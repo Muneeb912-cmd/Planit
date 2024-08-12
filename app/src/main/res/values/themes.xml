@@ -57,8 +57,19 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeTopLeft">0dp</item>
-        <item name="cornerSizeBottomRight">16dp</item>
-        <item name="cornerSizeBottomLeft">16dp</item>
+        <item name="cornerSizeBottomRight">30dp</item>
+        <item name="cornerSizeBottomLeft">30dp</item>
     </style>
+
+    <style name="BottomNavActive">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/md_theme_scrim</item>
+    </style>
+
+    <style name="BottomNavInactive">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/md_theme_secondaryFixed_mediumContrast</item>
+    </style>
+
 
 </resources>

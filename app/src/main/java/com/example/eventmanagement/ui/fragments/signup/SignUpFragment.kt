@@ -1,148 +1,165 @@
-import android.graphics.drawable.TransitionDrawable
+package com.example.eventmanagement.ui.fragments.signup
+
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
+import com.example.eventmanagement.adapters.SignUpPagerAdapter
+import com.example.eventmanagement.databinding.FragmentSignUpBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class SignUpFragment : Fragment() {
 
-    private lateinit var indicatorContainer: LinearLayout
-    private lateinit var stepContainer: FrameLayout
-    private lateinit var btnPrevious: Button
-    private lateinit var btnNext: Button
-
-    private var currentStep = 0
-    private val totalSteps = 3
-
-    // ViewModel or other data storage
-    private val stepData = mutableMapOf<Int, String>()
+    private val viewModel: SignUpViewModel by activityViewModels()
+    private lateinit var binding: FragmentSignUpBinding
+    private lateinit var indicators: Array<View>
+    private val indicatorCount = 3
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_sign_up, container, false)
+    ): View {
+        binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        indicatorContainer = view.findViewById(R.id.indicatorContainer)
-        stepContainer = view.findViewById(R.id.stepContainer)
-        btnPrevious = view.findViewById(R.id.btnPrevious)
-        btnNext = view.findViewById(R.id.btnNext)
-
+        setupViewPager()
+        setupNavigationButtons()
         setupIndicators()
-        updateStep()
+    }
 
-        btnPrevious.setOnClickListener {
-            if (currentStep > 0) {
-                saveData()
-                currentStep--
-                updateStep()
+    private fun setupViewPager() {
+        val pagerAdapter = SignUpPagerAdapter(this)
+        binding.stepContainer.adapter = pagerAdapter
+
+        binding.stepContainer.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                updateIndicators(position)
+                updateNavigationButtons(position)
+            }
+        })
+    }
+
+    private fun setupNavigationButtons() {
+        binding.btnPrevious.setOnClickListener {
+            val currentItem = binding.stepContainer.currentItem
+            if (currentItem > 0) {
+                binding.stepContainer.currentItem = currentItem - 1
             }
         }
 
-        btnNext.setOnClickListener {
-            if (currentStep < totalSteps - 1) {
-                saveData()
-                currentStep++
-                updateStep()
+        binding.btnNext.setOnClickListener {
+            val currentItem = binding.stepContainer.currentItem
+            if (validateCurrentStep(currentItem)) {
+                if (currentItem < indicatorCount - 1) {
+                    binding.stepContainer.currentItem = currentItem + 1
+                } else {
+                    finishRegistration()
+                }
             } else {
-                // Handle finish action, save final data
-                saveData()
-                finishSignUp()
+                showValidationAlert(currentItem)
+            }
+        }
+
+        binding.btnFinish.setOnClickListener {
+            finishRegistration()
+        }
+    }
+
+    private fun validateCurrentStep(step: Int): Boolean {
+        Log.d("Role Selected", "validateCurrentStep: ${viewModel.isRoleSelected}")
+        return when (step) {
+            0 -> viewModel.isRoleSelected
+            1 -> viewModel.isDataComplete
+            else -> true
+        }
+    }
+
+    private fun updateIndicators(position: Int) {
+        indicators.forEachIndexed { index, view ->
+            view.background = if (index == position) {
+                ContextCompat.getDrawable(requireContext(), R.drawable.indicator_active)
+            } else {
+                ContextCompat.getDrawable(requireContext(), R.drawable.indicators_inactive)
+            }
+        }
+    }
+
+    private fun updateNavigationButtons(position: Int) {
+        when (position) {
+            2 -> {
+                binding.btnNext.visibility = View.GONE
+                binding.btnFinish.visibility = View.VISIBLE
+            }
+
+            0 -> {
+                binding.btnNext.visibility = View.VISIBLE
+                binding.btnFinish.visibility = View.GONE
+            }
+
+            else -> {
+                binding.btnNext.visibility = View.VISIBLE
+                binding.btnPrevious.visibility = View.VISIBLE
+                binding.btnFinish.visibility = View.GONE
             }
         }
     }
 
     private fun setupIndicators() {
-        indicatorContainer.removeAllViews()
-        for (i in 0 until totalSteps) {
-            val indicator = ImageView(requireContext()).apply {
+        val indicatorContainer = binding.indicatorContainer
+        indicators = Array(indicatorCount) { index ->
+            View(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    resources.getDimensionPixelSize(R.dimen.indicator_size),
+                    resources.getDimensionPixelSize(R.dimen.indicator_size)
                 ).apply {
-                    marginEnd = 8.dpToPx()
+                    setMargins(
+                        resources.getDimensionPixelSize(R.dimen.indicator_margin),
+                        0,
+                        resources.getDimensionPixelSize(R.dimen.indicator_margin),
+                        0
+                    )
                 }
-                setImageResource(R.drawable.indicators_inactive)
-            }
-            indicatorContainer.addView(indicator)
-        }
-        updateIndicators()
-    }
-
-    private fun updateIndicators() {
-        for (i in 0 until totalSteps) {
-            val indicator = indicatorContainer.getChildAt(i) as ImageView
-            if (i == currentStep) {
-                indicator.setImageResource(R.drawable.indicator_active)
-            } else {
-                indicator.setImageResource(R.drawable.indicators_inactive)
+                background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.indicators_inactive)
+                indicatorContainer.addView(this)
             }
         }
     }
 
-    private fun updateStep() {
-        // Clear existing content
-        stepContainer.removeAllViews()
-
-        // Load step content based on current step
-        val layoutResId = when (currentStep) {
-            0 -> R.layout.signup_step1
-            1 -> R.layout.signup_step2
-            else -> R.layout.signup_step1
+    private fun showValidationAlert(currentStep: Int) {
+        if (currentStep == 0) {
+            AlertDialog.Builder(requireContext())
+                .setIcon(R.drawable.ic_attention)
+                .setTitle("Attention")
+                .setMessage("Please select one of the given option to proceed")
+                .setPositiveButton("OK", null)
+                .show()
+        } else {
+            AlertDialog.Builder(requireContext())
+                .setIcon(R.drawable.ic_attention)
+                .setTitle("Attention")
+                .setMessage("Please completely fill the required information.")
+                .setPositiveButton("OK", null)
+                .show()
         }
-        val inflater = LayoutInflater.from(requireContext())
-        val contentView = inflater.inflate(layoutResId, stepContainer, false)
-        stepContainer.addView(contentView)
-
-        // Restore data if available
-        val inputFieldId = when (currentStep) {
-            0 -> R.id.stepOneInput
-            1 -> R.id.stepTwoInput
-            else -> R.id.stepOneInput
-        }
-        val inputField = contentView.findViewById<EditText>(inputFieldId)
-        inputField.setText(stepData[currentStep])
-
-        // Update button visibility and text
-        btnPrevious.visibility = if (currentStep == 0) View.GONE else View.VISIBLE
-        btnNext.text = if (currentStep == totalSteps - 1) "Finish" else "Next"
-
-        // Animate background transition
-        val transitionDrawable = stepContainer.background as TransitionDrawable
-        transitionDrawable.startTransition(300) // Duration of the transition
-
-        // Update indicators
-        updateIndicators()
     }
 
-    private fun saveData() {
-        val inputFieldId = when (currentStep) {
-            0 -> R.id.stepOneInput
-            1 -> R.id.stepTwoInput
-            else -> R.id.stepOneInput
-        }
-        val inputField = stepContainer.findViewById<EditText>(inputFieldId)
-        stepData[currentStep] = inputField.text.toString()
-    }
-
-    private fun finishSignUp() {
-        // Handle final data processing and sign-up completion
-    }
-
-    private fun Int.dpToPx(): Int {
-        val density = resources.displayMetrics.density
-        return (this * density).toInt()
+    private fun finishRegistration() {
+        // Handle the registration completion logic here
+        // For example, you might navigate to a different screen or show a success message
     }
 }

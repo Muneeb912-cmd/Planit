@@ -2,9 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("androidx.navigation.safeargs")
-    id("com.google.devtools.ksp")
-    id ("kotlin-parcelize")
+    id ("kotlin-kapt")
+    id ("kotlin-android")
     id("com.google.gms.google-services")
+    id ("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
 }
 
@@ -44,6 +45,9 @@ android {
     dataBinding {
         enable=true
     }
+    viewBinding{
+        enable=true
+    }
     hilt {
         enableAggregatingTask = true
     }
@@ -70,12 +74,15 @@ dependencies {
     implementation(libs.zxing.core)
     implementation(libs.zxing.android.embedded)
     implementation(libs.play.services.auth)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
-    ksp(libs.dagger.compiler)
-    runtimeOnly(libs.dagger.compiler)
-    implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.lifecycle.viewmodel.compose)
+    implementation ("com.google.dagger:hilt-android:2.51.1")
+    implementation("com.google.dagger:hilt-compiler:2.51.1")
+    kapt ("com.google.dagger:hilt-compiler:2.51.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
     implementation(libs.gson)
     implementation(libs.glide)
+    implementation ("androidx.activity:activity:1.7.0")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.0")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.0")
+
 }

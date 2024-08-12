@@ -15,4 +15,23 @@
     <string name="don_t_have_an_account">Don\'t have an Account?</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="let_s_get_started">Let\'s Get Started!</string>
+    <string name="chose_your_role">Chose Your Role:</string>
+    <string name="personal_information">Personal Information:</string>
+    <string name="fill_in_your_information">Fill in your information:</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="birth_date">Date of Birth</string>
+    <string name="final_preview">Final Preview:</string>
+    <string name="input_your_email_here_to_get_the_password_reset_link">Input your email here to get the password reset link</string>
+    <string name="no_worries_we_got_you_covered">No worries we got you covered</string>
+    <string name="forgot_password_">Forgot Password?</string>
+    <string name="send">Send</string>
+    <string name="password_reset_email_sent">Password reset email sent!</string>
+    <string name="verify">Verify</string>
+    <string name="home">Home</string>
+    <string name="events">Events</string>
+    <string name="my_events">My Events</string>
+    <string name="profile">Profile</string>
 </resources>

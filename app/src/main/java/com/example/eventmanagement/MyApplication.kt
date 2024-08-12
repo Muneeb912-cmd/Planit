@@ -1,7 +1,9 @@
 package com.example.eventmanagement
 
+import android.app.Application
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
-@AndroidEntryPoint
-class MyApplication {
+@HiltAndroidApp
+class MyApplication: Application() {
 }

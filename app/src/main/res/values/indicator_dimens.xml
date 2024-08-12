@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Size of the indicator dots -->
+    <dimen name="indicator_size">12dp</dimen>
+    <!-- Margin between the indicator dots -->
+    <dimen name="indicator_margin">4dp</dimen>
+</resources>
