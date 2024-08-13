@@ -61,14 +61,23 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>
 
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar2"
+            app:layout_constraintBottom_toTopOf="@id/bottomNavView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/md_theme_secondaryFixed"
             android:elevation="8dp"
-            app:itemActiveIndicatorStyle=""
-            app:itemIconTint="@color/md_theme_tertiaryFixedDim_mediumContrast"
+
+            app:itemIconTint="@color/md_theme_secondaryFixedDim_mediumContrast"
             app:itemTextColor="@color/md_theme_scrim"
             app:labelVisibilityMode="selected"
             app:layout_constraintBottom_toBottomOf="parent"

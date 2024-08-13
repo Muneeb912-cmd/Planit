@@ -14,7 +14,7 @@
         android:title="@string/my_events"
         android:icon="@drawable/ic_my_events" />
     <item
-        android:id="@+id/person"
+        android:id="@+id/profile"
         android:title="@string/profile"
         android:icon="@drawable/ic_person" />
 </menu>
