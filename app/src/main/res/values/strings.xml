@@ -34,5 +34,15 @@
     <string name="events">Events</string>
     <string name="my_events">My Events</string>
     <string name="profile">Profile</string>
-    <string name="search_event">Search Event</string>
+    <string name="search_event">Search Event (Name, Organizer)</string>
+    <string name="missed">Missed</string>
+    <string name="up_coming">Up-Coming</string>
+    <string name="on_going">On-Going</string>
+    <string name="allow_notification">Allow Notification</string>
+    <string name="user_loaction">User Loaction</string>
+    <string name="reset_password">Reset Password?</string>
+    <string name="change_password">Change Password</string>
+    <string name="logout">Logout</string>
+    <string name="your_personal_information">Your personal information:</string>
+    <string name="update">Update</string>
 </resources>

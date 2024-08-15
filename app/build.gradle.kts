@@ -41,6 +41,7 @@ android {
     }
     buildFeatures{
         buildConfig = true
+        viewBinding = true
     }
     dataBinding {
         enable=true
@@ -64,6 +65,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,4 +88,5 @@ dependencies {
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.0")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.0")
     implementation ("com.kizitonwose.calendar:view:2.5.0" )
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
 }

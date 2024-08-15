@@ -2,6 +2,7 @@ package com.example.eventmanagement.ui.fragments.home
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,10 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
-import com.example.eventmanagement.adapters.EventAdapter
+import com.example.eventmanagement.adapters.HomeEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentHomeBinding
-import com.example.eventmanagement.models.Event
+import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -26,22 +28,129 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentHomeBinding
     private var selectedDate: LocalDate? = null
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val eventDates = setOf(
-        LocalDate.of(2024, 8, 15)
+    private val eventCardList = listOf(
+        CardData(
+            eventTitle = "Featured Event",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-10",
+            isEventFeatured = true,
+            isEventPopular = false,
+            isEventPublic = true,
+            numberOfPeopleAttending = 100,
+            eventStatus = "On-Going"
+        ),
+        CardData(
+            eventTitle = "Featured Event",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-14",
+            isEventFeatured = true,
+            isEventPopular = false,
+            isEventPublic = true,
+            numberOfPeopleAttending = 100,
+            eventStatus = "On-Going"
+        ),
+        CardData(
+            eventTitle = "Featured Event",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-20",
+            isEventFeatured = true,
+            isEventPopular = false,
+            isEventPublic = true,
+            numberOfPeopleAttending = 100,
+            eventStatus = "Up-Coming"
+        ),
+        CardData(
+            eventTitle = "Featured Event",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-21",
+            isEventFeatured = true,
+            isEventPopular = false,
+            isEventPublic = true,
+            numberOfPeopleAttending = 100,
+            eventStatus = "Up-Coming"
+        ),
+        CardData(
+            eventTitle = "Featured Event",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-20",
+            isEventFeatured = true,
+            isEventPopular = false,
+            isEventPublic = true,
+            numberOfPeopleAttending = 100,
+            eventStatus = "Up-Coming"
+        ),
+        CardData(
+            eventTitle = "Featured Event",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-15",
+            isEventFeatured = true,
+            isEventPopular = false,
+            isEventPublic = true,
+            numberOfPeopleAttending = 100,
+            eventStatus = "Missed"
+        ),
+        CardData(
+            eventTitle = "Popular Event 1",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-01",
+            isEventFeatured = false,
+            isEventPopular = true,
+            isEventPublic = true,
+            numberOfPeopleAttending = 28,
+            eventStatus = "Missed"
+        ),
+        CardData(
+            eventTitle = "Popular Event 2",
+            eventOrganizer = "Devsinc",
+            eventTiming = "2:00 PM - 3:00 PM",
+            eventCategory = "Conferences",
+            eventDescription = "Today we will celebrate Shaheer's Birthday",
+            eventLocation = "37.7749,-122.4194",
+            eventDate = "2024-08-14",
+            isEventFeatured = false,
+            isEventPopular = true,
+            isEventPublic = true,
+            numberOfPeopleAttending = 14,
+            eventStatus = "Missed"
+        ),
     )
-
-    private val events = listOf(
-        Event("Event 1", "2:00 PM - 4:00 PM"),
-        Event("Event 2", "2:00 PM - 4:00 PM"),
-        Event("Event 3", "2:00 PM - 4:00 PM"),
-        Event("Event 4", "2:00 PM - 4:00 PM"),
-        Event("Event 5", "5:00 PM - 6:00 PM")
-    )
+    private val eventDates: Set<LocalDate>
+        @RequiresApi(Build.VERSION_CODES.O)
+        get() = eventCardList.mapNotNull {
+            LocalDate.parse(it.eventDate)
+        }.toSet()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,13 +172,32 @@ class HomeFragment : Fragment() {
         binding.monthsContainer.nextMonthButton.setOnClickListener {
             navigateToNextMonth()
         }
+
         setupEventsList()
     }
 
-    private fun setupEventsList(){
-        binding.eventsList.layoutManager = LinearLayoutManager(context)
-        binding.eventsList.adapter = EventAdapter(events)
+    private fun setupEventsList() {
+        val selectedDateString = selectedDate?.toString()
+        Log.d("HomeFragment", "Selected Date: $selectedDateString")
+
+        val filteredEvents = eventCardList.filter {
+            it.isEventPublic == true && it.eventDate == selectedDateString
+        }
+
+        if (filteredEvents.isNotEmpty()) {
+            binding.eventsList.visibility = View.VISIBLE
+            binding.noEventsFoundText.visibility = View.GONE
+            val adapter = HomeEventCardAdapter(filteredEvents, this)
+            binding.eventsList.layoutManager = LinearLayoutManager(context)
+            binding.eventsList.adapter = adapter
+            adapter.notifyDataSetChanged()
+
+        } else {
+            binding.eventsList.visibility = View.GONE
+            binding.noEventsFoundText.visibility = View.VISIBLE
+        }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendarView() {
@@ -98,7 +226,6 @@ class HomeFragment : Fragment() {
                         container.dayTextView.setTextColor(requireContext().getColor(android.R.color.black))
                         container.dayTextView.background = null
                     }
-                    // Set the event dot visibility
                     if (data.date in eventDates) {
                         container.eventDot.visibility = View.VISIBLE
                     } else {
@@ -155,6 +282,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+        setupEventsList()
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun navigateToPreviousMonth() {
@@ -185,6 +313,11 @@ class HomeFragment : Fragment() {
 
     class MonthViewContainer(view: View) : ViewContainer(view) {
         val titlesContainer = view as ViewGroup
+    }
+
+    override fun onItemClick(cardData: CardData) {
+        val bottomSheetFragment = EventDetailsFragment(cardData)
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
 }

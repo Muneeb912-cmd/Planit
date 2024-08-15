@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentEventsMainBinding
-import com.example.eventmanagement.adapters.EventMainAdapter
+import com.example.eventmanagement.adapters.BottomNavAdapter
 
 class EventsMainFragment : Fragment() {
 
     private lateinit var binding: FragmentEventsMainBinding
-    private lateinit var viewPagerAdapter: EventMainAdapter
+    private lateinit var viewPagerAdapter: BottomNavAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +26,7 @@ class EventsMainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewPagerAdapter = EventMainAdapter(requireActivity())
+        viewPagerAdapter = BottomNavAdapter(requireActivity())
         binding.viewPager.adapter = viewPagerAdapter
 
         binding.bottomNavView.setOnItemSelectedListener { item ->
