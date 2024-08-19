@@ -12,7 +12,20 @@
           "package_name": "com.example.eventmanagement"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "711227771945-sdbc4soiebp6m7au89evbf2knbu64m04.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eventmanagement",
+            "certificate_hash": "1e8ad79493f7e343c15be38dc7ecadf7dc8976e7"
+          }
+        },
+        {
+          "client_id": "711227771945-hh6kfdkstur1lps7s7nrlds1ndtot2of.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAF0XYFjRnYUMwoi4VRLuhDYM0OF7MWq7M"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711227771945-hh6kfdkstur1lps7s7nrlds1ndtot2of.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

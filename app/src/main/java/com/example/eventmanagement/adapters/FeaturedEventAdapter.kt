@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
-import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.models.EventData
 
 class FeaturedEventAdapter(
-    private val promotionCards: List<CardData>,
+    private val promotionCards: List<EventData>,
     private val listener: OnFeaturedEventClickListener
 ) : RecyclerView.Adapter<FeaturedEventAdapter.PromotionCardViewHolder>() {
     interface OnFeaturedEventClickListener {
-        fun onFeaturedEventCardClick(cardData: CardData)
+        fun onFeaturedEventCardClick(cardData: EventData)
     }
 
 
@@ -32,13 +32,13 @@ class FeaturedEventAdapter(
     }
 
     inner class PromotionCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        private lateinit var currentCardData: CardData
+        private lateinit var currentCardData: EventData
 
         init {
             itemView.setOnClickListener(this)
         }
 
-        fun bind(cardData: CardData) {
+        fun bind(cardData: EventData) {
             currentCardData = cardData
             itemView.findViewById<TextView>(R.id.eventTitleTv).text = cardData.eventTitle
             itemView.findViewById<TextView>(R.id.eventOrganizer).text = cardData.eventOrganizer

@@ -2,7 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.eventmanagement.ui.fragments.signup.SignUpViewModel" />
@@ -52,7 +54,7 @@
                         android:layout_gravity="center"
                         android:background="@drawable/circular_background"
                         android:padding="8dp"
-                        android:src="@{viewModel.user.img}"
+                        android:src="@{viewModel.user.userImg}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -73,14 +75,14 @@
                             android:id="@+id/userName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.user.fullName}"
+                            android:text="@{viewModel.user.userName}"
                             android:textSize="25sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text='@{String.format("Selected Role: %s", viewModel.user.role)}'
+                            android:text='@{String.format("Selected Role: %s", viewModel.user.userRole)}'
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -99,6 +101,7 @@
                 app:layout_constraintTop_toBottomOf="@id/materialCardView" />
 
             <LinearLayout
+                android:id="@+id/userDataContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -125,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_margin="10dp"
-                        android:text="@{viewModel.user.email}"
+                        android:text="@{viewModel.user.userEmail}"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -147,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_margin="10dp"
-                        android:text="@{viewModel.user.phone}"
+                        android:text="@{viewModel.user.userPhone}"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -169,9 +172,57 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_margin="10dp"
-                        android:text="@{viewModel.user.dob}"
+                        android:text="@{viewModel.user.userDob}"
                         android:textSize="15sp" />
                 </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/userDataContainer"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/msgTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="User Email Not Verified"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/retryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Send Email"
+                    android:backgroundTint="#8F4C35"
+                    android:textColor="@android:color/white"/>
+
+                <TextView
+                    android:id="@+id/msg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Verification email is sent to you please verify to continue."
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/timerTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center" />
             </LinearLayout>
 
 

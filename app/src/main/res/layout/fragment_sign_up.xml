@@ -13,6 +13,17 @@
         android:layout_height="match_parent"
         tools:context=".ui.fragments.signup.SignUpFragment">
 
+        <include
+            android:id="@+id/loader_overlay"
+            layout="@layout/loader_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone" />
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolBar"
             android:layout_width="match_parent"

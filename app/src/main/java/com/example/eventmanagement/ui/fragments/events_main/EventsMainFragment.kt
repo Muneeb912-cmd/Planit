@@ -9,6 +9,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentEventsMainBinding
 import com.example.eventmanagement.adapters.BottomNavAdapter
+import com.example.eventmanagement.models.User
+import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
+import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.fav_evetns.FavEventsFragment
 
 class EventsMainFragment : Fragment() {
 
@@ -48,5 +51,10 @@ class EventsMainFragment : Fragment() {
                 binding.bottomNavView.menu.getItem(position).isChecked = true
             }
         })
+
+        binding.favEvents.setOnClickListener {
+            val bottomSheetFragment = FavEventsFragment()
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        }
     }
 }

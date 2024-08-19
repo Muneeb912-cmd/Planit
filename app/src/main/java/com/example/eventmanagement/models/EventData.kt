@@ -1,6 +1,6 @@
 package com.example.eventmanagement.models
 
-data class CardData(
+data class EventData(
     val eventId:String?=null,
     val eventTitle: String?=null,
     val eventOrganizer: String?=null,

@@ -6,15 +6,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
-import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.models.EventData
 
 class PopularEventCardAdapter(
-    private val eventCards: List<CardData>,
+    private val eventCards: List<EventData>,
     private val listener: EventCardClickListener
 ) : RecyclerView.Adapter<PopularEventCardAdapter.EventCardViewHolder>() {
 
     interface EventCardClickListener {
-        fun onEventCardClick(cardData: CardData)
+        fun onEventCardClick(cardData: EventData)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventCardViewHolder {
@@ -33,7 +33,7 @@ class PopularEventCardAdapter(
 
     inner class EventCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        fun bind(cardData: CardData) {
+        fun bind(cardData: EventData) {
             itemView.findViewById<TextView>(R.id.eventTitle).text = cardData.eventTitle
             itemView.findViewById<TextView>(R.id.eventOrganizer).text = cardData.eventOrganizer
             itemView.findViewById<TextView>(R.id.eventTime).text = cardData.eventTiming

@@ -45,4 +45,8 @@
     <string name="logout">Logout</string>
     <string name="your_personal_information">Your personal information:</string>
     <string name="update">Update</string>
+    <string name="favorites">Favorites</string>
+    <string name="no_events_found">No Events Found</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="client_server_key">711227771945-hh6kfdkstur1lps7s7nrlds1ndtot2of.apps.googleusercontent.com</string>
 </resources>

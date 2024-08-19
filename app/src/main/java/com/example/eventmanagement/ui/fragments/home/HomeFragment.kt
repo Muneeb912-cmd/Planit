@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.HomeEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentHomeBinding
-import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
@@ -33,7 +33,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
     private lateinit var binding: FragmentHomeBinding
     private var selectedDate: LocalDate? = null
     private val eventCardList = listOf(
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -47,7 +47,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "On-Going"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -61,7 +61,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "On-Going"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -75,7 +75,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -89,7 +89,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -103,7 +103,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -117,7 +117,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Missed"
         ),
-        CardData(
+        EventData(
             eventTitle = "Popular Event 1",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -131,7 +131,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             numberOfPeopleAttending = 28,
             eventStatus = "Missed"
         ),
-        CardData(
+        EventData(
             eventTitle = "Popular Event 2",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -315,7 +315,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
         val titlesContainer = view as ViewGroup
     }
 
-    override fun onItemClick(cardData: CardData) {
+    override fun onItemClick(cardData: EventData) {
         val bottomSheetFragment = EventDetailsFragment(cardData)
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }

@@ -15,7 +15,7 @@ import com.example.eventmanagement.adapters.PopularEventCardAdapter
 import com.example.eventmanagement.adapters.FeaturedEventAdapter
 import com.example.eventmanagement.databinding.FragmentEventsBinding
 import com.example.eventmanagement.di.Categories
-import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +30,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
     @Categories
     lateinit var categories: ArrayList<String>
     private val eventCardList = listOf(
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -44,7 +44,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 100,
             eventStatus = "On-Going"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -58,7 +58,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 100,
             eventStatus = "On-Going"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -72,7 +72,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -86,7 +86,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -100,7 +100,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -114,7 +114,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 100,
             eventStatus = "Missed"
         ),
-        CardData(
+        EventData(
             eventTitle = "Popular Event 1",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -128,7 +128,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
             numberOfPeopleAttending = 28,
             eventStatus = "Missed"
         ),
-        CardData(
+        EventData(
             eventTitle = "Popular Event 2",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -285,12 +285,12 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
         binding.recyclerViewEventCards.animate().translationY(0f).alpha(1f).setDuration(300)
     }
 
-    override fun onEventCardClick(cardData: CardData) {
+    override fun onEventCardClick(cardData: EventData) {
         val bottomSheetFragment = EventDetailsFragment(cardData)
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
-    override fun onFeaturedEventCardClick(cardData: CardData) {
+    override fun onFeaturedEventCardClick(cardData: EventData) {
         val bottomSheetFragment = EventDetailsFragment(cardData)
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
