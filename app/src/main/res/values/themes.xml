@@ -47,4 +47,29 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+    <style name="MyCardView" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MaterialCardView.Cut</item>
+    </style>
+
+
+    <style name="ShapeAppearanceOverlay.MaterialCardView.Cut" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomRight">30dp</item>
+        <item name="cornerSizeBottomLeft">30dp</item>
+    </style>
+
+    <style name="BottomNavActive">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/md_theme_scrim</item>
+    </style>
+
+    <style name="BottomNavInactive">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/md_theme_secondaryFixed_mediumContrast</item>
+    </style>
+
+
 </resources>
