@@ -34,5 +34,4 @@ class ProfileViewModel@Inject constructor(
             _states.value = Response.Error(e)
         }
     }
-
 }

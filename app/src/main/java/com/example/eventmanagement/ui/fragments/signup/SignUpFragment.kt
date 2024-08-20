@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -80,27 +81,39 @@ class SignUpFragment : Fragment() {
     }
 
     private fun handleNextButtonClick() {
-        val currentItem = binding.stepContainer.currentItem
-        if (validateCurrentStep(currentItem)) {
-            if (currentItem < indicatorCount - 1) {
-                binding.stepContainer.currentItem = currentItem + 1
-                if (currentItem == 1) {
+        when (val currentItem = binding.stepContainer.currentItem) {
+            0 -> {
+                if (validateCurrentStep(0)) {
+                    binding.stepContainer.currentItem = currentItem + 1
+                } else {
+                    showValidationAlert(currentItem)
+                }
+            }
+
+            1 -> {
+                if (viewModel.isDataComplete) {
                     viewModel.createUserAccount()
                     observeSignUpStateOnCreateUser()
+                    if (validateCurrentStep(currentItem)) {
+                        binding.stepContainer.currentItem = currentItem + 1
+                    } else {
+                        showValidationAlert(currentItem)
+                    }
+                } else {
+                    showValidationAlert(currentItem)
                 }
-            } else {
-                finishRegistration()
             }
-        } else {
-            showValidationAlert(currentItem)
+
+            2 -> finishRegistration()
+            else -> null
         }
     }
 
     private fun validateCurrentStep(step: Int): Boolean {
-        Log.d("SignUpFragment", "Validating step: $step")
+        Log.d("SignUpFragment", "Validating step: $step  and ${viewModel.accountExist}")
         return when (step) {
             0 -> viewModel.isRoleSelected
-            1 -> viewModel.isDataComplete
+            1 -> (viewModel.isDataComplete && viewModel.accountExist)
             else -> true
         }
     }
@@ -146,10 +159,18 @@ class SignUpFragment : Fragment() {
     private fun showValidationAlert(currentStep: Int) {
         val (title, message) = when (currentStep) {
             0 -> "Attention" to "Please select one of the given options to proceed."
-            1 -> if (!viewModel.isDataUploaded) {
-                "Error" to "Error saving user info."
-            } else {
-                "Attention" to "Please completely fill the required information."
+
+            1 -> {
+                val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
+                val confirmPassword =
+                    view?.findViewById<EditText>(R.id.confirmPassword)?.text.toString()
+                if (password != confirmPassword) {
+                    "Password Error" to "Password and Confirm Password didn't match"
+                } else if (!viewModel.isDataComplete) {
+                    "Data Incomplete" to "Input field Empty, Kindly fill the input fields before continuing"
+                } else {
+                    null to null
+                }
             }
 
             else -> null to null
@@ -219,7 +240,7 @@ class SignUpFragment : Fragment() {
         showLoader(false)
         AlertDialog.Builder(requireContext())
             .setTitle("Error")
-            .setMessage("Registration failed: ${exception.message}")
+            .setMessage("Registration failed: ${exception.message} OR email already in use.")
             .setPositiveButton("OK", null)
             .show()
     }

@@ -150,6 +150,15 @@ class LoginSignUpMethodsImpl @Inject constructor(
             }
     }
 
+    override fun sendResetPasswordEmail(email: String, onResult: (Boolean) -> Unit) {
+        return try {
+            auth.sendPasswordResetEmail(email)
+            onResult(true)
+        } catch (e: Exception) {
+            onResult(false)
+        }
+    }
+
     private fun saveUserDataToFirestore(
         userId: String,
         userData: User.UserData,
