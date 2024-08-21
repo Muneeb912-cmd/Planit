@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.eventmanagement.databinding.FragmentEventDetailsBinding
-import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.models.EventData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class EventDetailsFragment(private val cardData: CardData) : BottomSheetDialogFragment(), OnMapReadyCallback {
+class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogFragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentEventDetailsBinding
     private lateinit var googleMap: GoogleMap

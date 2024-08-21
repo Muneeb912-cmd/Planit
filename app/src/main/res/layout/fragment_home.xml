@@ -91,7 +91,7 @@
             android:id="@+id/noEventsFoundText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Events Found"
+            android:text="@string/no_events_found"
             android:textSize="18sp"
             android:textColor="@android:color/darker_gray"
             android:layout_centerInParent="true"

@@ -181,7 +181,18 @@
                     android:paddingStart="50dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/msgTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Loading..."
+                android:visibility="gone"/>
+
+
+
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/updateUserBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/update"

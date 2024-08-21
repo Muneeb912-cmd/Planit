@@ -6,10 +6,22 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/md_theme_secondaryFixed">
+
+        <include
+            android:id="@+id/loader_overlay"
+            layout="@layout/loader_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView1"
@@ -26,9 +38,9 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toTopOf="@id/cardView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,29 +121,22 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <ImageButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/googleLoginBtn"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:backgroundTint="@color/md_theme_background"
-                        android:contentDescription="TODO"
-                        android:elevation="10dp"
-                        android:padding="15dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_google" />
-
-                    <ImageButton
-                        android:id="@+id/fbLogin"
-                        android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_weight="1"
-                        android:backgroundTint="@color/md_theme_background"
-                        android:contentDescription="TODO"
-                        android:elevation="10dp"
-                        android:padding="15dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_facebook" />
+                        android:drawablePadding="8dp"
+                        android:text="@string/login_with_google"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        app:backgroundTint="@color/md_theme_background"
+                        app:cornerRadius="4dp"
+                        app:icon="@drawable/ic_google"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        app:iconTint="@null"
+                        app:strokeWidth="1dp" />
                 </LinearLayout>
 
                 <RelativeLayout
@@ -208,10 +213,10 @@
                     android:id="@+id/forgotPassTv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/forgot_password"
-                    android:textAlignment="textEnd"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:text="@string/forgot_password"
+                    android:textAlignment="textEnd"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 

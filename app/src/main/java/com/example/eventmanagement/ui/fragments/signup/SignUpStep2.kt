@@ -19,28 +19,40 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentSignUpStep2Binding
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import kotlin.math.sign
 
 class SignUpStep2 : Fragment() {
 
     private lateinit var binding: FragmentSignUpStep2Binding
     private val signUpViewModel: SignUpViewModel by activityViewModels()
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
+    private lateinit var loginType:String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignUpStep2Binding.inflate(inflater, container, false)
+        loginType=signUpViewModel.loginType
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (signUpViewModel.loginType == "google") {
+            binding.passwordLayout.visibility = View.GONE
+            binding.confirmPasswordLayout.visibility = View.GONE
+            loadCurrentUserData()
+        }
+
         setupListeners()
         initializeImagePicker()
         binding.addImage.setOnClickListener {
-            imagePickerLauncher.launch("image/*") // Launch image picker
+            imagePickerLauncher.launch("image/*")
         }
+
+
 
         lifecycleScope.launch {
             signUpViewModel.errors.collect { errorMap ->
@@ -50,6 +62,25 @@ class SignUpStep2 : Fragment() {
                 binding.passwordLayout.error = errorMap["password"]
                 binding.confirmPasswordLayout.error = errorMap["confirmPassword"]
             }
+        }
+    }
+
+    private fun loadCurrentUserData() {
+        val currentUser = signUpViewModel.getCurrentUser()
+        currentUser.let {
+            binding.fullName.setText(it?.userName)
+            binding.userEmail.setText(it?.userEmail)
+            binding.userPhone.setText(it?.userPhone)
+            Glide.with(this)
+                .load(it?.userImg)
+                .apply(RequestOptions().placeholder(R.drawable.ic_placeholder))
+                .into(binding.addImage)
+            signUpViewModel.updateUserInfo("fullName",it?.userName.toString())
+            signUpViewModel.updateUserInfo("email",it?.userEmail.toString())
+            signUpViewModel.updateUserInfo("phone",it?.userPhone.toString())
+            signUpViewModel.updateUserInfo("img",it?.userImg.toString())
+            signUpViewModel.updateUserInfo("userId",it?.userId.toString())
+
         }
     }
 
@@ -72,11 +103,15 @@ class SignUpStep2 : Fragment() {
         }
 
         binding.password.addTextChangedListener {
-            signUpViewModel.updateUserInfo("password", it.toString())
+            if (loginType != "google") {
+                signUpViewModel.updateUserInfo("password", it.toString())
+            }
         }
 
         binding.confirmPassword.addTextChangedListener {
-            signUpViewModel.updateUserInfo("confirmPassword", it.toString())
+            if (loginType != "google") {
+                signUpViewModel.updateUserInfo("confirmPassword", it.toString())
+            }
         }
     }
 

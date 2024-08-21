@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.adapters.MyEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentMyEventsBinding
-import com.example.eventmanagement.models.CardData
+import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.google.android.material.tabs.TabLayout
 
@@ -18,7 +18,7 @@ import com.google.android.material.tabs.TabLayout
 class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
     private lateinit var binding: FragmentMyEventsBinding
     private val eventCardList = listOf(
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -32,7 +32,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "On-Going"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -46,7 +46,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "On-Going"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -60,7 +60,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -74,7 +74,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -88,7 +88,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Up-Coming"
         ),
-        CardData(
+        EventData(
             eventTitle = "Featured Event",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -102,7 +102,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 100,
             eventStatus = "Missed"
         ),
-        CardData(
+        EventData(
             eventTitle = "Popular Event 1",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -116,7 +116,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             numberOfPeopleAttending = 28,
             eventStatus = "Missed"
         ),
-        CardData(
+        EventData(
             eventTitle = "Popular Event 2",
             eventOrganizer = "Devsinc",
             eventTiming = "2:00 PM - 3:00 PM",
@@ -131,7 +131,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             eventStatus = "Missed"
         ),
     )
-    private var filteredEvents = listOf<CardData>()
+    private var filteredEvents = listOf<EventData>()
     private var currentTabPosition = 0
 
     override fun onCreateView(
@@ -177,7 +177,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
         binding.eventsList.adapter = adapter
     }
 
-    override fun OnMyEventCardClickListener(cardData: CardData) {
+    override fun OnMyEventCardClickListener(cardData: EventData) {
         val bottomSheetFragment = EventDetailsFragment(cardData)
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
@@ -215,7 +215,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
         updateRecyclerView(filteredEvents)
     }
 
-    private fun updateRecyclerView(events: List<CardData>) {
+    private fun updateRecyclerView(events: List<EventData>) {
         val adapter = MyEventCardAdapter(events, this)
         binding.eventsList.adapter = adapter
     }
