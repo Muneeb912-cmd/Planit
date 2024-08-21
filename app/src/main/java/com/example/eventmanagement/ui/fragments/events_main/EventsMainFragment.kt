@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentEventsMainBinding
@@ -12,25 +13,31 @@ import com.example.eventmanagement.adapters.BottomNavAdapter
 import com.example.eventmanagement.models.User
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.fav_evetns.FavEventsFragment
+import com.example.eventmanagement.ui.shared_view_model.UserDataViewModel
 
 class EventsMainFragment : Fragment() {
 
     private lateinit var binding: FragmentEventsMainBinding
     private lateinit var viewPagerAdapter: BottomNavAdapter
+    private val userDataViewModel: UserDataViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentEventsMainBinding.inflate(inflater, container, false)
+        binding.viewModel = userDataViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         viewPagerAdapter = BottomNavAdapter(requireActivity())
         binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.isUserInputEnabled=false
 
         binding.bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {

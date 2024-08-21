@@ -13,6 +13,7 @@ data class EventData(
     val isEventPopular:Boolean?=null,
     val numberOfPeopleAttending:Int?=null,
     val isEventPublic:Boolean?=null,
-    val eventStatus:String?=null
+    val eventStatus:String?=null,
+    val eventCreatedBy:String?=null
 )
 

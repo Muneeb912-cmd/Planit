@@ -29,8 +29,8 @@ class SignUpViewModel @Inject constructor(
 
     var isRoleSelected: Boolean = false
     var isDataComplete: Boolean = false
-    var isDataUploaded: Boolean = false
     var isEmailVerified: Boolean = false
+    var accountExist: Boolean = false
     var loginType: String = ""
 
     private val _errors = MutableStateFlow<Map<String, String?>>(emptyMap())
@@ -117,13 +117,16 @@ class SignUpViewModel @Inject constructor(
                                 checkVerificationEmail()
                                 addUserDatatoFirestore(userId)
                                 _signUpResults.value = Response.Success(Unit)
+                                accountExist=false
 
                             } else {
                                 _signUpResults.value =
                                     Response.Error(Exception("Failed to retrieve user ID or User already exist"))
+                                accountExist=true
                             }
                         } else {
                             _signUpResults.value = Response.Error(Exception("Sign-up failed"))
+                            accountExist=true
                         }
                     }
                 } catch (e: Exception) {
@@ -143,7 +146,8 @@ class SignUpViewModel @Inject constructor(
                         _emailVerificationStatus.value = Response.Success(Unit)
                         isEmailVerified = true
                     } else {
-                        _emailVerificationStatus.value = Response.Error(Exception("Email not verified"))
+                        _emailVerificationStatus.value =
+                            Response.Error(Exception("Email not verified"))
                         isEmailVerified = false
                     }
                 }
@@ -190,14 +194,14 @@ class SignUpViewModel @Inject constructor(
     }
 
 
-    fun saveDataToPreferences(onResult: (Boolean) -> Unit){
-        val user1=getCurrentUser()
-        updateUserInfo("userId",user1?.userId.toString())
+    fun saveDataToPreferences(onResult: (Boolean) -> Unit) {
+        val user1 = getCurrentUser()
+        updateUserInfo("userId", user1?.userId.toString())
         try {
             preferencesUtil.saveUser(user.value)
             Log.d("UserData", "saveDataToPreferences: ${preferencesUtil.getUser()}")
             onResult(true)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("UserDataPrefs", "getUserDataFromFireStore: $e")
             onResult(false)
         }

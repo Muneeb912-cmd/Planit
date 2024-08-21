@@ -49,7 +49,7 @@ class SignUpStep2 : Fragment() {
         setupListeners()
         initializeImagePicker()
         binding.addImage.setOnClickListener {
-            imagePickerLauncher.launch("image/*") // Launch image picker
+            imagePickerLauncher.launch("image/*")
         }
 
 

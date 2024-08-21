@@ -1,0 +1,105 @@
+package com.example.eventmanagement.repository.firebase.envents_data
+
+import com.example.eventmanagement.models.EventData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import javax.inject.Inject
+
+class EventsDataMethodsImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : EventDataMethods {
+
+    private var eventsListener: ListenerRegistration? = null
+
+    override fun getAllEvents(): List<EventData> {
+        val eventsList = mutableListOf<EventData>()
+        firestore.collection("Events")
+            .get()
+            .addOnSuccessListener { snapshots ->
+                if (snapshots != null && !snapshots.isEmpty) {
+                    val events = snapshots.toObjects(EventData::class.java)
+                    eventsList.addAll(events)
+                }
+            }
+            .addOnFailureListener {
+                // Handle any errors
+            }
+        return eventsList
+    }
+
+    override fun getEventById(eventId: String): EventData? {
+        var event: EventData? = null
+        firestore.collection("Events").document(eventId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    event = document.toObject(EventData::class.java)
+                }
+            }
+            .addOnFailureListener {
+                // Handle any errors
+            }
+        return event
+    }
+
+    override fun updateEventById(eventId: String, onResult: (Boolean) -> Unit) {
+        firestore.collection("Events").document(eventId)
+            .update("fieldName", "newValue")  // Update specific fields as needed
+            .addOnSuccessListener {
+                onResult(true)
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
+    }
+
+    override fun deleteEventById(eventId: String, onResult: (Boolean) -> Unit) {
+        firestore.collection("Events").document(eventId)
+            .delete()
+            .addOnSuccessListener {
+                onResult(true)
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
+    }
+
+    override fun getEventsByCreator(creatorId: String): List<EventData> {
+        val eventsList = mutableListOf<EventData>()
+        firestore.collection("Events")
+            .whereEqualTo("creatorId", creatorId)
+            .get()
+            .addOnSuccessListener { snapshots ->
+                if (snapshots != null && !snapshots.isEmpty) {
+                    val events = snapshots.toObjects(EventData::class.java)
+                    eventsList.addAll(events)
+                }
+            }
+            .addOnFailureListener {
+
+            }
+        return eventsList
+    }
+
+    override fun observeAllEvents(onResult: (List<EventData>) -> Unit) {
+        eventsListener = firestore.collection("Events")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    onResult(emptyList())
+                    return@addSnapshotListener
+                }
+
+                if (snapshots != null && !snapshots.isEmpty) {
+                    val events = snapshots.toObjects(EventData::class.java)
+                    onResult(events)
+                } else {
+                    onResult(emptyList())
+                }
+            }
+    }
+
+    fun removeEventsListener() {
+        eventsListener?.remove()
+    }
+}

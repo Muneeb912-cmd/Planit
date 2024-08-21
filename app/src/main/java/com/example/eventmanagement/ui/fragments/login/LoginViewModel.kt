@@ -129,5 +129,4 @@ class LoginViewModel @Inject constructor(
             onResult(false)
         }
     }
-
 }
