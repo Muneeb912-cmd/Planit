@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,8 +33,8 @@ class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogF
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
-
-        eventLocation = cardData.eventLocation?.let { parseLocation(it) }
+        val latLng=cardData.eventLong+","+cardData.eventLat
+        eventLocation = parseLocation(latLng)
 
         binding.attendingToggleButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -83,6 +84,7 @@ class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogF
     }
 
     private fun parseLocation(locationString: String): LatLng? {
+        Log.d("location", "parseLocation: $locationString")
         return try {
             val parts = locationString.split(",")
             if (parts.size == 2) {

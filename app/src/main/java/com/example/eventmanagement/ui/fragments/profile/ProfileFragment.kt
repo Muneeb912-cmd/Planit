@@ -2,6 +2,7 @@ package com.example.eventmanagement.ui.fragments.profile
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +22,7 @@ import com.example.eventmanagement.databinding.FragmentProfileBinding
 import com.example.eventmanagement.di.CitiesCountries
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.ediit_profile.EditProfileFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.reset_password.ResetPasswordFragment
-import com.example.eventmanagement.ui.shared_view_model.UserDataViewModel
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +33,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
-    private val userDataViewModel: UserDataViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     @Inject
     @CitiesCountries
@@ -43,7 +44,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.viewModel = userDataViewModel
+        binding.viewModel = sharedViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -53,13 +54,17 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeListeners()
         Glide.with(requireContext())
-            .load(userDataViewModel.currentUser.value?.userImg)
+            .load(sharedViewModel.currentUser.value?.userImg)
             .apply(
                 RequestOptions()
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
             )
             .into(binding.userProfileImg)
+
+        binding.notificationToggle.isChecked= sharedViewModel.currentUser.value?.isNotificationsAllowed == true
+        binding.profileToggle.isChecked= sharedViewModel.currentUser.value?.isProfilePrivate == true
+
     }
 
     private fun initializeListeners() {
@@ -99,6 +104,7 @@ class ProfileFragment : Fragment() {
                     }
 
                     is Response.Success -> {
+                        sharedViewModel.resetViewModel()
                         findNavController().navigate(
                             R.id.action_eventsMainFragment_to_loginFragment,
                             null,
@@ -138,7 +144,7 @@ class ProfileFragment : Fragment() {
             .setItems(citiesCountries.toTypedArray()) { _, which ->
                 val selectedLocation = citiesCountries[which]
                 viewModel.updateUserLocation(
-                    userDataViewModel.currentUser.value?.userId.toString(),
+                    sharedViewModel.currentUser.value?.userId.toString(),
                     selectedLocation
                 ) { result ->
                     if (result) {
@@ -165,7 +171,7 @@ class ProfileFragment : Fragment() {
 
     private fun handleNotificationToggle(isChecked: Boolean) {
         viewModel.updateUserNotificationStatus(
-            userDataViewModel.currentUser.value?.userId.toString(),
+            sharedViewModel.currentUser.value?.userId.toString(),
             isChecked
         ) { result ->
             if (result) {
@@ -189,7 +195,7 @@ class ProfileFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun handleProfileToggle(isChecked: Boolean) {
         viewModel.updateUserProfileStatus(
-            userDataViewModel.currentUser.value?.userId.toString(),
+            sharedViewModel.currentUser.value?.userId.toString(),
             isChecked
         ) { result ->
             if (result) {

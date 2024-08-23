@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.eventmanagement.ui.shared_view_model.UserDataViewModel" />
+            type="com.example.eventmanagement.ui.shared_view_model.SharedViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -68,6 +68,32 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/locationIcon"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/favEvents"
+                        app:layout_constraintTop_toTopOf="parent" >
+                        <ImageView
+                            android:id="@+id/eventInvitesNotifier"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="10dp"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/indicator_active"
+                            android:translationZ="20dp"/>
+                        <ImageView
+                            android:id="@+id/eventInvites"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="15dp"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/ic_invites"
+                            />
+                    </RelativeLayout>
 
                     <ImageView
                         android:id="@+id/favEvents"

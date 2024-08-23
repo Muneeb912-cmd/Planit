@@ -87,7 +87,7 @@ class UserDataImpl @Inject constructor(
         onResult: (Boolean) -> Unit
     ) {
         try {
-            val updateData = mapOf("notificationsEnabled" to newSettings)
+            val updateData = mapOf("notificationsAllowed" to newSettings)
             firestore.collection("UserData")
                 .document(userId)
                 .update(updateData)
@@ -105,7 +105,7 @@ class UserDataImpl @Inject constructor(
         onResult: (Boolean) -> Unit
     ) {
         try {
-            val updateData = mapOf("isProfilePrivate" to newSettings)
+            val updateData = mapOf("profilePrivate" to newSettings)
             firestore.collection("UserData")
                 .document(userId)
                 .update(updateData)
@@ -208,7 +208,7 @@ class UserDataImpl @Inject constructor(
             }
     }
 
-    fun removeCurrentUserListener() {
+    override fun removeCurrentUserListener() {
         currentUserListener?.remove()
     }
 

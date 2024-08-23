@@ -10,16 +10,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentEventsMainBinding
 import com.example.eventmanagement.adapters.BottomNavAdapter
-import com.example.eventmanagement.models.User
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.fav_evetns.FavEventsFragment
-import com.example.eventmanagement.ui.shared_view_model.UserDataViewModel
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 
 class EventsMainFragment : Fragment() {
 
     private lateinit var binding: FragmentEventsMainBinding
     private lateinit var viewPagerAdapter: BottomNavAdapter
-    private val userDataViewModel: UserDataViewModel by activityViewModels()
+    private val userDataViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

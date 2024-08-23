@@ -1,4 +1,4 @@
-package com.example.eventmanagement.repository.firebase.envents_data
+package com.example.eventmanagement.repository.firebase.events_data
 
 import com.example.eventmanagement.models.EventData
 
@@ -9,4 +9,5 @@ interface EventDataMethods {
     fun deleteEventById(eventId: String,onResult: (Boolean)->Unit)
     fun getEventsByCreator(creatorId:String):List<EventData>
     fun observeAllEvents(onResult: (List<EventData>) -> Unit)
+    fun saveEvent(eventData:EventData,onResult: (Boolean,String) -> Unit)
 }

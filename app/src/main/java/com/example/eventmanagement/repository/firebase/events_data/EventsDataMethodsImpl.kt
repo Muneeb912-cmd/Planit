@@ -1,7 +1,6 @@
-package com.example.eventmanagement.repository.firebase.envents_data
+package com.example.eventmanagement.repository.firebase.events_data
 
 import com.example.eventmanagement.models.EventData
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import javax.inject.Inject
@@ -98,6 +97,22 @@ class EventsDataMethodsImpl @Inject constructor(
                 }
             }
     }
+
+    override fun saveEvent(eventData: EventData, onResult: (Boolean, String) -> Unit) {
+        val eventsCollection = firestore.collection("Events")
+        val newDocumentRef = eventsCollection.document()
+        val updatedEventData = eventData.copy(eventId = newDocumentRef.id)
+
+        newDocumentRef
+            .set(updatedEventData)
+            .addOnSuccessListener {
+                onResult(true, "Event saved successfully with ID: ${newDocumentRef.id}.")
+            }
+            .addOnFailureListener { exception ->
+                onResult(false, "Error saving event: ${exception.message}")
+            }
+    }
+
 
     fun removeEventsListener() {
         eventsListener?.remove()

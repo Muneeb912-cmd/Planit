@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
@@ -17,8 +19,10 @@ import com.example.eventmanagement.databinding.FragmentEventsBinding
 import com.example.eventmanagement.di.Categories
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,122 +33,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
     @Inject
     @Categories
     lateinit var categories: ArrayList<String>
-    private val eventCardList = listOf(
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-10",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "On-Going"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-14",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "On-Going"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-20",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-21",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-20",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-15",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Missed"
-        ),
-        EventData(
-            eventTitle = "Popular Event 1",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-01",
-            isEventFeatured = false,
-            isEventPopular = true,
-            isEventPublic = true,
-            numberOfPeopleAttending = 28,
-            eventStatus = "Missed"
-        ),
-        EventData(
-            eventTitle = "Popular Event 2",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-14",
-            isEventFeatured = false,
-            isEventPopular = true,
-            isEventPublic = true,
-            numberOfPeopleAttending = 14,
-            eventStatus = "Missed"
-        ),
-    )
-
-
+    private val sharedViewModel:SharedViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -158,6 +47,12 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
         setUpEventRecyclerView()
         setUpPromotionRecyclerView()
         setUpScrollListener()
+        lifecycleScope.launch {
+            sharedViewModel.allEvents.collect {
+                setUpEventRecyclerView()
+                setUpPromotionRecyclerView()
+            }
+        }
     }
 
     private fun setUpCategories() {
@@ -200,7 +95,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
 
     private fun setUpEventRecyclerView() {
         val adapter = PopularEventCardAdapter(
-            eventCardList.filter { it.isEventPopular == true && it.isEventPublic == true },
+            sharedViewModel.allEvents.value.filter { it.isEventPopular == true && it.isEventPublic == true },
             this
         )
         binding.recyclerViewEventCards.layoutManager =
@@ -211,7 +106,7 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
 
     private fun setUpPromotionRecyclerView() {
         val adapter = FeaturedEventAdapter(
-            eventCardList.filter { it.isEventFeatured == true && it.isEventPublic == true },
+            sharedViewModel.allEvents.value.filter { it.isEventFeatured == true && it.isEventPublic == true },
             this
         )
         binding.recyclerViewPromotionCards.layoutManager =

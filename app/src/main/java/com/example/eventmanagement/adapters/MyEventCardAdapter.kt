@@ -42,7 +42,7 @@ class MyEventCardAdapter(
             currentCardData = cardData
             itemView.findViewById<TextView>(R.id.eventTitleTv).text = cardData.eventTitle
             itemView.findViewById<TextView>(R.id.eventOrganizer).text = cardData.eventOrganizer
-            itemView.findViewById<TextView>(R.id.eventTime).text = cardData.eventDate
+            itemView.findViewById<TextView>(R.id.eventTime).text = cardData.eventTiming
             itemView.findViewById<TextView>(R.id.eventStatus).text = cardData.eventStatus
         }
 

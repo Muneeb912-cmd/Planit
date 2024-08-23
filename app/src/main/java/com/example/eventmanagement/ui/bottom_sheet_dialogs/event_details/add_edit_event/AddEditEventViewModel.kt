@@ -1,0 +1,201 @@
+package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event
+
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModel
+import com.example.eventmanagement.models.EventData
+import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
+import com.example.eventmanagement.utils.Response
+import com.example.eventmanagement.utils.Validators
+import dagger.hilt.android.lifecycle.HiltViewModel
+
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import java.lang.Exception
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
+
+@HiltViewModel
+class AddEditEventViewModel @Inject constructor(
+    private val validators: Validators,
+    private val eventDataMethods: EventDataMethods
+) : ViewModel() {
+
+    private val _events = MutableStateFlow(EventData())
+    private val eventsData: StateFlow<EventData> = _events.asStateFlow()
+
+
+    private val _states = MutableStateFlow<Response<Unit>>(Response.Loading)
+    val states: StateFlow<Response<Unit>> get() = _states.asStateFlow()
+
+    private val _errors = MutableStateFlow<Map<String, String?>>(emptyMap())
+    val errors: StateFlow<Map<String, String?>> get() = _errors
+
+
+    var isDataComplete: Boolean = false
+    var isDataValid:Boolean=false
+
+    fun updateEventInfo(key: String, value: String) {
+        val currentEvent = _events.value
+        val updatedEvent = currentEvent.copy(
+            eventId = if (key == "eventId") value else currentEvent.eventId,
+            eventTitle = if (key == "eventTitle") value else currentEvent.eventTitle,
+            eventOrganizer = if (key == "eventOrganizer") value else currentEvent.eventOrganizer,
+            eventTiming = if (key == "eventTiming") value else currentEvent.eventTiming,
+            eventCategory = if (key == "eventCategory") value else currentEvent.eventCategory,
+            eventDescription = if (key == "eventDescription") value else currentEvent.eventDescription,
+            eventLocation = if (key == "eventLocation") value else currentEvent.eventLocation,
+            eventDate = if (key == "eventDate") value else currentEvent.eventDate,
+            isEventFeatured = if (key == "isEventFeatured") value == "yes" else currentEvent.isEventFeatured,
+            isEventPopular = if (key == "isEventPopular") value == "yes" else currentEvent.isEventPopular,
+            numberOfPeopleAttending = if (key == "numberOfPeopleAttending") value.toIntOrNull() else currentEvent.numberOfPeopleAttending,
+            isEventPublic = if (key == "isEventPublic") value == "yes" else currentEvent.isEventPublic,
+            eventStatus = if (key == "eventStatus") value else currentEvent.eventStatus,
+            eventCreatedBy = if (key == "eventCreatedBy") value else currentEvent.eventCreatedBy,
+            eventLong = if (key == "eventLong") value else currentEvent.eventLong,
+            eventLat = if (key == "eventLat") value else currentEvent.eventLat
+        )
+        validateField(key, value)
+        checkIfDataComplete()
+        _events.value = updatedEvent
+        Log.d("Updated Event", "updateEventInfo: $updatedEvent and $isDataComplete")
+    }
+
+    private fun checkIfDataComplete() {
+        isDataComplete = !eventsData.value.eventTitle.isNullOrEmpty() &&
+                !eventsData.value.eventOrganizer.isNullOrEmpty() &&
+                !eventsData.value.eventTiming.isNullOrEmpty() &&
+                !eventsData.value.eventCategory.isNullOrEmpty() &&
+                !eventsData.value.eventDescription.isNullOrEmpty() &&
+                !eventsData.value.eventLocation.isNullOrEmpty() &&
+                !eventsData.value.eventDate.isNullOrEmpty() &&
+                eventsData.value.numberOfPeopleAttending != null &&
+                eventsData.value.isEventFeatured != null &&
+                eventsData.value.isEventPopular != null &&
+                eventsData.value.isEventPublic != null &&
+                !eventsData.value.eventCreatedBy.isNullOrEmpty()
+    }
+
+
+    fun validateField(field: String, value: String) {
+        val updatedErrors = _errors.value.toMutableMap()
+
+        when (field) {
+            "eventTitle" -> {
+                updatedErrors["eventTitle"] =
+                    if (validators.validateName(value)) null
+                    else "Invalid Title. Example Input: (Promotion Ceremony)"
+            }
+
+            "eventEndTime" -> {
+                val timePattern = " - "
+                val times = value.split(timePattern)
+
+                if (times.size == 2) {
+                    val startTime = times[0].trim()
+                    val endTime = times[1].trim()
+                    updatedErrors["eventEndTime"] =
+
+                        if (validators.validateEventEndTimings(
+                                startTime,
+                                endTime
+                            )
+                        ) null
+                        else "Invalid End Time. Ensure it's after the start time and minimum event time is 10 minutes. "
+
+                }
+
+            }
+
+            "eventStartTiming" -> updatedErrors["eventTiming"] =
+                if (value.isNotBlank()) null else "Timing cannot be empty."
+
+            "eventCategory" -> updatedErrors["eventCategory"] =
+                if (value.isNotBlank()) null else "Category cannot be empty."
+
+            "eventDescription" -> updatedErrors["eventDescription"] =
+                if (value.isNotBlank()) null else "Description cannot be empty."
+
+            "eventLocation" -> updatedErrors["eventLocation"] =
+                if (value.isNotBlank()) null else "Location cannot be empty."
+
+            "eventDate" -> updatedErrors["eventDate"] =
+                if (value.isNotBlank()) null else "Date cannot be empty."
+
+        }
+        isDataValid = updatedErrors.values.all { it == null }
+        _errors.value = updatedErrors
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateEventStatus() {
+        val currentDateTime = LocalDateTime.now()
+
+        val eventDateString = eventsData.value.eventDate
+        val eventTiming = eventsData.value.eventTiming
+
+        var eventStartDateTime: LocalDateTime
+        var eventEndDateTime: LocalDateTime
+
+        if (eventDateString != null) {
+            val dateRange = eventDateString.split(" - ")
+
+            if (dateRange.size == 2) {
+                val startDate = LocalDate.parse(dateRange[0].trim(), DateTimeFormatter.ISO_LOCAL_DATE)
+                val endDate = LocalDate.parse(dateRange[1].trim(), DateTimeFormatter.ISO_LOCAL_DATE)
+                val startTime = LocalTime.MIN
+                val endTime = LocalTime.MAX
+
+                eventStartDateTime = startDate.atTime(startTime)
+                eventEndDateTime = endDate.atTime(endTime)
+            } else {
+                // Event is a single date
+                val eventDate = LocalDate.parse(eventDateString, DateTimeFormatter.ISO_LOCAL_DATE)
+                eventStartDateTime = eventDate.atStartOfDay()
+                eventEndDateTime = eventDate.atTime(LocalTime.MAX)
+            }
+
+            if (eventTiming != null && eventTiming.contains(" - ")) {
+                // Handle time range if provided
+                val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+                val times = eventTiming.split(" - ")
+                if (times.size == 2) {
+                    val startTime = LocalTime.parse(times[0].trim(), timeFormatter)
+                    val endTime = LocalTime.parse(times[1].trim(), timeFormatter)
+                    eventStartDateTime = eventStartDateTime.with(startTime)
+                    eventEndDateTime = eventEndDateTime.with(endTime)
+                }
+            }
+
+            val status = when {
+                currentDateTime.toLocalDate() != eventStartDateTime.toLocalDate() && currentDateTime.isBefore(eventStartDateTime) -> "Upcoming"
+                currentDateTime.isAfter(eventEndDateTime) -> "Missed"
+                else -> "On-Going"
+            }
+
+            _events.value = eventsData.value.copy(eventStatus = status)
+        } else {
+            _events.value = eventsData.value.copy(eventStatus = "Unknown")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun saveEvent(){
+        updateEventStatus()
+        _states.value=Response.Loading
+        eventDataMethods.saveEvent(eventsData.value){dataUploaded,msg->
+            if(dataUploaded){
+                _states.value=Response.Success(Unit)
+            }else{
+                _states.value=Response.Error(Exception(msg))
+            }
+        }
+    }
+
+}

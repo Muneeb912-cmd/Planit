@@ -30,6 +30,7 @@ class ProfileViewModel @Inject constructor(
                 if (userSignedOut) {
                     _states.value = Response.Success(Unit)
                     preferencesUtil.deleteUser()
+                    userDataMethods.removeCurrentUserListener()
                 } else {
                     _states.value = Response.Error(Exception("Failed to sign out"))
                 }

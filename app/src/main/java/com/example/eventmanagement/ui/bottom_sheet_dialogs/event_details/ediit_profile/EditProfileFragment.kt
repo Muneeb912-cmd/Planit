@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentEditProfileBinding
-import com.example.eventmanagement.ui.shared_view_model.UserDataViewModel
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 class EditProfileFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding:FragmentEditProfileBinding
-    private val userDataViewModel: UserDataViewModel by activityViewModels()
+    private val userDataViewModel: SharedViewModel by activityViewModels()
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
     private val viewModel:EditProfileViewModel by viewModels()
     private var userImg:String=""

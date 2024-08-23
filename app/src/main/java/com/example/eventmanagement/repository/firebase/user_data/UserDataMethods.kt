@@ -15,4 +15,6 @@ interface UserDataMethods {
     suspend fun updateUserProfile(userId: String,userName:String,userEmail:String,userPhone:String,userDob:String,userImg:String,onResult: (Boolean) -> Unit)
     fun observeCurrentUser(onResult: (User.UserData?) -> Unit)
     fun observeUsers(onResult: (List<User.UserData>?) -> Unit)
+
+    fun removeCurrentUserListener()
 }

@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentLoginBinding
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -27,6 +29,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+    private val sharedViewModel:SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,6 +90,7 @@ class LoginFragment : Fragment() {
                         viewModel.isEmailVerified.collect { isVerified ->
                             showLoader(false)
                             if (isVerified) {
+
                                 viewModel.usersData.collect { usersResponse ->
                                     when (usersResponse) {
                                         is Response.Loading -> {
@@ -119,6 +123,7 @@ class LoginFragment : Fragment() {
                                             if (currentUserId != null) {
                                                 val userExists =
                                                     users.any { it.userId == currentUserId }
+                                                sharedViewModel.initializeObservers()
                                                 if (userExists) {
                                                     findNavController().navigate(R.id.action_loginFragment_to_eventsMainFragment)
                                                 } else {

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.EventsInvites
 import com.example.eventmanagement.models.User
-import com.example.eventmanagement.repository.firebase.envents_data.EventDataMethods
+import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
 import com.example.eventmanagement.repository.firebase.invites_data.InviteMethods
 import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserDataViewModel @Inject constructor(
+class SharedViewModel @Inject constructor(
     private val userDataMethods: UserDataMethods,
     private val inviteMethods: InviteMethods,
     private val eventDataMethods: EventDataMethods
@@ -48,7 +48,6 @@ class UserDataViewModel @Inject constructor(
                 _currentUser.value = user
             }
         }
-        Log.d("observeCurrentUser", "observeCurrentUser: ${currentUser.value}")
     }
 
     private fun observeUserInvites() {
@@ -80,7 +79,6 @@ class UserDataViewModel @Inject constructor(
         }
     }
 
-
     fun getProfileStatus(): String {
         return if (currentUser.value?.isProfilePrivate == true) {
             "Public"
@@ -88,4 +86,18 @@ class UserDataViewModel @Inject constructor(
             "Private"
         }
     }
+
+    fun resetViewModel() {
+        _currentUser.value = null
+        _userInvites.value = emptyList()
+        _allUsers.value = emptyList()
+        _allEvents.value = emptyList()
+    }
+    fun initializeObservers() {
+        observeCurrentUser()
+        observeUserInvites()
+        observeAllUsers()
+        observeAllEvents()
+    }
+
 }
