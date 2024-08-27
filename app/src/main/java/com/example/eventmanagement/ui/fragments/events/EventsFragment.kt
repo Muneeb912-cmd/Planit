@@ -1,20 +1,21 @@
 package com.example.eventmanagement.ui.fragments.events
 
-
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
-import com.example.eventmanagement.adapters.PopularEventCardAdapter
 import com.example.eventmanagement.adapters.FeaturedEventAdapter
+import com.example.eventmanagement.adapters.PopularEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentEventsBinding
 import com.example.eventmanagement.di.Categories
 import com.example.eventmanagement.models.EventData
@@ -26,14 +27,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListener,
+class EventsFragment : Fragment(),
+    PopularEventCardAdapter.EventCardClickListener,
     FeaturedEventAdapter.OnFeaturedEventClickListener {
+
     private lateinit var binding: FragmentEventsBinding
+    private var isEventDetailsBottomSheetShown = false
 
     @Inject
     @Categories
     lateinit var categories: ArrayList<String>
-    private val sharedViewModel:SharedViewModel by activityViewModels()
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val eventsViewModel: EventsViewModel by viewModels()
+    private val selectedCategories = mutableSetOf<String>()
+
+    private var isUiHidden = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -44,28 +54,40 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpCategories()
-        setUpEventRecyclerView()
-        setUpPromotionRecyclerView()
-        setUpScrollListener()
-        lifecycleScope.launch {
-            sharedViewModel.allEvents.collect {
-                setUpEventRecyclerView()
-                setUpPromotionRecyclerView()
+        setUpRecyclerViews()
+        observeViewModel()
+
+        binding.expandUi.setImageResource(R.drawable.ic_up)
+
+        binding.expandUi.setOnClickListener {
+            if (isUiHidden) {
+                binding.expandUi.setImageResource(R.drawable.ic_up)
+                showUiElements("expandUiBtn")
+            } else {
+                binding.expandUi.setImageResource(R.drawable.ic_down)
+                hideUiElements("expandUiBtn")
             }
         }
+
+        binding.searchEvent.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                handleSearch(s.toString().trim())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     private fun setUpCategories() {
-        val chipLabels = categories
-        for (label in chipLabels) {
+        categories.forEach { label ->
             val chip = Chip(context).apply {
                 text = label
                 isClickable = true
                 isCheckable = true
                 setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
                 setTextColor(resources.getColor(R.color.md_theme_onBackground_highContrast, null))
-
-                val params = LinearLayout.LayoutParams(
+                layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
                     marginStart = resources.getDimensionPixelSize(R.dimen.chip_margin_start)
@@ -73,120 +95,199 @@ class EventsFragment : Fragment(), PopularEventCardAdapter.EventCardClickListene
                     topMargin = resources.getDimensionPixelSize(R.dimen.chip_margin_top)
                     bottomMargin = resources.getDimensionPixelSize(R.dimen.chip_margin_bottom)
                 }
-                layoutParams = params
-
                 setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
+                        selectedCategories.add(label)
                         setChipBackgroundColorResource(R.color.md_theme_primary)
                         setTextColor(resources.getColor(R.color.md_theme_surfaceContainerLow, null))
                     } else {
+                        selectedCategories.remove(label)
                         setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
                         setTextColor(
                             resources.getColor(
-                                R.color.md_theme_onBackground_highContrast, null
+                                R.color.md_theme_onBackground_highContrast,
+                                null
                             )
                         )
                     }
+                    filterFeaturedEvents()
                 }
             }
             binding.chipsContainer.addView(chip)
         }
     }
 
-    private fun setUpEventRecyclerView() {
-        val adapter = PopularEventCardAdapter(
-            sharedViewModel.allEvents.value.filter { it.isEventPopular == true && it.isEventPublic == true },
-            this
-        )
+    private fun setUpRecyclerViews() {
         binding.recyclerViewEventCards.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerViewEventCards.adapter = adapter
-        startAutoScrollForEvents()
-    }
-
-    private fun setUpPromotionRecyclerView() {
-        val adapter = FeaturedEventAdapter(
-            sharedViewModel.allEvents.value.filter { it.isEventFeatured == true && it.isEventPublic == true },
-            this
+        binding.recyclerViewEventCards.adapter = PopularEventCardAdapter(
+            emptyList(), sharedViewModel.allFavEvents.value, this
         )
+
         binding.recyclerViewPromotionCards.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerViewPromotionCards.adapter = adapter
+        binding.recyclerViewPromotionCards.adapter = FeaturedEventAdapter(
+            emptyList(), sharedViewModel.allFavEvents.value, this
+        )
+
+        binding.searchItemRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.searchItemRecyclerView.adapter = PopularEventCardAdapter(
+            emptyList(), sharedViewModel.allFavEvents.value, this
+        )
     }
 
-    private fun startAutoScrollForEvents() {
-        val handler = android.os.Handler()
-        val scrollRunnable = object : Runnable {
-            override fun run() {
-                val layoutManager = binding.recyclerViewEventCards.layoutManager as LinearLayoutManager
-                val currentPosition = layoutManager.findFirstVisibleItemPosition()
-                val totalItemCount = binding.recyclerViewEventCards.adapter?.itemCount ?: 0
-
-                if (totalItemCount > 0) {
-                    val nextPosition = (currentPosition + 1) % totalItemCount
-                    binding.recyclerViewEventCards.smoothScrollToPosition(nextPosition)
-                    handler.postDelayed(this, 3000) // Repeat after 3 seconds
-                }
-            }
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            launch { sharedViewModel.allEvents.collect { filterFeaturedEvents() } }
+            launch { sharedViewModel.allFavEvents.collect {favEvents->
+                (binding.recyclerViewPromotionCards.adapter as? FeaturedEventAdapter)?.submitFavEventsList(
+                    favEvents
+                )
+                (binding.recyclerViewEventCards.adapter as? PopularEventCardAdapter)?.submitFavEventsList(
+                    favEvents
+                )
+            }}
         }
-        handler.postDelayed(scrollRunnable, 3000)
     }
 
-    private fun setUpScrollListener() {
-        val scrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val scrollThreshold = 100
-                Log.d("Scroll", "onScrolled: $dy")
-                if (dy > scrollThreshold) { // Scrolling down
-                    hideSearchAndEventCards()
-                } else if (dy < -scrollThreshold) { // Scrolling up
-                    showSearchAndEventCards()
-                }
-            }
+    private fun filterFeaturedEvents() {
+        val filteredEvents = sharedViewModel.allEvents.value.filter { event ->
+            event.isEventFeatured == true &&
+                    event.isEventPublic == true &&
+                    (selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory))
         }
+        (binding.recyclerViewPromotionCards.adapter as? FeaturedEventAdapter)?.submitList(
+            filteredEvents
+        )
 
-        binding.recyclerViewPromotionCards.addOnScrollListener(scrollListener)
+        val filteredPopularEvents = sharedViewModel.allEvents.value.filter { event ->
+            event.isEventPopular == true &&
+                    event.isEventPublic == true &&
+                    (selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory))
+        }
+        (binding.recyclerViewEventCards.adapter as? PopularEventCardAdapter)?.submitList(
+            filteredPopularEvents
+        )
+
     }
 
-    private fun hideSearchAndEventCards() {
-        binding.searchEventContainer.animate()
-            .translationY(-binding.searchEventContainer.height.toFloat()).alpha(0f).setDuration(300)
-            .withEndAction {
-                binding.searchEventContainer.visibility = View.GONE
-            }
-
-        binding.titlePopularEvents.animate()
-            .translationY(-binding.titlePopularEvents.height.toFloat()).alpha(0f).setDuration(300)
-            .withEndAction {
-                binding.titlePopularEvents.visibility = View.GONE
-            }
-
-        binding.recyclerViewEventCards.animate()
-            .translationY(-binding.recyclerViewEventCards.height.toFloat()).alpha(0f)
-            .setDuration(300).withEndAction {
-                binding.recyclerViewEventCards.visibility = View.GONE
-            }
+    private fun handleSearch(query: String) {
+        if (query.isEmpty()) {
+            showUiElements("search")
+            filterFeaturedEvents()
+        } else {
+            hideUiElements("search")
+            deselectAllCategories()
+            handleQuery(query)
+        }
     }
 
-    private fun showSearchAndEventCards() {
-        binding.searchEventContainer.visibility = View.VISIBLE
-        binding.searchEventContainer.animate().translationY(0f).alpha(1f).setDuration(300)
+    private fun handleQuery(query: String) {
+        val searchedEvents = sharedViewModel.allEvents.value.filter { event ->
+            val matchesQuery = event.eventOrganizer?.lowercase()?.contains(query.lowercase()) == true ||
+                    event.eventTitle?.lowercase()?.contains(query.lowercase()) == true
+            matchesQuery &&
+                    event.isEventPublic == true &&
+                    (selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory))
+        }
+        (binding.searchItemRecyclerView.adapter as? PopularEventCardAdapter)?.submitList(searchedEvents)
+    }
 
-        binding.titlePopularEvents.visibility = View.VISIBLE
-        binding.titlePopularEvents.animate().translationY(0f).alpha(1f).setDuration(300)
+    private fun deselectAllCategories() {
+        selectedCategories.clear()
+        (0 until binding.chipsContainer.childCount).forEach { index ->
+            (binding.chipsContainer.getChildAt(index) as? Chip)?.isChecked = false
+        }
+    }
 
-        binding.recyclerViewEventCards.visibility = View.VISIBLE
-        binding.recyclerViewEventCards.animate().translationY(0f).alpha(1f).setDuration(300)
+    private fun hideUiElements(key: String) {
+        if (key != "search") {
+            animateViewVisibility(binding.searchEventContainer, View.GONE)
+            animateViewVisibility(binding.titlePopularEvents, View.GONE)
+            animateViewVisibility(binding.recyclerViewEventCards, View.GONE)
+            isUiHidden = true
+        } else {
+            animateViewVisibility(binding.searchItemRecyclerView, View.VISIBLE)
+            animateViewVisibility(binding.titlePopularEvents, View.GONE)
+            animateViewVisibility(binding.recyclerViewEventCards, View.GONE)
+            animateViewVisibility(binding.featuredEventTitle, View.GONE)
+            animateViewVisibility(binding.recyclerViewPromotionCards, View.GONE)
+            animateViewVisibility(binding.expandLayout, View.GONE)
+        }
+    }
+
+    private fun showUiElements(key: String) {
+        if (key != "search") {
+            animateViewVisibility(binding.searchEventContainer, View.VISIBLE)
+            animateViewVisibility(binding.titlePopularEvents, View.VISIBLE)
+            animateViewVisibility(binding.recyclerViewEventCards, View.VISIBLE)
+            isUiHidden = false
+        } else {
+            animateViewVisibility(binding.searchItemRecyclerView, View.GONE)
+            animateViewVisibility(binding.titlePopularEvents, View.VISIBLE)
+            animateViewVisibility(binding.recyclerViewEventCards, View.VISIBLE)
+            animateViewVisibility(binding.featuredEventTitle, View.VISIBLE)
+            animateViewVisibility(binding.recyclerViewPromotionCards, View.VISIBLE)
+            animateViewVisibility(binding.expandLayout, View.VISIBLE)
+        }
+    }
+
+
+    private fun animateViewVisibility(view: View, visibility: Int) {
+        val duration = 300L
+        view.animate()
+            .translationY(if (visibility == View.VISIBLE) 0f else -view.height.toFloat())
+            .alpha(if (visibility == View.VISIBLE) 1f else 0f)
+            .setDuration(duration)
+            .setInterpolator(android.view.animation.AccelerateDecelerateInterpolator())
+            .withEndAction {
+                view.visibility = visibility
+            }
     }
 
     override fun onEventCardClick(cardData: EventData) {
-        val bottomSheetFragment = EventDetailsFragment(cardData)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        showEventDetails(cardData)
     }
 
     override fun onFeaturedEventCardClick(cardData: EventData) {
-        val bottomSheetFragment = EventDetailsFragment(cardData)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        showEventDetails(cardData)
+    }
+
+    private fun showEventDetails(cardData: EventData) {
+        if (!isEventDetailsBottomSheetShown) {
+            isEventDetailsBottomSheetShown = true
+            val bottomSheetFragment = EventDetailsFragment(cardData)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEventDetailsBottomSheetShown = false
+            }
+        }
+    }
+
+    override fun onFavIconClick(cardData: EventData) {
+        val userId = sharedViewModel.currentUser.value?.userId.toString()
+        if (sharedViewModel.allFavEvents.value.any { it.eventId == cardData.eventId }) {
+            removeEventFromFavorites(userId, cardData)
+        } else {
+            addEventToFavorites(userId, cardData)
+        }
+    }
+
+    private fun removeEventFromFavorites(userId: String, cardData: EventData) {
+        eventsViewModel.removeEventFromUserFav(userId, cardData) { result, msg ->
+            showToast("Event deleted from favorites", result, msg)
+        }
+    }
+
+    private fun addEventToFavorites(userId: String, cardData: EventData) {
+        eventsViewModel.addEventToUserFav(userId, cardData) { result, msg ->
+            showToast("Event added to favorites", result, msg)
+        }
+    }
+
+    private fun showToast(message: String, result: Boolean, msg: String) {
+        Toast.makeText(requireContext(), if (result) message else "Error: $msg", Toast.LENGTH_SHORT)
+            .show()
     }
 }

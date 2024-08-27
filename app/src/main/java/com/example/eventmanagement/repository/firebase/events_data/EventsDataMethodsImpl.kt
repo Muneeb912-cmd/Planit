@@ -10,6 +10,7 @@ class EventsDataMethodsImpl @Inject constructor(
 ) : EventDataMethods {
 
     private var eventsListener: ListenerRegistration? = null
+    private var favEventsListener: ListenerRegistration? = null
 
     override fun getAllEvents(): List<EventData> {
         val eventsList = mutableListOf<EventData>()
@@ -113,7 +114,72 @@ class EventsDataMethodsImpl @Inject constructor(
             }
     }
 
+    override fun addEventToUserFav(
+        userId: String,
+        eventData: EventData,
+        onResult: (Boolean,String) -> Unit
+    ) {
+        val userFavEventsRef = eventData.eventId?.let {
+            firestore.collection("UserData")
+                .document(userId)
+                .collection("FavEvents")
+                .document(it)
+        }
 
+        userFavEventsRef?.set(eventData)?.addOnSuccessListener {
+            onResult(true, "")
+        }?.addOnFailureListener {
+            onResult(true, it.toString())
+        }
+    }
+
+    override fun removeEventFromUserFav(
+        userId: String,
+        eventData: EventData,
+        onResult: (Boolean, String) -> Unit
+    ) {
+        val userFavEventsRef = eventData.eventId?.let {
+            firestore.collection("UserData")
+                .document(userId)
+                .collection("FavEvents")
+                .document(it)
+        }
+
+        userFavEventsRef?.delete()?.addOnSuccessListener {
+            onResult(true, "Event removed from favorites successfully.")
+        }?.addOnFailureListener {
+            onResult(false, "Failed to remove event from favorites: ${it.message}")
+        }
+    }
+
+
+    override fun observeCurrentUserFavEvents(
+        userId: String,
+        onResult: (List<EventData>) -> Unit
+    ) {
+        val userFavEventsRef = firestore.collection("UserData")
+            .document(userId)
+            .collection("FavEvents")
+
+        userFavEventsRef.addSnapshotListener { snapshots, e ->
+            if (e != null) {
+                onResult(emptyList())
+                return@addSnapshotListener
+            }
+
+            if (snapshots != null && !snapshots.isEmpty) {
+                val favEvents = snapshots.toObjects(EventData::class.java)
+                onResult(favEvents)
+            } else {
+                onResult(emptyList())
+            }
+        }
+    }
+
+
+    fun removeFavEventsListener() {
+        favEventsListener?.remove()
+    }
     fun removeEventsListener() {
         eventsListener?.remove()
     }

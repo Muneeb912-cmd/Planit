@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_loginFragment_to_eventsMainFragment"
             app:destination="@id/eventsMainFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_adminMainFragment"
+            app:destination="@id/adminMainFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -30,6 +33,9 @@
         <argument
             android:name="loginType"
             app:argType="string" />
+        <action
+            android:id="@+id/action_signUpFragment_to_adminMainFragment"
+            app:destination="@id/adminMainFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgetPasswordFragment"
@@ -43,6 +49,15 @@
         tools:layout="@layout/fragment_events_main" >
         <action
             android:id="@+id/action_eventsMainFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminMainFragment"
+        android:name="com.example.eventmanagement.ui.fragments.admin_main.AdminMainFragment"
+        android:label="fragment_admin_main"
+        tools:layout="@layout/fragment_admin_main" >
+        <action
+            android:id="@+id/action_adminMainFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

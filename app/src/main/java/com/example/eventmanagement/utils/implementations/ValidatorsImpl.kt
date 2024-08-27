@@ -54,4 +54,20 @@ class ValidatorsImpl @Inject constructor(): Validators {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun validateEventStartTime(eventStartTime: String, eventEndTime: String): Boolean {
+        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+
+        return try {
+            val startTime = LocalTime.parse(eventStartTime, timeFormatter)
+            val endTime = LocalTime.parse(eventEndTime, timeFormatter)
+            val isBefore = startTime.isBefore(endTime)
+            val duration = Duration.between(startTime, endTime).toMinutes()
+            isBefore && duration >= 15
+        } catch (e: DateTimeParseException) {
+            false
+        }
+    }
+
+
 }

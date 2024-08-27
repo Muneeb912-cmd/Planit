@@ -24,6 +24,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var filteredEvents = listOf<EventData>()
     private var currentTabPosition = 0
+    private var isEventDetailsBottomSheetShown = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,13 +39,13 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
         setupTabLayout()
         setUpMyEventsCardView()
         binding.tabLayout.getTabAt(0)?.select()
-        filterEvents(0)
         setupSearchListener()
         lifecycleScope.launch {
             sharedViewModel.allEvents.collect {
                 setUpMyEventsCardView()
             }
         }
+        filterEvents(0)
     }
 
     private fun setupSearchListener() {
@@ -74,8 +75,14 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
     }
 
     override fun OnMyEventCardClickListener(cardData: EventData) {
-        val bottomSheetFragment = EventDetailsFragment(cardData)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEventDetailsBottomSheetShown) {
+            isEventDetailsBottomSheetShown = true
+            val bottomSheetFragment = EventDetailsFragment(cardData)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEventDetailsBottomSheetShown = false
+            }
+        }
     }
 
     private fun setupTabLayout() {
@@ -84,6 +91,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
                 tab?.let {
                     currentTabPosition = it.position
                     filterEvents(it.position)
+                    binding.searchEvent.text?.clear()
                 }
             }
 
@@ -96,6 +104,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 tab?.let {
                     filterEvents(it.position)
+                    binding.searchEvent.text?.clear()
                 }
             }
         })

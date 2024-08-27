@@ -9,30 +9,53 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.models.EventData
 
 class HomeEventCardAdapter(
-    private val events: List<EventData>,
-    private val listener: OnItemClickListener // Add the listener
+    private var events: List<EventData>,
+    private var favoriteEvents: List<EventData>,
+    private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<HomeEventCardAdapter.EventViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(cardData: EventData)
+        fun onFavIconClick(cardData: EventData)
     }
 
-    inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private lateinit var currentEvent: EventData
 
+        // Reference to the favorite icon and other views
+        private val favIcon: View = itemView.findViewById(R.id.favIcon)
+
         init {
-            itemView.setOnClickListener(this)
+            favIcon.setOnClickListener {
+                listener.onFavIconClick(currentEvent)
+            }
+            itemView.setOnClickListener {
+                listener.onItemClick(currentEvent)
+            }
         }
 
-        fun bind(event: EventData) {
+        fun bind(event: EventData, isFavorite: Boolean) {
             currentEvent = event
             itemView.findViewById<TextView>(R.id.eventTitleTv).text = event.eventTitle
             itemView.findViewById<TextView>(R.id.eventTimeTv).text = event.eventTiming
-        }
 
-        override fun onClick(v: View?) {
-            listener.onItemClick(currentEvent)
+            if (isFavorite) {
+                favIcon.setBackgroundResource(R.drawable.ic_fav_filled)
+            } else {
+                favIcon.setBackgroundResource(R.drawable.ic_fav)
+            }
         }
+    }
+
+    fun updatedFilteredEvents(filteredEvents:List<EventData>){
+        events=filteredEvents
+        notifyDataSetChanged()
+    }
+
+
+    fun updatedFavEvents(favEvents:List<EventData>){
+        favoriteEvents=favEvents
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -43,7 +66,8 @@ class HomeEventCardAdapter(
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = events[position]
-        holder.bind(event)
+        val isFavorite = favoriteEvents.any { it.eventId == event.eventId }
+        holder.bind(event, isFavorite)
     }
 
     override fun getItemCount(): Int = events.size

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -37,6 +38,7 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentAddEditEventBinding
     private lateinit var eventLongitude: String
     private lateinit var eventLatitude: String
+    private var onDismissListener: (() -> Unit)? = null
 
     @Inject
     @Categories
@@ -66,9 +68,6 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
             viewModel.errors.collect { errorMap ->
                 binding.eventTitle.error = errorMap["eventTitle"]
                 binding.eventCategory.error = errorMap["eventCategory"]
-                binding.eventEndTime.error = errorMap["eventEndTime"]
-                binding.eventStartTime.error = errorMap["eventStartTime"]
-                binding.eventEndTime.error = errorMap["eventEndTime"]
                 binding.eventLocation.error = errorMap["eventLocation"]
                 binding.eventDescription.error = errorMap["eventDescription"]
             }
@@ -241,10 +240,26 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
                         "eventTiming",
                         "${binding.eventStartTime.text.toString()} - ${binding.eventEndTime.text.toString()}"
                     )
-                    viewModel.validateField(
-                        "eventEndTime",
-                        "${binding.eventStartTime.text.toString()} - ${binding.eventEndTime.text.toString()}"
-                    )
+                }
+                viewModel.validateEventTiming(
+                    "${binding.eventStartTime.text.toString()} - ${binding.eventEndTime.text.toString()}"
+                ) { result, msg, fieldType ->
+                    if (result) {
+                        binding.eventStartTime.error = null
+                        binding.eventEndTime.error = null
+                        binding.timeError.visibility=View.GONE
+                    } else {
+                        binding.timeError.visibility=View.VISIBLE
+                        binding.timeError.text=msg
+                        when (fieldType) {
+                            "start" -> binding.eventStartTime.error = msg
+                            "end" -> binding.eventEndTime.error = msg
+                            "both" -> {
+                                binding.eventStartTime.error = msg
+                                binding.eventEndTime.error = msg
+                            }
+                        }
+                    }
                 }
             },
             calendar.get(Calendar.HOUR_OF_DAY),
@@ -312,6 +327,15 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
             }
         val alertDialog = builder.create()
         alertDialog.show()
+    }
+
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
     }
 
 }

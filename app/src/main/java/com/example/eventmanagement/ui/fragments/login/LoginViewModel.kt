@@ -92,13 +92,15 @@ class LoginViewModel @Inject constructor(
     fun getUserDataFromFireStore(userId: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                userDataMethods.getUserDataFromFireStore(userId) { success, userData ->
+                Log.d("userId", "getUserDataFromFireStore: $userId")
+                userDataMethods.getUserDataFromFireStore(userId) { success, userData,msg ->
                     if (success && userData != null) {
                         saveDataToPreferences(userData) { isUserSavedToPreferences ->
                             onResult(isUserSavedToPreferences)
                         }
                     } else {
                         onResult(false)
+                        Log.d("exception", "getUserDataFromFireStore: $msg")
                     }
                 }
             } catch (e: Exception) {
@@ -108,7 +110,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun saveDataToPreferences(userData: User.UserData, onResult: (Boolean) -> Unit) {
+     fun saveDataToPreferences(userData: User.UserData, onResult: (Boolean) -> Unit) {
         try {
             preferencesUtil.saveUser(userData)
             Log.d("UserData", "saveDataToPreferences: ${preferencesUtil.getUser()}")
@@ -118,15 +120,15 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-     fun checkUserInPrefs(onResult: (Boolean) -> Unit) {
+     fun checkUserInPrefs(onResult: (Boolean,String) -> Unit) {
         try {
             val user = preferencesUtil.getUser()
             if (user != null) {
-                onResult(true)
+                onResult(true,user.userRole.toString())
             }
-            onResult(false)
+            onResult(false,"null")
         } catch (e: Exception) {
-            onResult(false)
+            onResult(false,"null")
         }
     }
 }

@@ -33,6 +33,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:id="@+id/favIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="TODO"
@@ -53,30 +54,35 @@
                 tools:layout_editor_absoluteX="20dp"
                 tools:layout_editor_absoluteY="20dp" />
 
-            <TextView
-                android:id="@+id/eventOrganizer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Ali Ahmad"
-                android:textSize="18dp"
-                android:drawablePadding="10dp"
-                app:drawableLeftCompat="@drawable/ic_person"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view"/>
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/view"
+               android:orientation="horizontal"
+               android:gravity="center_vertical"
+               android:layout_marginTop="10dp">
+               <TextView
+                   android:id="@+id/eventOrganizer"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Ali Ahmad"
+                   android:textSize="18dp"
+                   android:drawablePadding="10dp"
+                   app:drawableLeftCompat="@drawable/ic_person"
+                   android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/eventDate"
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="14-8-2024"
-                android:textSize="18sp"
-                android:drawablePadding="5dp"
-                app:drawableLeftCompat="@drawable/ic_calender"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
+               <TextView
+                   android:id="@+id/eventDate"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="14-8-2024"
+                   android:textSize="18sp"
+                   android:drawablePadding="5dp"
+                   app:drawableLeftCompat="@drawable/ic_calender"
+                   android:layout_weight="1"
+                   />
+           </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

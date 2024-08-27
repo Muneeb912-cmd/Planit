@@ -26,6 +26,7 @@ import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +35,7 @@ class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var isEditProfileBottomSheetShown = false
 
     @Inject
     @CitiesCountries
@@ -62,8 +64,10 @@ class ProfileFragment : Fragment() {
             )
             .into(binding.userProfileImg)
 
-        binding.notificationToggle.isChecked= sharedViewModel.currentUser.value?.isNotificationsAllowed == true
-        binding.profileToggle.isChecked= sharedViewModel.currentUser.value?.isProfilePrivate == true
+        binding.notificationToggle.isChecked =
+            sharedViewModel.currentUser.value?.isNotificationsAllowed == true
+        binding.profileToggle.isChecked =
+            sharedViewModel.currentUser.value?.isProfilePrivate == true
 
     }
 
@@ -104,16 +108,32 @@ class ProfileFragment : Fragment() {
                     }
 
                     is Response.Success -> {
-                        sharedViewModel.resetViewModel()
-                        findNavController().navigate(
-                            R.id.action_eventsMainFragment_to_loginFragment,
-                            null,
-                            NavOptions.Builder()
-                                .setPopUpTo(R.id.nav_graph_xml, true)
-                                .setLaunchSingleTop(true)
-                                .build()
-                        )
-                        showLoader(false)
+                        lifecycleScope.launch {
+                            if (sharedViewModel.currentUser.value?.userRole == "Attendee") {
+                                findNavController().navigate(
+                                    R.id.action_eventsMainFragment_to_loginFragment,
+                                    null,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.nav_graph_xml, true)
+                                        .setLaunchSingleTop(true)
+                                        .build()
+                                )
+                                sharedViewModel.resetViewModel()
+                                showLoader(false)
+                            } else {
+                                findNavController().navigate(
+                                    R.id.action_adminMainFragment_to_loginFragment,
+                                    null,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.nav_graph_xml, true)
+                                        .setLaunchSingleTop(true)
+                                        .build()
+                                )
+                                sharedViewModel.resetViewModel()
+                                showLoader(false)
+                            }
+
+                        }
                     }
 
                     is Response.Error -> {
@@ -127,13 +147,27 @@ class ProfileFragment : Fragment() {
 
 
     private fun openEditProfile() {
-        val bottomSheetFragment = EditProfileFragment()
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEditProfileBottomSheetShown) {
+            isEditProfileBottomSheetShown = true
+
+            val bottomSheetFragment = EditProfileFragment("Update", null)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEditProfileBottomSheetShown = false
+            }
+        }
     }
 
     private fun openPasswordReset() {
-        val bottomSheetFragment = ResetPasswordFragment()
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEditProfileBottomSheetShown) {
+            isEditProfileBottomSheetShown = true
+            val bottomSheetFragment = ResetPasswordFragment()
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEditProfileBottomSheetShown = false
+            }
+        }
+
     }
 
 
@@ -226,6 +260,10 @@ class ProfileFragment : Fragment() {
             .setIcon(R.drawable.ic_log_out)
             .setCancelable(false)
             .setPositiveButton("Confirm") { _, _ ->
+                Log.d(
+                    "userRole",
+                    "showLogOutDialog: ${sharedViewModel.currentUser.value?.userRole}"
+                )
                 userLogOut()
             }
             .setNegativeButton("Cancel") { dialog, _ ->

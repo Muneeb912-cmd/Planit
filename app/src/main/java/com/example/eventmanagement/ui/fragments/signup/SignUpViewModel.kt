@@ -57,7 +57,8 @@ class SignUpViewModel @Inject constructor(
             userLoginType = if (key == "loginType") value else currentUser.userLoginType,
             isProfilePrivate = if (key == "profile") value == "Yes" else currentUser.isProfilePrivate,
             isNotificationsAllowed = if (key == "notification") value == "Yes" else currentUser.isNotificationsAllowed,
-            userId = if (key == "userId") value else currentUser.userId
+            userId = if (key == "userId") value else currentUser.userId,
+            isUserBanned = if (key == "userBanned") value == "Yes" else currentUser.isUserBanned
         )
         validateField(key, value)
         checkIfDataComplete()
@@ -117,16 +118,16 @@ class SignUpViewModel @Inject constructor(
                                 checkVerificationEmail()
                                 addUserDatatoFirestore(userId)
                                 _signUpResults.value = Response.Success(Unit)
-                                accountExist=false
+                                accountExist = false
 
                             } else {
                                 _signUpResults.value =
                                     Response.Error(Exception("Failed to retrieve user ID or User already exist"))
-                                accountExist=true
+                                accountExist = true
                             }
                         } else {
                             _signUpResults.value = Response.Error(Exception("Sign-up failed"))
-                            accountExist=true
+                            accountExist = true
                         }
                     }
                 } catch (e: Exception) {
@@ -177,6 +178,7 @@ class SignUpViewModel @Inject constructor(
         updateUserInfo("loginType", loginType)
         updateUserInfo("profile", "No")
         updateUserInfo("notification", "Yes")
+        updateUserInfo("userBanned", "No")
         if (userId.isNullOrEmpty()) updateUserInfo("userId", userId.toString())
         if (isDataComplete) {
             loginSignUpMethods.createUser(user.value) { userCreated ->

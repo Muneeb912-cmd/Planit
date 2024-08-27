@@ -9,11 +9,9 @@ import com.example.eventmanagement.repository.firebase.events_data.EventDataMeth
 import com.example.eventmanagement.utils.Response
 import com.example.eventmanagement.utils.Validators
 import dagger.hilt.android.lifecycle.HiltViewModel
-
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.lang.Exception
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -38,7 +36,7 @@ class AddEditEventViewModel @Inject constructor(
 
 
     var isDataComplete: Boolean = false
-    var isDataValid:Boolean=false
+    var isDataValid: Boolean = false
 
     fun updateEventInfo(key: String, value: String) {
         val currentEvent = _events.value
@@ -92,29 +90,6 @@ class AddEditEventViewModel @Inject constructor(
                     else "Invalid Title. Example Input: (Promotion Ceremony)"
             }
 
-            "eventEndTime" -> {
-                val timePattern = " - "
-                val times = value.split(timePattern)
-
-                if (times.size == 2) {
-                    val startTime = times[0].trim()
-                    val endTime = times[1].trim()
-                    updatedErrors["eventEndTime"] =
-
-                        if (validators.validateEventEndTimings(
-                                startTime,
-                                endTime
-                            )
-                        ) null
-                        else "Invalid End Time. Ensure it's after the start time and minimum event time is 10 minutes. "
-
-                }
-
-            }
-
-            "eventStartTiming" -> updatedErrors["eventTiming"] =
-                if (value.isNotBlank()) null else "Timing cannot be empty."
-
             "eventCategory" -> updatedErrors["eventCategory"] =
                 if (value.isNotBlank()) null else "Category cannot be empty."
 
@@ -147,7 +122,8 @@ class AddEditEventViewModel @Inject constructor(
             val dateRange = eventDateString.split(" - ")
 
             if (dateRange.size == 2) {
-                val startDate = LocalDate.parse(dateRange[0].trim(), DateTimeFormatter.ISO_LOCAL_DATE)
+                val startDate =
+                    LocalDate.parse(dateRange[0].trim(), DateTimeFormatter.ISO_LOCAL_DATE)
                 val endDate = LocalDate.parse(dateRange[1].trim(), DateTimeFormatter.ISO_LOCAL_DATE)
                 val startTime = LocalTime.MIN
                 val endTime = LocalTime.MAX
@@ -174,7 +150,10 @@ class AddEditEventViewModel @Inject constructor(
             }
 
             val status = when {
-                currentDateTime.toLocalDate() != eventStartDateTime.toLocalDate() && currentDateTime.isBefore(eventStartDateTime) -> "Upcoming"
+                currentDateTime.toLocalDate() != eventStartDateTime.toLocalDate() && currentDateTime.isBefore(
+                    eventStartDateTime
+                ) -> "Up-Coming"
+
                 currentDateTime.isAfter(eventEndDateTime) -> "Missed"
                 else -> "On-Going"
             }
@@ -186,15 +165,76 @@ class AddEditEventViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun saveEvent(){
+    fun saveEvent() {
         updateEventStatus()
-        _states.value=Response.Loading
-        eventDataMethods.saveEvent(eventsData.value){dataUploaded,msg->
-            if(dataUploaded){
-                _states.value=Response.Success(Unit)
-            }else{
-                _states.value=Response.Error(Exception(msg))
+        _states.value = Response.Loading
+        eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
+            if (dataUploaded) {
+                _states.value = Response.Success(Unit)
+            } else {
+                _states.value = Response.Error(Exception(msg))
             }
+        }
+    }
+
+    fun validateEventTiming(
+        value: String,
+        callback: (Boolean, String, String) -> Unit
+    ) {
+        val timePattern = " - "
+        val times = value.split(timePattern)
+
+        if (times.size == 2) {
+            val startTime = times[0].trim()
+            val endTime = times[1].trim()
+
+            when {
+                startTime.isEmpty() && endTime.isEmpty() -> {
+                    callback(
+                        false,
+                        "Event start time not selected. Event end time not selected.",
+                        "both"
+                    )
+                }
+
+                startTime.isEmpty() -> {
+                    callback(false, "Event start time not selected.", "start")
+                }
+
+                endTime.isEmpty() -> {
+                    callback(false, "Event end time not selected.", "end")
+                }
+
+                else -> {
+                    val isStartTimeValid = validators.validateEventStartTime(startTime, endTime)
+                    val isEndTimeValid = validators.validateEventEndTimings(startTime, endTime)
+
+                    when {
+                        !isEndTimeValid -> {
+                            callback(
+                                false,
+                                "Invalid end time. Ensure it's after the start time and the minimum event time is 15 minutes.",
+                                "end"
+                            )
+                        }
+
+                        !isStartTimeValid -> {
+                            callback(
+                                false,
+                                "Invalid start time. Ensure it's before the end time and the minimum event time is 15 minutes.",
+                                "start"
+                            )
+                        }
+
+
+                        else -> {
+                            callback(true, "Event timing is valid.", "none")
+                        }
+                    }
+                }
+            }
+        } else {
+            callback(false, "Timing cannot be empty or incomplete.", "both")
         }
     }
 

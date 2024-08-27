@@ -109,6 +109,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:id="@+id/eventDateLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/event_date"
@@ -166,14 +167,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
+                        android:id="@+id/eventStartTimeLayout"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="10dp"
                         android:layout_weight="1"
                         android:hint="@string/start_time"
                         app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
@@ -198,7 +200,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:layout_marginBottom="10dp"
                         android:layout_weight="1"
                         android:hint="@string/end_time"
                         app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
@@ -218,6 +219,17 @@
                             tools:ignore="RtlSymmetry" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/timeError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="15sp"
+                    android:padding="10dp"
+                    android:visibility="gone"
+                    android:textAlignment="center"/>
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

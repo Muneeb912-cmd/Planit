@@ -100,8 +100,9 @@ class LoginSignUpMethodsImpl @Inject constructor(
                 userImg = userData.userImg,
                 userLocation = userData.userLocation,
                 userLoginType = userData.userLoginType,
-                isNotificationsAllowed = true,
-                isProfilePrivate = false
+                isNotificationsAllowed = userData.isNotificationsAllowed,
+                isProfilePrivate = userData.isProfilePrivate,
+                isUserBanned = userData.isUserBanned,
             )
             val userImageUri = userDataCopy.userImg
             if (!userImageUri.isNullOrEmpty()) {

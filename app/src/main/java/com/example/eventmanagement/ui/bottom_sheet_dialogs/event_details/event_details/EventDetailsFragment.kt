@@ -1,6 +1,7 @@
 package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,6 +25,7 @@ class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogF
     private lateinit var googleMap: GoogleMap
     private lateinit var mapView: com.google.android.gms.maps.MapView
     private var eventLocation: LatLng? = null
+    private var onDismissListener: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -126,5 +128,14 @@ class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogF
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
     }
 }

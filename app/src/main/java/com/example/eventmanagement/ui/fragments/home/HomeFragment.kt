@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
@@ -27,6 +29,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -35,12 +38,15 @@ import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.util.Locale
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
 
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private var selectedDate: LocalDate? = null
+    private var isEventDetailsBottomSheetShown = false
+    private val homeViewModel: HomeViewModel by viewModels()
 
     private val eventDates: Set<LocalDate>
         @RequiresApi(Build.VERSION_CODES.O)
@@ -58,29 +64,52 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         return binding.root
     }
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupCalendarView()
         setInitialSelection()
-        binding.monthsContainer.prevMonthButton.setOnClickListener {
-            navigateToPreviousMonth()
-        }
+        setUpAdapter()
+        observeEvents()
+        binding.monthsContainer.prevMonthButton.setOnClickListener { navigateToPreviousMonth() }
+        initializeFab()
+        binding.monthsContainer.nextMonthButton.setOnClickListener { navigateToNextMonth() }
 
-        binding.addEventFab.setOnClickListener {
-            val bottomSheetFragment = AddEditEventFragment()
-            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
-        }
+    }
 
-        binding.monthsContainer.nextMonthButton.setOnClickListener {
-            navigateToNextMonth()
+    private fun initializeFab(){
+        if(sharedViewModel.currentUser.value?.userRole=="Admin"){
+            binding.addEventFab.visibility=View.VISIBLE
+            binding.addEventFab.setOnClickListener { showAddEventBottomSheet() }
         }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun observeEvents() {
         lifecycleScope.launch {
-            sharedViewModel.allEvents.collect {
-                setupEventsList()
-                setupCalendarView()
+            launch {
+                sharedViewModel.allEvents.collect {
+                    setupEventsList()
+                    setupCalendarView()
+                }
             }
+            launch {
+                sharedViewModel.allFavEvents.collect {
+                    (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFavEvents(
+                        sharedViewModel.allFavEvents.value
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showAddEventBottomSheet() {
+        binding.addEventFab.isEnabled = false
+        val bottomSheetFragment = AddEditEventFragment()
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        bottomSheetFragment.setOnDismissListener {
+            binding.addEventFab.isEnabled = true
         }
     }
 
@@ -100,16 +129,24 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         if (filteredEvents.isNotEmpty()) {
             binding.eventsList.visibility = View.VISIBLE
             binding.noEventsFoundText.visibility = View.GONE
-            val adapter = HomeEventCardAdapter(filteredEvents, this)
-            binding.eventsList.layoutManager = LinearLayoutManager(context)
-            binding.eventsList.adapter = adapter
-            adapter.notifyDataSetChanged()
+            (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFilteredEvents(
+                filteredEvents
+            )
+
 
         } else {
             binding.eventsList.visibility = View.GONE
             binding.noEventsFoundText.visibility = View.VISIBLE
         }
     }
+
+    private fun setUpAdapter() {
+        val adapter =
+            HomeEventCardAdapter(emptyList(), sharedViewModel.allFavEvents.value, this)
+        binding.eventsList.layoutManager = LinearLayoutManager(context)
+        binding.eventsList.adapter = adapter
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isDateWithinEventDateRange(selectedDate: String?, eventDate: String?): Boolean {
         if (selectedDate == null || eventDate == null) {
@@ -269,18 +306,27 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         binding.monthsContainer.monthYearTextView.text = monthYearText
     }
 
-    class DayViewContainer(view: View) : ViewContainer(view) {
-        val dayTextView: TextView = view.findViewById(R.id.dayTextView)
-        val eventDot: View = view.findViewById(R.id.eventDot)
-    }
-
-    class MonthViewContainer(view: View) : ViewContainer(view) {
-        val titlesContainer = view as ViewGroup
-    }
-
     override fun onItemClick(cardData: EventData) {
-        val bottomSheetFragment = EventDetailsFragment(cardData)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEventDetailsBottomSheetShown) {
+            isEventDetailsBottomSheetShown = true
+
+            val bottomSheetFragment = EventDetailsFragment(cardData)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+
+            bottomSheetFragment.setOnDismissListener {
+                isEventDetailsBottomSheetShown = false
+            }
+        }
+    }
+
+    override fun onFavIconClick(cardData: EventData) {
+        val userId = sharedViewModel.currentUser.value?.userId.toString()
+        if (sharedViewModel.allFavEvents.value.any { it.eventId == cardData.eventId }) {
+            removeEventFromFavorites(userId, cardData)
+        } else {
+            addEventToFavorites(userId, cardData)
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -309,8 +355,6 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         }
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateDateRange(startDate: LocalDate, endDate: LocalDate): List<LocalDate> {
         val dates = mutableListOf<LocalDate>()
@@ -324,5 +368,34 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         return dates
     }
 
+    class DayViewContainer(view: View) : ViewContainer(view) {
+        val dayTextView: TextView = view.findViewById(R.id.dayTextView)
+        val eventDot: View = view.findViewById(R.id.eventDot)
+    }
 
+    class MonthViewContainer(view: View) : ViewContainer(view) {
+        val titlesContainer = view as ViewGroup
+    }
+
+    private fun removeEventFromFavorites(userId: String, cardData: EventData) {
+        homeViewModel.removeEventFromUserFav(userId, cardData) { result, msg ->
+            if (result) {
+                Toast.makeText(requireContext(), "Event deleted from favorites", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Error: $msg", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun addEventToFavorites(userId: String, cardData: EventData) {
+        homeViewModel.addEventToUserFav(userId, cardData) { result, msg ->
+            if (result) {
+                Toast.makeText(requireContext(), "Event added to favorites", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Error: $msg", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }

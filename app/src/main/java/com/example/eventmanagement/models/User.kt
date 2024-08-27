@@ -13,7 +13,8 @@ sealed class User {
         var userLocation:String?=null,
         var userLoginType: String? = null,
         var isNotificationsAllowed:Boolean?=null,
-        var isProfilePrivate:Boolean?=null
+        var isProfilePrivate:Boolean?=null,
+        var isUserBanned:Boolean?=null
     )
     data class AttendingEvents(
         var userId: String? = null,

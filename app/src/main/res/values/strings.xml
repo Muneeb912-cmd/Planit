@@ -61,4 +61,11 @@
     <string name="api_key">AIzaSyB7EIFMRQe-9Ijp2e-Bjwy6PnZ6ksByABg</string>
     <string name="date_range">Date Range?</string>
     <string name="users">Users</string>
+    <string name="accepted">Accepted</string>
+    <string name="rejected">Rejected</string>
+    <string name="new_">New</string>
+    <string name="expired">Expired</string>
+    <string name="banned_users">Banned Users</string>
+    <string name="user_management">User Management</string>
+    <string name="ban_user">Ban User?</string>
 </resources>

@@ -11,7 +11,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#75000000" />
+        android:background="#75000000"
+        android:translationZ="50dp"/>
 
     <!-- Loading spinner in the center -->
     <ProgressBar
@@ -20,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/progress_drawable"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:translationZ="50dp"/>
 
 </FrameLayout>

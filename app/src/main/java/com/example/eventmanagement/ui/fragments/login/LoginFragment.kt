@@ -1,6 +1,7 @@
 package com.example.eventmanagement.ui.fragments.login
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,7 +31,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
     private val viewModel: LoginViewModel by viewModels()
-    private val sharedViewModel:SharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,38 +48,54 @@ class LoginFragment : Fragment() {
     }
 
     private fun checkUserPrefs() {
-        viewModel.checkUserInPrefs { userExists ->
+        viewModel.checkUserInPrefs { userExists, userRole ->
             if (userExists) {
-                findNavController().navigate(
-                    R.id.action_loginFragment_to_eventsMainFragment,
-                    null,
-                    NavOptions.Builder()
-                        .setPopUpTo(R.id.nav_graph_xml, true)
-                        .setLaunchSingleTop(true)
-                        .build()
-                )
+                when (userRole) {
+                    "Attendee" -> {
+                        findNavController().navigate(
+                            R.id.action_loginFragment_to_eventsMainFragment,
+                            null,
+                            NavOptions.Builder()
+                                .setPopUpTo(R.id.nav_graph_xml, true)
+                                .setLaunchSingleTop(true)
+                                .build()
+                        )
+                    }
+                    "Admin" -> {
+                        findNavController().navigate(
+                            R.id.action_loginFragment_to_adminMainFragment,
+                            null,
+                            NavOptions.Builder()
+                                .setPopUpTo(R.id.nav_graph_xml, true)
+                                .setLaunchSingleTop(true)
+                                .build()
+                        )
+                    }
+                }
             }
         }
     }
 
+
+
     private fun setupListeners() {
-        binding.signupBtn.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToSignUpFragment("email_pass")
-            findNavController().navigate(action)
-        }
-
-        binding.forgotPassTv.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_forgetPasswordFragment)
-        }
-
-        binding.googleLoginBtn.setOnClickListener {
-            signInWithGoogle()
-        }
-
-        binding.loginBtn.setOnClickListener {
-            val email = binding.email.text.toString()
-            val password = binding.password.text.toString()
-            handleLoginWithEmailPassword(email, password)
+        with(binding) {
+            signupBtn.setOnClickListener {
+                val action =
+                    LoginFragmentDirections.actionLoginFragmentToSignUpFragment("email_pass")
+                findNavController().navigate(action)
+            }
+            forgotPassTv.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_forgetPasswordFragment)
+            }
+            googleLoginBtn.setOnClickListener {
+                signInWithGoogle()
+            }
+            loginBtn.setOnClickListener {
+                val email = binding.email.text.toString()
+                val password = binding.password.text.toString()
+                handleLoginWithEmailPassword(email, password)
+            }
         }
     }
 
@@ -103,29 +121,50 @@ class LoginFragment : Fragment() {
                                             val currentUserId = currentUser?.userId
 
                                             if (currentUserId != null) {
-                                                viewModel.getUserDataFromFireStore(currentUserId) { isUserSavedInPrefs ->
-                                                    if (isUserSavedInPrefs) {
-                                                        Toast.makeText(
-                                                            requireContext(),
-                                                            "User instance saved for seamless login",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    } else {
-                                                        Toast.makeText(
-                                                            requireContext(),
-                                                            "Couldn't save user instance",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }
-                                                }
-                                            }
-
-                                            if (currentUserId != null) {
                                                 val userExists =
                                                     users.any { it.userId == currentUserId }
+                                                val user=users.firstOrNull{it.userId == currentUserId }
                                                 sharedViewModel.initializeObservers()
                                                 if (userExists) {
-                                                    findNavController().navigate(R.id.action_loginFragment_to_eventsMainFragment)
+                                                    if(user!=null){
+                                                        viewModel.saveDataToPreferences(user){isUserSavedInPrefs->
+                                                            if (isUserSavedInPrefs) {
+                                                                Toast.makeText(
+                                                                    requireContext(),
+                                                                    "User instance saved for seamless login",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            } else {
+                                                                Toast.makeText(
+                                                                    requireContext(),
+                                                                    "Couldn't save user instance",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            }
+                                                        }
+                                                    }
+                                                    when (user?.userRole) {
+                                                        "Attendee" -> {
+                                                            findNavController().navigate(
+                                                                R.id.action_loginFragment_to_eventsMainFragment,
+                                                                null,
+                                                                NavOptions.Builder()
+                                                                    .setPopUpTo(R.id.nav_graph_xml, true)
+                                                                    .setLaunchSingleTop(true)
+                                                                    .build()
+                                                            )
+                                                        }
+                                                        "Admin" -> {
+                                                            findNavController().navigate(
+                                                                R.id.action_loginFragment_to_adminMainFragment,
+                                                                null,
+                                                                NavOptions.Builder()
+                                                                    .setPopUpTo(R.id.nav_graph_xml, true)
+                                                                    .setLaunchSingleTop(true)
+                                                                    .build()
+                                                            )
+                                                        }
+                                                    }
                                                 } else {
                                                     val action =
                                                         LoginFragmentDirections.actionLoginFragmentToSignUpFragment(
@@ -219,6 +258,19 @@ class LoginFragment : Fragment() {
                 ).show()
             }
         }
+    }
+    private fun showAlertDialog(title:String,msg:String,icon:Drawable) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(msg)
+            .setIcon(icon)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     companion object {

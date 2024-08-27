@@ -16,21 +16,44 @@ import javax.inject.Inject
 class EditProfileViewModel @Inject constructor(
     private val userDataMethods: UserDataMethods,
     private val loginSignUpMethods: LoginSignUpMethods
-): ViewModel() {
+) : ViewModel() {
 
     private val _states = MutableStateFlow<Response<Unit>>(Response.Loading)
     val editDataStates: StateFlow<Response<Unit>> get() = _states.asStateFlow()
 
-    fun updateUserData(userId: String,userName:String,userEmail:String,userPhone:String,userDob:String,userImg:String){
-        _states.value=Response.Loading
+    fun updateUserData(
+        userId: String,
+        userName: String,
+        userEmail: String,
+        userPhone: String,
+        userDob: String,
+        userImg: String,
+        currentUserEmail:String?
+    ) {
+        _states.value = Response.Loading
         viewModelScope.launch {
             userDataMethods.updateUserProfile(
-                userId,userName,userEmail,userPhone,userDob,userImg
+                userId, userName, userEmail, userPhone, userDob, userImg,currentUserEmail
+            ) { result ->
+                if (result) {
+                    _states.value = Response.Success(Unit)
+                } else {
+                    _states.value = Response.Error(Exception("Error Updating User Data!"))
+                }
+            }
+        }
+    }
+
+    fun updateUserBanStatus(userId:String,banStatus:Boolean, onResult: (Boolean) -> Unit){
+        viewModelScope.launch {
+            userDataMethods.updateUserBanStatus(
+                userId,
+                banStatus
             ){result->
                 if(result){
-                    _states.value=Response.Success(Unit)
+                    onResult(true)
                 }else{
-                    _states.value=Response.Error(Exception("Error Updating User Data!"))
+                    onResult(false)
                 }
             }
         }

@@ -43,7 +43,7 @@ class UserDataImpl @Inject constructor(
 
     override suspend fun getUserDataFromFireStore(
         userId: String,
-        onResult: (Boolean, User.UserData?) -> Unit
+        onResult: (Boolean, User.UserData?,String) -> Unit
     ) {
         try {
             val documentSnapshot = firestore.collection("UserData")
@@ -54,12 +54,12 @@ class UserDataImpl @Inject constructor(
             val userData = documentSnapshot.toObject(User.UserData::class.java)
 
             if (userData != null) {
-                onResult(true, userData)
+                onResult(true, userData,"Good")
             } else {
-                onResult(false, null)
+                onResult(false, null,"Data Null")
             }
         } catch (e: Exception) {
-            onResult(false, null)
+            onResult(false, null,e.toString())
         }
     }
 
@@ -123,16 +123,17 @@ class UserDataImpl @Inject constructor(
         userPhone: String,
         userDob: String,
         userImg: String,
+        currentEmail: String?,
         onResult: (Boolean) -> Unit
     ) {
         try {
-            val firebaseUser = auth.currentUser
-            val currentEmail = firebaseUser?.email
             val updates = mutableMapOf<String, Any>(
                 "userName" to userName,
                 "userPhone" to userPhone,
                 "userDob" to userDob
             )
+
+            // Handle image upload if userImg is not empty
             if (userImg.isNotEmpty()) {
                 val storageRef = firebaseStorage.reference
                 val userImgRef = storageRef.child("ProfileImages/$userId")
@@ -141,7 +142,8 @@ class UserDataImpl @Inject constructor(
                 updates["userImg"] = downloadUrl.toString()
             }
 
-            if (userEmail != currentEmail && firebaseUser != null) {
+            // Handle email update if userEmail is different from currentEmail
+            if (currentEmail != null && userEmail != currentEmail) {
                 val signInMethods = auth.fetchSignInMethodsForEmail(userEmail).await()
                 if (signInMethods.signInMethods?.isNotEmpty() == true) {
                     onResult(false)
@@ -149,8 +151,11 @@ class UserDataImpl @Inject constructor(
                 }
 
                 updates["userEmail"] = userEmail
-                firebaseUser.updateEmail(userEmail).await()
-                firebaseUser.sendEmailVerification().await()
+                val firebaseUser = auth.currentUser
+                if (firebaseUser != null && firebaseUser.email == currentEmail) {
+                    firebaseUser.updateEmail(userEmail).await()
+                    firebaseUser.sendEmailVerification().await()
+                }
             }
 
             firestore.collection("UserData")
@@ -163,6 +168,7 @@ class UserDataImpl @Inject constructor(
             onResult(false)
         }
     }
+
 
     private var currentUserListener: ListenerRegistration? = null
     private var usersListener: ListenerRegistration? = null
@@ -210,6 +216,19 @@ class UserDataImpl @Inject constructor(
 
     override fun removeCurrentUserListener() {
         currentUserListener?.remove()
+    }
+
+    override suspend fun updateUserBanStatus(userId: String, banStatus:Boolean, onResult: (Boolean) -> Unit) {
+        try {
+            val updateData = mapOf("userBanned" to banStatus)
+            firestore.collection("UserData")
+                .document(userId)
+                .update(updateData)
+                .await()
+            onResult(true)
+        } catch (e: Exception) {
+            onResult(false)
+        }
     }
 
     fun removeUsersListener() {
