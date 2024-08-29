@@ -10,7 +10,7 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.models.EventData
 
 class FavEventAdapter(
-    private val favoriteEvents: List<EventData>,
+    private var favoriteEvents: List<EventData>,
     private val listener: EventCardClickListener
 ) : RecyclerView.Adapter<FavEventAdapter.EventCardViewHolder>() {
 
@@ -32,6 +32,11 @@ class FavEventAdapter(
 
     override fun getItemCount(): Int {
         return favoriteEvents.size
+    }
+
+    fun updatedFavEvents(favEvents:List<EventData>){
+        favoriteEvents=favEvents
+        notifyDataSetChanged()
     }
 
     inner class EventCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

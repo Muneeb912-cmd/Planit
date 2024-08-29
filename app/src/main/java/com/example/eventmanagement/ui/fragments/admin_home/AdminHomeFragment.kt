@@ -1,4 +1,4 @@
-package com.example.eventmanagement.ui.fragments.home
+package com.example.eventmanagement.ui.fragments.admin_home
 
 import android.os.Build
 import android.os.Bundle
@@ -7,17 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
+import com.example.eventmanagement.adapters.AdminHomeAdapter
 import com.example.eventmanagement.adapters.HomeEventCardAdapter
-import com.example.eventmanagement.databinding.FragmentHomeBinding
+import com.example.eventmanagement.databinding.FragmentAdminHomeBinding
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event.AddEditEventFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
@@ -29,7 +28,6 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -38,15 +36,13 @@ import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.util.Locale
 
-@AndroidEntryPoint
-class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
 
+class AdminHomeFragment : Fragment(), AdminHomeAdapter.OnItemClickListener {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var binding: FragmentHomeBinding
+    private lateinit var binding: FragmentAdminHomeBinding
     private var selectedDate: LocalDate? = null
     private var isEventDetailsBottomSheetShown = false
-    private val homeViewModel: HomeViewModel by viewModels()
 
     private val eventDates: Set<LocalDate>
         @RequiresApi(Build.VERSION_CODES.O)
@@ -60,10 +56,9 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = FragmentAdminHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,8 +68,13 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         setUpAdapter()
         observeEvents()
         binding.monthsContainer.prevMonthButton.setOnClickListener { navigateToPreviousMonth() }
+        initializeFab()
         binding.monthsContainer.nextMonthButton.setOnClickListener { navigateToNextMonth() }
 
+    }
+
+    private fun initializeFab() {
+        binding.addEventFab.setOnClickListener { showAddEventBottomSheet() }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -86,17 +86,22 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
                     setupCalendarView()
                 }
             }
-            launch {
-                sharedViewModel.allFavEvents.collect {
-                    (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFavEvents(
-                        sharedViewModel.allFavEvents.value
-                    )
-                }
-            }
         }
     }
 
-
+    private fun showAddEventBottomSheet() {
+        binding.addEventFab.isEnabled = false
+        val bottomSheetFragment = AddEditEventFragment()
+        val bundle = Bundle().apply {
+            putString("key", "create")
+            putSerializable("eventData", null)
+        }
+        bottomSheetFragment.arguments = bundle
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        bottomSheetFragment.setOnDismissListener {
+            binding.addEventFab.isEnabled = true
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupEventsList() {
@@ -114,7 +119,7 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         if (filteredEvents.isNotEmpty()) {
             binding.eventsList.visibility = View.VISIBLE
             binding.noEventsFoundText.visibility = View.GONE
-            (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFilteredEvents(
+            (binding.eventsList.adapter as? AdminHomeAdapter)?.updatedFilteredEvents(
                 filteredEvents
             )
 
@@ -127,7 +132,7 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
 
     private fun setUpAdapter() {
         val adapter =
-            HomeEventCardAdapter(emptyList(), emptyList(), this)
+            AdminHomeAdapter(emptyList(), this)
         binding.eventsList.layoutManager = LinearLayoutManager(context)
         binding.eventsList.adapter = adapter
     }
@@ -304,15 +309,6 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         }
     }
 
-    override fun onFavIconClick(cardData: EventData) {
-        val userId = sharedViewModel.currentUser.value?.userId.toString()
-        if (sharedViewModel.allFavEvents.value.any { it == cardData.eventId }) {
-            removeEventFromFavorites(userId, cardData)
-        } else {
-            addEventToFavorites(userId, cardData)
-        }
-
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -362,25 +358,4 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         val titlesContainer = view as ViewGroup
     }
 
-    private fun removeEventFromFavorites(userId: String, cardData: EventData) {
-        homeViewModel.removeEventFromUserFav(userId, cardData) { result, msg ->
-            if (result) {
-                Toast.makeText(requireContext(), "Event deleted from favorites", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(requireContext(), "Error: $msg", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun addEventToFavorites(userId: String, cardData: EventData) {
-        homeViewModel.addEventToUserFav(userId, cardData) { result, msg ->
-            if (result) {
-                Toast.makeText(requireContext(), "Event added to favorites", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(requireContext(), "Error: $msg", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 }

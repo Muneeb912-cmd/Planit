@@ -3,16 +3,10 @@ package com.example.eventmanagement.ui.activities.fav_events
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.FavEventAdapter
 import com.example.eventmanagement.databinding.ActivityFavEventBinding
 import com.example.eventmanagement.models.EventData
@@ -22,17 +16,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavEventActivity : AppCompatActivity(),FavEventAdapter.EventCardClickListener {
+class FavEventActivity : AppCompatActivity(), FavEventAdapter.EventCardClickListener {
 
     private val favEventViewModel: FavEventsViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var binding: ActivityFavEventBinding
     private var isEventDetailsBottomSheetShown = false
+    private lateinit var adapter:FavEventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFavEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setUpFavEventsDisplay()
         observeFavEvents()
         binding.toolBar.setNavigationOnClickListener {
             finish()
@@ -45,7 +41,7 @@ class FavEventActivity : AppCompatActivity(),FavEventAdapter.EventCardClickListe
                 if (events.isNotEmpty()) {
                     binding.favEventsList.visibility = View.VISIBLE
                     binding.noEventTv.visibility = View.GONE
-                    setUpFavEventsDisplay()
+                    eventsByFavs()
                 } else {
                     binding.favEventsList.visibility = View.GONE
                     binding.noEventTv.visibility = View.VISIBLE
@@ -54,8 +50,15 @@ class FavEventActivity : AppCompatActivity(),FavEventAdapter.EventCardClickListe
         }
     }
 
+    private fun eventsByFavs() {
+        val filteredFavEvents = sharedViewModel.allEvents.value.filter { event ->
+            sharedViewModel.allFavEvents.value.contains(event.eventId)
+        }
+        adapter.updatedFavEvents(filteredFavEvents)
+    }
+
     private fun setUpFavEventsDisplay() {
-        val adapter = FavEventAdapter(sharedViewModel.allFavEvents.value, this)
+        adapter = FavEventAdapter(emptyList(), this)
         binding.favEventsList.layoutManager = LinearLayoutManager(this)
         binding.favEventsList.adapter = adapter
     }
@@ -74,12 +77,12 @@ class FavEventActivity : AppCompatActivity(),FavEventAdapter.EventCardClickListe
     }
 
     override fun onFavIconClick(cardData: EventData) {
-        val currentUserId=sharedViewModel.currentUser.value?.userId.toString()
-        favEventViewModel.removeEventFromUserFav(currentUserId,cardData){result,msg->
-            if(result){
-                Toast.makeText(this,"Event removed from favorites", Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(this,"Error: $msg", Toast.LENGTH_SHORT).show()
+        val currentUserId = sharedViewModel.currentUser.value?.userId.toString()
+        favEventViewModel.removeEventFromUserFav(currentUserId, cardData) { result, msg ->
+            if (result) {
+                Toast.makeText(this, "Event removed from favorites", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Error: $msg", Toast.LENGTH_SHORT).show()
             }
         }
     }

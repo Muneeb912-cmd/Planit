@@ -2,6 +2,7 @@ package com.example.eventmanagement.ui.shared_view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.eventmanagement.models.Attendees
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.EventInvites
 import com.example.eventmanagement.models.Invites
@@ -35,21 +36,26 @@ class SharedViewModel @Inject constructor(
     private val _allEvents = MutableStateFlow<List<EventData>>(emptyList())
     val allEvents: StateFlow<List<EventData>> get() = _allEvents.asStateFlow()
 
-    private val _allFavEvents = MutableStateFlow<List<EventData>>(emptyList())
-    val allFavEvents: StateFlow<List<EventData>> get() = _allFavEvents.asStateFlow()
+    private val _allFavEvents = MutableStateFlow<List<String>>(emptyList())
+    val allFavEvents: StateFlow<List<String>> get() = _allFavEvents.asStateFlow()
 
-    private val _invitedEvents = MutableStateFlow<List<EventData>>(emptyList())
-    val invitedEvents: StateFlow<List<EventData>> get() = _invitedEvents.asStateFlow()
+    private val _allInvites = MutableStateFlow<List<Invites>>(emptyList())
+    val allInvites: StateFlow<List<Invites>> get() = _allInvites.asStateFlow()
 
-    private val _eventInvites = MutableStateFlow<List<EventInvites>>(emptyList())
-    val eventInvites: StateFlow<List<EventInvites>> get() = _eventInvites.asStateFlow()
+    private val _currentUserInvites = MutableStateFlow<List<EventInvites>>(emptyList())
+    val currentUserInvites: StateFlow<List<EventInvites>> get() = _currentUserInvites.asStateFlow()
 
+    private val _currentUserInvitedEvents = MutableStateFlow<List<EventData>>(emptyList())
+    val currentUserInvitedEvents: StateFlow<List<EventData>> get() = _currentUserInvitedEvents.asStateFlow()
 
+    private val _observeCurrentUserFromAttendees = MutableStateFlow<List<Attendees>>(emptyList())
+    val observeCurrentUserFromAttendees: StateFlow<List<Attendees>> get() = _observeCurrentUserFromAttendees.asStateFlow()
 
     init {
         observeCurrentUser()
-        observeAllEvents()
         observeAllUsers()
+        observeAllEvents()
+        observeAllInvites()
         observeUserInvites()
     }
 
@@ -57,11 +63,30 @@ class SharedViewModel @Inject constructor(
         viewModelScope.launch {
             userDataMethods.observeCurrentUser { user ->
                 _currentUser.value = user
-                if (user != null) {
-                    if (user.userRole == "Attendee") {
-                        observeAllDFavEvents(user.userId.toString())
+                user?.let {
+                    if (it.userRole == "Attendee") {
+                        observeAllFavEvents(it.userId.toString())
+                        observeCurrentUserFromAttendees(it.userId.toString())
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeAllInvites() {
+        viewModelScope.launch {
+            inviteMethods.observeAllInvites { invites ->
+                _allInvites.value = invites
+            }
+        }
+    }
+
+    private fun observeCurrentUserFromAttendees(userId:String){
+        viewModelScope.launch {
+            eventDataMethods.observeCurrentUserFromAttendees(
+              userId
+            ) {data ->
+                _observeCurrentUserFromAttendees.value = data
             }
         }
     }
@@ -69,54 +94,43 @@ class SharedViewModel @Inject constructor(
     private fun observeUserInvites() {
         viewModelScope.launch {
             inviteMethods.observeCurrentUserInvites { invites ->
-                val filteredInvites = invites.filter { invite ->
-                    _allEvents.value.any { event -> event.eventId == invite.eventId }
-                }
-                _userInvites.value = filteredInvites
-
                 val invitedEventsList = _allEvents.value.filter { event ->
-                    filteredInvites.any { invite -> invite.eventId == event.eventId }
+                    invites.any { invite -> invite.eventId == event.eventId }
                 }
-                _invitedEvents.value = invitedEventsList
-
-                val eventInvitesList = filteredInvites.mapNotNull { invite ->
-                    val event = _allEvents.value.firstOrNull { it.eventId == invite.eventId }
+                _currentUserInvitedEvents.value = invitedEventsList
+                val eventInvitesList = invites.mapNotNull { invite ->
+                    val event = invitedEventsList.firstOrNull { it.eventId == invite.eventId }
                     val sender = _allUsers.value.firstOrNull { it.userId == invite.senderId }
 
-                    if (event != null && sender != null) {
-                        EventInvites(
-                            inviteId = invite.inviteId,
-                            eventId = event.eventId,
-                            eventTitle = event.eventTitle,
-                            eventOrganizer = sender.userName,
-                            eventTiming = event.eventTiming,
-                            eventDate = event.eventDate,
-                            senderName = sender.userName,
-                            inviteTime = invite.inviteTime,
-                            inviteStatus = invite.inviteStatus
-                        )
-                    } else {
-                        null
+                    event?.let {
+                        sender?.let {
+                            EventInvites(
+                                inviteId = invite.inviteId,
+                                eventId = event.eventId,
+                                eventTitle = event.eventTitle,
+                                eventOrganizer = sender.userName,
+                                eventTiming = event.eventTiming,
+                                eventDate = event.eventDate,
+                                senderName = sender.userName,
+                                inviteTime = invite.inviteTime,
+                                inviteStatus = invite.inviteStatus
+                            )
+                        }
                     }
                 }
-
-                _eventInvites.value = eventInvitesList
+                _currentUserInvites.value = eventInvitesList
             }
         }
     }
-
 
 
     private fun observeAllUsers() {
         viewModelScope.launch {
             userDataMethods.observeUsers { users ->
-                if (users != null) {
-                    _allUsers.value = users
-                }
+                _allUsers.value = users.orEmpty()
             }
         }
     }
-
 
     private fun observeAllEvents() {
         viewModelScope.launch {
@@ -126,7 +140,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun observeAllDFavEvents(currentUserID: String) {
+    private fun observeAllFavEvents(currentUserID: String) {
         if (currentUser.value?.userRole == "Attendee") {
             viewModelScope.launch {
                 eventDataMethods.observeCurrentUserFavEvents(currentUserID) { events ->
@@ -153,9 +167,8 @@ class SharedViewModel @Inject constructor(
 
     fun initializeObservers() {
         observeCurrentUser()
-        observeUserInvites()
         observeAllUsers()
+        observeUserInvites()
         observeAllEvents()
     }
-
 }

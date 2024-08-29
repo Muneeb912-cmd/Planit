@@ -69,6 +69,9 @@ class ProfileFragment : Fragment() {
         binding.profileToggle.isChecked =
             sharedViewModel.currentUser.value?.isProfilePrivate == true
 
+        if (sharedViewModel.currentUser.value?.userLoginType == "google") binding.passwordRestLayout.visibility =
+            View.GONE
+
     }
 
     private fun initializeListeners() {

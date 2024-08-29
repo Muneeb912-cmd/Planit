@@ -131,6 +131,7 @@
             android:textSize="18sp" />
 
         <LinearLayout
+            android:id="@+id/attendingEventLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"

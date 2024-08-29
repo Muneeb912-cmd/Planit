@@ -11,7 +11,7 @@ import kotlin.io.path.fileVisitor
 
 class PopularEventCardAdapter(
     private var eventCards: List<EventData>,
-    private var favoriteEvents: List<EventData>,
+    private var favoriteEvents: List<String>,
     private val listener: EventCardClickListener
 ) : RecyclerView.Adapter<PopularEventCardAdapter.EventCardViewHolder>() {
 
@@ -28,7 +28,7 @@ class PopularEventCardAdapter(
 
     override fun onBindViewHolder(holder: EventCardViewHolder, position: Int) {
         val event = eventCards[position]
-        val isFavorite = favoriteEvents.any { it.eventId == event.eventId }
+        val isFavorite = favoriteEvents.any { it == event.eventId }
         holder.bind(event, isFavorite)
     }
 
@@ -41,7 +41,7 @@ class PopularEventCardAdapter(
         notifyDataSetChanged()
     }
 
-    fun submitFavEventsList(favEvents: List<EventData>) {
+    fun submitFavEventsList(favEvents: List<String>) {
         favoriteEvents= favEvents
         notifyDataSetChanged()
     }

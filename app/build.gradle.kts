@@ -68,6 +68,9 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.core.i18n)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,4 +101,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx:21.0.0")
     implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("com.google.android.gms:play-services-places:17.1.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
 }

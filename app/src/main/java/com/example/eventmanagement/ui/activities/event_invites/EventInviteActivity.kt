@@ -43,7 +43,7 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
 
     private fun observeInviteEvents() {
         lifecycleScope.launch {
-            sharedViewModel.eventInvites.collect { eventInvites ->
+            sharedViewModel.currentUserInvites.collect { eventInvites ->
                 handleInviteVisibility(eventInvites.isEmpty())
                 updateTabTitles(eventInvites)
                 filterEvents(currentTabPosition)
@@ -77,7 +77,7 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
             else -> null
         }
 
-        val filteredEvents = sharedViewModel.eventInvites.value.filter { invite ->
+        val filteredEvents = sharedViewModel.currentUserInvites.value.filter { invite ->
             status == null || invite.inviteStatus == status
         }
 
@@ -121,7 +121,7 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
 
     override fun onEventCardClick(invite: EventInvites) {
         lifecycleScope.launch {
-            sharedViewModel.invitedEvents.collect { events ->
+            sharedViewModel.currentUserInvitedEvents.collect { events ->
                 events.firstOrNull { it.eventId == invite.eventId }?.let { event ->
                     showEventDetailsBottomSheet(event)
                 }

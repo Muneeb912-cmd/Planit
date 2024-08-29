@@ -56,7 +56,8 @@ class AddEditEventViewModel @Inject constructor(
             eventStatus = if (key == "eventStatus") value else currentEvent.eventStatus,
             eventCreatedBy = if (key == "eventCreatedBy") value else currentEvent.eventCreatedBy,
             eventLong = if (key == "eventLong") value else currentEvent.eventLong,
-            eventLat = if (key == "eventLat") value else currentEvent.eventLat
+            eventLat = if (key == "eventLat") value else currentEvent.eventLat,
+            isEventDeleted = if (key == "isEventDeleted") value == "Yes" else currentEvent.isEventDeleted,
         )
         validateField(key, value)
         checkIfDataComplete()
@@ -80,7 +81,7 @@ class AddEditEventViewModel @Inject constructor(
     }
 
 
-    fun validateField(field: String, value: String) {
+    private fun validateField(field: String, value: String) {
         val updatedErrors = _errors.value.toMutableMap()
 
         when (field) {
@@ -167,12 +168,27 @@ class AddEditEventViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveEvent() {
         updateEventStatus()
+        updateEventInfo("isEventDeleted","No")
         _states.value = Response.Loading
         eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
             if (dataUploaded) {
                 _states.value = Response.Success(Unit)
             } else {
                 _states.value = Response.Error(Exception(msg))
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateEvent() {
+        updateEventStatus()
+        updateEventInfo("isEventDeleted","No")
+        _states.value = Response.Loading
+        eventDataMethods.updateEventById(eventsData.value.eventId.toString(),eventsData.value) { dataUpdated ->
+            if (dataUpdated) {
+                _states.value = Response.Success(Unit)
+            } else {
+                _states.value = Response.Error(Exception("Error: Couldn't update event"))
             }
         }
     }

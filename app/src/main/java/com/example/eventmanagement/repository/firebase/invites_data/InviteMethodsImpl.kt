@@ -15,12 +15,13 @@ class InviteMethodsImpl @Inject constructor(
     private var invitesListener: ListenerRegistration? = null
 
     override fun createInvite(
-        receiverId: String,
         invite: Invites,
         onResult: (Boolean) -> Unit
     ) {
-        firestore.collection("UserData").document(receiverId).collection("Invites")
-            .add(invite)
+        val inviteDocRef = firestore.collection("Invites").document()
+        invite.inviteId = inviteDocRef.id // Set inviteId to document ID
+
+        inviteDocRef.set(invite)
             .addOnSuccessListener {
                 onResult(true)
             }
@@ -29,12 +30,29 @@ class InviteMethodsImpl @Inject constructor(
             }
     }
 
+    override fun observeAllInvites(onResult: (List<Invites>) -> Unit) {
+        invitesListener = firestore.collection("Invites")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.d("events", "observeAllInvites: $e")
+                    onResult(emptyList())
+                    return@addSnapshotListener
+                }
+
+                if (snapshots != null && !snapshots.isEmpty) {
+                    val invites = snapshots.toObjects(Invites::class.java)
+                    onResult(invites)
+                } else {
+                    onResult(emptyList())
+                }
+            }
+    }
+
     override fun observeCurrentUserInvites(onResult: (List<Invites>) -> Unit) {
         val currentUserId = auth.currentUser?.uid
         if (currentUserId != null) {
-            invitesListener = firestore.collection("UserData")
-                .document(currentUserId)
-                .collection("Invites")
+            invitesListener = firestore.collection("Invites")
+                .whereEqualTo("receiverId", currentUserId)
                 .addSnapshotListener { snapshots, e ->
                     if (e != null) {
                         Log.d("events", "observeCurrentUserInvites: $e")
@@ -54,48 +72,52 @@ class InviteMethodsImpl @Inject constructor(
         }
     }
 
-    override fun deleteInvite(inviteId: String, onResult: (Boolean) -> Unit) {
-        val currentUserId = auth.currentUser?.uid
-        if (currentUserId != null) {
-            firestore.collection("UserData")
-                .document(currentUserId)
-                .collection("Invites")
-                .document(inviteId)
-                .delete()
-                .addOnSuccessListener {
-                    onResult(true)
-                }
-                .addOnFailureListener {
+    override fun deleteInvite(eventId: String, userId: String, onResult: (Boolean) -> Unit) {
+        val invitesRef = firestore.collection("Invites")
+
+        // Query to find the document with the matching eventId and userId
+        invitesRef
+            .whereEqualTo("eventId", eventId)
+            .whereEqualTo("receiverId", userId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
                     onResult(false)
+                    return@addOnSuccessListener
                 }
-        } else {
-            onResult(false)
-        }
+                for (document in querySnapshot.documents) {
+                    // Delete the document
+                    invitesRef.document(document.id)
+                        .delete()
+                        .addOnSuccessListener {
+                            onResult(true)
+                        }
+                        .addOnFailureListener {
+                            onResult(false)
+                        }
+                }
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
     }
+
 
     override fun updateInviteStatus(
         inviteId: String,
         newStatus: String,
         onResult: (Boolean) -> Unit
     ) {
-        val currentUserId = auth.currentUser?.uid
-        if (currentUserId != null) {
-            firestore.collection("UserData")
-                .document(currentUserId)
-                .collection("Invites")
-                .document(inviteId)
-                .update("inviteStatus", newStatus)
-                .addOnSuccessListener {
-                    onResult(true)
-                }
-                .addOnFailureListener {
-                    onResult(false)
-                }
-        } else {
-            onResult(false)
-        }
+        firestore.collection("Invites")
+            .document(inviteId)
+            .update("inviteStatus", newStatus)
+            .addOnSuccessListener {
+                onResult(true)
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
     }
-
 
     fun removeInvitesListener() {
         invitesListener?.remove()

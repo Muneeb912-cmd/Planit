@@ -1,5 +1,8 @@
 package com.example.eventmanagement.models
 
+import android.os.Parcelable
+import java.io.Serializable
+
 data class EventData(
     var eventId:String?=null,
     var eventTitle: String?=null,
@@ -16,6 +19,7 @@ data class EventData(
     var numberOfPeopleAttending:Int?=null,
     var isEventPublic:Boolean?=null,
     var eventStatus:String?=null,
-    var eventCreatedBy:String?=null
-)
+    var eventCreatedBy:String?=null,
+    var isEventDeleted:Boolean?=null,
+):Serializable
 

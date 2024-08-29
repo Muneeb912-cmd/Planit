@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.FeaturedEventAdapter
+import com.example.eventmanagement.adapters.ManageEventAdapter
 import com.example.eventmanagement.adapters.PopularEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentEventsBinding
 import com.example.eventmanagement.di.Categories
@@ -178,27 +179,20 @@ class EventsFragment : Fragment(),
             filterFeaturedEvents()
         } else {
             hideUiElements("search")
-            deselectAllCategories()
             handleQuery(query)
         }
     }
 
     private fun handleQuery(query: String) {
-        val searchedEvents = sharedViewModel.allEvents.value.filter { event ->
-            val matchesQuery = event.eventOrganizer?.lowercase()?.contains(query.lowercase()) == true ||
-                    event.eventTitle?.lowercase()?.contains(query.lowercase()) == true
-            matchesQuery &&
-                    event.isEventPublic == true &&
-                    (selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory))
-        }
-        (binding.searchItemRecyclerView.adapter as? PopularEventCardAdapter)?.submitList(searchedEvents)
-    }
+        val filteredEvents = sharedViewModel.allEvents.value.filter { event ->
+            val matchesQuery = event.eventOrganizer?.contains(query, ignoreCase = true) == true ||
+                    event.eventTitle?.contains(query, ignoreCase = true) == true
+            val matchesCategory = selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory)
 
-    private fun deselectAllCategories() {
-        selectedCategories.clear()
-        (0 until binding.chipsContainer.childCount).forEach { index ->
-            (binding.chipsContainer.getChildAt(index) as? Chip)?.isChecked = false
+            matchesQuery && matchesCategory && event.isEventPublic == true
         }
+
+        (binding.searchItemRecyclerView.adapter as? PopularEventCardAdapter)?.submitList(filteredEvents)
     }
 
     private fun hideUiElements(key: String) {
@@ -267,7 +261,7 @@ class EventsFragment : Fragment(),
 
     override fun onFavIconClick(cardData: EventData) {
         val userId = sharedViewModel.currentUser.value?.userId.toString()
-        if (sharedViewModel.allFavEvents.value.any { it.eventId == cardData.eventId }) {
+        if (sharedViewModel.allFavEvents.value.any { it == cardData.eventId }) {
             removeEventFromFavorites(userId, cardData)
         } else {
             addEventToFavorites(userId, cardData)

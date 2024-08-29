@@ -42,7 +42,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
         setupSearchListener()
         lifecycleScope.launch {
             sharedViewModel.allEvents.collect {
-                setUpMyEventsCardView()
+                filterEvents(currentTabPosition)
             }
         }
         filterEvents(0)
@@ -111,14 +111,26 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
     }
 
     private fun filterEvents(selectedTabPosition: Int) {
+        val currentUserAttendeeEvents = sharedViewModel.observeCurrentUserFromAttendees.value.map { it.eventId }
+
         filteredEvents = when (selectedTabPosition) {
-            0 -> sharedViewModel.allEvents.value.filter { it.eventStatus == "On-Going" }
-            1 -> sharedViewModel.allEvents.value.filter { it.eventStatus == "Up-Coming" }
-            2 -> sharedViewModel.allEvents.value.filter { it.eventStatus == "Missed" }
-            else -> sharedViewModel.allEvents.value
+            0 -> sharedViewModel.allEvents.value.filter {
+                it.eventStatus == "On-Going" && currentUserAttendeeEvents.contains(it.eventId)
+            }
+            1 -> sharedViewModel.allEvents.value.filter {
+                it.eventStatus == "Up-Coming" && currentUserAttendeeEvents.contains(it.eventId)
+            }
+            2 -> sharedViewModel.allEvents.value.filter {
+                it.eventStatus == "Missed" && currentUserAttendeeEvents.contains(it.eventId)
+            }
+            else -> sharedViewModel.allEvents.value.filter {
+                currentUserAttendeeEvents.contains(it.eventId)
+            }
         }
         updateRecyclerView(filteredEvents)
     }
+
+
 
     private fun updateRecyclerView(events: List<EventData>) {
         val adapter = MyEventCardAdapter(events, this)

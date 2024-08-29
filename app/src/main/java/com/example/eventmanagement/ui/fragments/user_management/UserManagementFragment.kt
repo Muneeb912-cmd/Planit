@@ -116,7 +116,7 @@ class UserManagementFragment : Fragment(), UserDataAdapter.OnItemClickListener {
             users.count { it.isUserBanned == true && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
 
         binding.tabLayout.getTabAt(0)?.text = "Users ($userCount)"
-        binding.tabLayout.getTabAt(1)?.text = "Banded Users ($bandedUsersCount)"
+        binding.tabLayout.getTabAt(1)?.text = "Suspended Users ($bandedUsersCount)"
     }
 
     private fun setUpAdapter() {

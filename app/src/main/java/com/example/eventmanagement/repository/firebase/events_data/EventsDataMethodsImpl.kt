@@ -1,5 +1,6 @@
 package com.example.eventmanagement.repository.firebase.events_data
 
+import com.example.eventmanagement.models.Attendees
 import com.example.eventmanagement.models.EventData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -11,6 +12,7 @@ class EventsDataMethodsImpl @Inject constructor(
 
     private var eventsListener: ListenerRegistration? = null
     private var favEventsListener: ListenerRegistration? = null
+    private var eventAttendeesListener: ListenerRegistration? = null
 
     override fun getAllEvents(): List<EventData> {
         val eventsList = mutableListOf<EventData>()
@@ -28,24 +30,48 @@ class EventsDataMethodsImpl @Inject constructor(
         return eventsList
     }
 
-    override fun getEventById(eventId: String): EventData? {
-        var event: EventData? = null
-        firestore.collection("Events").document(eventId)
+    override fun getEventById(eventId: String, onResult: (EventData?) -> Unit) {
+        firestore.collection("Events")
+            .whereEqualTo("eventDeleted", false)
+            .whereEqualTo("eventId", eventId)
             .get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    event = document.toObject(EventData::class.java)
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val event = querySnapshot.documents[0].toObject(EventData::class.java)
+                    onResult(event)
+                } else {
+                    onResult(null)
                 }
             }
             .addOnFailureListener {
-                // Handle any errors
+                onResult(null)
             }
-        return event
     }
 
-    override fun updateEventById(eventId: String, onResult: (Boolean) -> Unit) {
+
+    override fun updateEventById(eventId: String, eventData: EventData, onResult: (Boolean) -> Unit) {
+        val eventMap = mapOf(
+            "eventId" to eventData.eventId,
+            "eventTitle" to eventData.eventTitle,
+            "eventOrganizer" to eventData.eventOrganizer,
+            "eventTiming" to eventData.eventTiming,
+            "eventCategory" to eventData.eventCategory,
+            "eventDescription" to eventData.eventDescription,
+            "eventLocation" to eventData.eventLocation,
+            "eventDate" to eventData.eventDate,
+            "isEventFeatured" to eventData.isEventFeatured,
+            "isEventPopular" to eventData.isEventPopular,
+            "numberOfPeopleAttending" to eventData.numberOfPeopleAttending,
+            "isEventPublic" to eventData.isEventPublic,
+            "eventStatus" to eventData.eventStatus,
+            "eventCreatedBy" to eventData.eventCreatedBy,
+            "eventLong" to eventData.eventLong,
+            "eventLat" to eventData.eventLat,
+            "isEventDeleted" to eventData.isEventDeleted
+        )
+
         firestore.collection("Events").document(eventId)
-            .update("fieldName", "newValue")  // Update specific fields as needed
+            .update(eventMap)
             .addOnSuccessListener {
                 onResult(true)
             }
@@ -54,9 +80,9 @@ class EventsDataMethodsImpl @Inject constructor(
             }
     }
 
-    override fun deleteEventById(eventId: String, onResult: (Boolean) -> Unit) {
+    override fun deleteEventById(eventId: String, deleted: Boolean, onResult: (Boolean) -> Unit) {
         firestore.collection("Events").document(eventId)
-            .delete()
+            .update("eventDeleted", deleted)
             .addOnSuccessListener {
                 onResult(true)
             }
@@ -84,6 +110,7 @@ class EventsDataMethodsImpl @Inject constructor(
 
     override fun observeAllEvents(onResult: (List<EventData>) -> Unit) {
         eventsListener = firestore.collection("Events")
+            .whereEqualTo("eventDeleted", false)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     onResult(emptyList())
@@ -117,45 +144,44 @@ class EventsDataMethodsImpl @Inject constructor(
     override fun addEventToUserFav(
         userId: String,
         eventData: EventData,
-        onResult: (Boolean,String) -> Unit
+        onResult: (Boolean, String) -> Unit
     ) {
-        val userFavEventsRef = eventData.eventId?.let {
-            firestore.collection("UserData")
-                .document(userId)
-                .collection("FavEvents")
-                .document(it)
-        }
+        val userFavEventsRef = firestore.collection("UserData")
+            .document(userId)
+            .collection("FavEvents")
+            .document(eventData.eventId.toString())
 
-        userFavEventsRef?.set(eventData)?.addOnSuccessListener {
+        val data = mapOf("eventId" to eventData.eventId.toString())
+
+        userFavEventsRef.set(data).addOnSuccessListener {
             onResult(true, "")
-        }?.addOnFailureListener {
-            onResult(true, it.toString())
+        }.addOnFailureListener { exception ->
+            onResult(false, exception.toString())
         }
     }
+
 
     override fun removeEventFromUserFav(
         userId: String,
         eventData: EventData,
         onResult: (Boolean, String) -> Unit
     ) {
-        val userFavEventsRef = eventData.eventId?.let {
-            firestore.collection("UserData")
-                .document(userId)
-                .collection("FavEvents")
-                .document(it)
-        }
+        val userFavEventsRef = firestore.collection("UserData")
+            .document(userId)
+            .collection("FavEvents")
+            .document(eventData.eventId.toString())
 
-        userFavEventsRef?.delete()?.addOnSuccessListener {
+        userFavEventsRef.delete().addOnSuccessListener {
             onResult(true, "Event removed from favorites successfully.")
-        }?.addOnFailureListener {
-            onResult(false, "Failed to remove event from favorites: ${it.message}")
+        }.addOnFailureListener { exception ->
+            onResult(false, "Failed to remove event from favorites: ${exception.message}")
         }
     }
 
 
     override fun observeCurrentUserFavEvents(
         userId: String,
-        onResult: (List<EventData>) -> Unit
+        onResult: (List<String>) -> Unit
     ) {
         val userFavEventsRef = firestore.collection("UserData")
             .document(userId)
@@ -168,7 +194,9 @@ class EventsDataMethodsImpl @Inject constructor(
             }
 
             if (snapshots != null && !snapshots.isEmpty) {
-                val favEvents = snapshots.toObjects(EventData::class.java)
+                val favEvents = snapshots.documents.mapNotNull { document ->
+                    document.getString("eventId")
+                }
                 onResult(favEvents)
             } else {
                 onResult(emptyList())
@@ -176,10 +204,127 @@ class EventsDataMethodsImpl @Inject constructor(
         }
     }
 
+    // Method to add an attendee and update the count of people attending
+    override fun addAttendeeUpdatePeopleGoingCount(
+        eventId: String,
+        userId: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        val eventRef = firestore.collection("Events").document(eventId)
+        val attendeeRef = firestore.collection("Attendees").document(eventId)
+
+        firestore.runTransaction { transaction ->
+            val eventSnapshot = transaction.get(eventRef)
+            val attendeeSnapshot = transaction.get(attendeeRef)
+
+            if (!attendeeSnapshot.exists()) {
+                val newAttendee = mapOf("userId" to userId, "eventId" to eventId)
+                transaction.set(attendeeRef, newAttendee)
+            } else {
+                throw Exception("User is already an attendee.")
+            }
+
+            val currentPeopleAttending = eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
+            val updatedPeopleAttending = currentPeopleAttending + 1
+
+            transaction.update(eventRef, "numberOfPeopleAttending", updatedPeopleAttending)
+        }.addOnSuccessListener {
+            onResult(true)
+        }.addOnFailureListener {
+            onResult(false)
+        }
+    }
+
+    // Method to remove an attendee and update the count of people attending
+    override fun removeAttendeeUpdatePeopleGoingCount(
+        eventId: String,
+        userId: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        val eventRef = firestore.collection("Events").document(eventId)
+        val attendeeRef = firestore.collection("Attendees").document(eventId)
+
+        firestore.runTransaction { transaction ->
+            val eventSnapshot = transaction.get(eventRef)
+            val attendeeSnapshot = transaction.get(attendeeRef)
+
+            if (attendeeSnapshot.exists()) {
+                transaction.delete(attendeeRef)
+            } else {
+                throw Exception("User is not an attendee.")
+            }
+
+            val currentPeopleAttending = eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
+            val updatedPeopleAttending = currentPeopleAttending - 1
+
+            transaction.update(eventRef, "numberOfPeopleAttending", updatedPeopleAttending)
+        }.addOnSuccessListener {
+            onResult(true)
+        }.addOnFailureListener {
+            onResult(false)
+        }
+    }
+
+    // Method to observe attendees by eventId
+    override fun observeAttendeesByEventId(eventId: String, onResult: (Boolean, List<String>) -> Unit) {
+        val attendeesRef = firestore.collection("Attendees")
+            .whereEqualTo("eventId", eventId)
+
+        val listenerRegistration = attendeesRef.addSnapshotListener { snapshots, e ->
+            if (e != null) {
+                onResult(false, emptyList())
+                return@addSnapshotListener
+            }
+
+            if (snapshots != null && !snapshots.isEmpty) {
+                val attendees = snapshots.documents.mapNotNull { document ->
+                    document.getString("userId")
+                }
+                onResult(true, attendees)
+            } else {
+                onResult(true, emptyList())
+            }
+        }
+        eventAttendeesListener = listenerRegistration
+    }
+
+
+    override fun observeCurrentUserFromAttendees(
+        userId: String,
+        onResult: (List<Attendees>) -> Unit
+    ) {
+        val userAttendeesRef = firestore.collection("Attendees")
+            .whereEqualTo("userId", userId)
+
+        userAttendeesRef.addSnapshotListener { snapshots, e ->
+            if (e != null) {
+                onResult(emptyList())
+                return@addSnapshotListener
+            }
+
+            if (snapshots != null && !snapshots.isEmpty) {
+                val attendeesList = snapshots.documents.mapNotNull { document ->
+                    document.toObject(Attendees::class.java)
+                }
+                onResult(attendeesList)
+            } else {
+                onResult(emptyList())
+            }
+        }
+    }
+
+
+
+
+    fun removeEventAttendeeListener() {
+        eventAttendeesListener?.remove()
+    }
+
 
     fun removeFavEventsListener() {
         favEventsListener?.remove()
     }
+
     fun removeEventsListener() {
         eventsListener?.remove()
     }

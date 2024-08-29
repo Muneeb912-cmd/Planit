@@ -1,5 +1,6 @@
 package com.example.eventmanagement.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,42 +9,42 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
 import com.example.eventmanagement.models.EventData
 
-class HomeEventCardAdapter(
+class ManageEventAdapter (
     private var events: List<EventData>,
-    private var favoriteEvents: List<String>,
     private val listener: OnItemClickListener
-) : RecyclerView.Adapter<HomeEventCardAdapter.EventViewHolder>() {
+) : RecyclerView.Adapter<ManageEventAdapter.EventViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(cardData: EventData)
-        fun onFavIconClick(cardData: EventData)
+        fun onCreateInviteClick(cardData: EventData)
+        fun onDeleteInviteClick(cardData: EventData)
     }
 
     inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private lateinit var currentEvent: EventData
-
-        // Reference to the favorite icon and other views
-        private val favIcon: View = itemView.findViewById(R.id.favIcon)
+        private val deleteEvent: View = itemView.findViewById(R.id.deleteEventBtn)
+        private val createInvite: View = itemView.findViewById(R.id.createInviteBtn)
 
         init {
-            favIcon.setOnClickListener {
-                listener.onFavIconClick(currentEvent)
-            }
             itemView.setOnClickListener {
                 listener.onItemClick(currentEvent)
             }
+            deleteEvent.setOnClickListener {
+                listener.onDeleteInviteClick(currentEvent)
+            }
+            createInvite.setOnClickListener {
+                listener.onCreateInviteClick(currentEvent)
+            }
         }
 
-        fun bind(event: EventData, isFavorite: Boolean) {
+        @SuppressLint("SetTextI18n")
+        fun bind(event: EventData) {
             currentEvent = event
             itemView.findViewById<TextView>(R.id.eventTitleTv).text = event.eventTitle
+            itemView.findViewById<TextView>(R.id.eventCategoryTv).text = "Category: ${event.eventCategory}"
             itemView.findViewById<TextView>(R.id.eventTimeTv).text = event.eventTiming
-
-            if (isFavorite) {
-                favIcon.setBackgroundResource(R.drawable.ic_fav_filled)
-            } else {
-                favIcon.setBackgroundResource(R.drawable.ic_fav)
-            }
+            itemView.findViewById<TextView>(R.id.eventDateTv).text = event.eventDate
+            itemView.findViewById<TextView>(R.id.peopleAttendingTv).text = " : ${event.numberOfPeopleAttending.toString()}"
         }
     }
 
@@ -51,23 +52,15 @@ class HomeEventCardAdapter(
         events=filteredEvents
         notifyDataSetChanged()
     }
-
-
-    fun updatedFavEvents(favEvents:List<String>){
-        favoriteEvents=favEvents
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.event_view_card, parent, false)
+            .inflate(R.layout.manage_event_card, parent, false)
         return EventViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = events[position]
-        val isFavorite = favoriteEvents.any { it == event.eventId }
-        holder.bind(event, isFavorite)
+        holder.bind(event)
     }
 
     override fun getItemCount(): Int = events.size

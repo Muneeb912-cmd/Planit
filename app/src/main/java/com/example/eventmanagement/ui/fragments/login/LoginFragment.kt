@@ -1,8 +1,8 @@
 package com.example.eventmanagement.ui.fragments.login
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.service.autofill.UserData
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +16,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentLoginBinding
+import com.example.eventmanagement.models.User
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -50,169 +51,49 @@ class LoginFragment : Fragment() {
     private fun checkUserPrefs() {
         viewModel.checkUserInPrefs { userExists, userRole ->
             if (userExists) {
-                when (userRole) {
-                    "Attendee" -> {
-                        findNavController().navigate(
-                            R.id.action_loginFragment_to_eventsMainFragment,
-                            null,
-                            NavOptions.Builder()
-                                .setPopUpTo(R.id.nav_graph_xml, true)
-                                .setLaunchSingleTop(true)
-                                .build()
-                        )
-                    }
-                    "Admin" -> {
-                        findNavController().navigate(
-                            R.id.action_loginFragment_to_adminMainFragment,
-                            null,
-                            NavOptions.Builder()
-                                .setPopUpTo(R.id.nav_graph_xml, true)
-                                .setLaunchSingleTop(true)
-                                .build()
-                        )
-                    }
-                }
+                navigateBasedOnUserRole(userRole)
             }
         }
     }
 
-
-
     private fun setupListeners() {
         with(binding) {
-            signupBtn.setOnClickListener {
-                val action =
-                    LoginFragmentDirections.actionLoginFragmentToSignUpFragment("email_pass")
-                findNavController().navigate(action)
-            }
-            forgotPassTv.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_forgetPasswordFragment)
-            }
-            googleLoginBtn.setOnClickListener {
-                signInWithGoogle()
-            }
+            signupBtn.setOnClickListener { navigateToSignUp("email_pass") }
+            forgotPassTv.setOnClickListener { navigateToForgotPassword() }
+            googleLoginBtn.setOnClickListener { signInWithGoogle() }
             loginBtn.setOnClickListener {
-                val email = binding.email.text.toString()
-                val password = binding.password.text.toString()
+                val email = email.text.toString()
+                val password = password.text.toString()
                 handleLoginWithEmailPassword(email, password)
             }
         }
     }
 
-    private fun observeViewModel(loginType: String) {
-        lifecycleScope.launch {
-            viewModel.loginResult.collect { response ->
-                when (response) {
-                    is Response.Loading -> showLoader(true)
-                    is Response.Success -> {
-                        viewModel.isEmailVerified.collect { isVerified ->
-                            showLoader(false)
-                            if (isVerified) {
-
-                                viewModel.usersData.collect { usersResponse ->
-                                    when (usersResponse) {
-                                        is Response.Loading -> {
-                                            // Optionally handle loading state
-                                        }
-
-                                        is Response.Success -> {
-                                            val users = usersResponse.data
-                                            val currentUser = viewModel.getCurrentUser()
-                                            val currentUserId = currentUser?.userId
-
-                                            if (currentUserId != null) {
-                                                val userExists =
-                                                    users.any { it.userId == currentUserId }
-                                                val user=users.firstOrNull{it.userId == currentUserId }
-                                                sharedViewModel.initializeObservers()
-                                                if (userExists) {
-                                                    if(user!=null){
-                                                        viewModel.saveDataToPreferences(user){isUserSavedInPrefs->
-                                                            if (isUserSavedInPrefs) {
-                                                                Toast.makeText(
-                                                                    requireContext(),
-                                                                    "User instance saved for seamless login",
-                                                                    Toast.LENGTH_SHORT
-                                                                ).show()
-                                                            } else {
-                                                                Toast.makeText(
-                                                                    requireContext(),
-                                                                    "Couldn't save user instance",
-                                                                    Toast.LENGTH_SHORT
-                                                                ).show()
-                                                            }
-                                                        }
-                                                    }
-                                                    when (user?.userRole) {
-                                                        "Attendee" -> {
-                                                            findNavController().navigate(
-                                                                R.id.action_loginFragment_to_eventsMainFragment,
-                                                                null,
-                                                                NavOptions.Builder()
-                                                                    .setPopUpTo(R.id.nav_graph_xml, true)
-                                                                    .setLaunchSingleTop(true)
-                                                                    .build()
-                                                            )
-                                                        }
-                                                        "Admin" -> {
-                                                            findNavController().navigate(
-                                                                R.id.action_loginFragment_to_adminMainFragment,
-                                                                null,
-                                                                NavOptions.Builder()
-                                                                    .setPopUpTo(R.id.nav_graph_xml, true)
-                                                                    .setLaunchSingleTop(true)
-                                                                    .build()
-                                                            )
-                                                        }
-                                                    }
-                                                } else {
-                                                    val action =
-                                                        LoginFragmentDirections.actionLoginFragmentToSignUpFragment(
-                                                            loginType
-                                                        )
-                                                    findNavController().navigate(action)
-                                                }
-                                            } else {
-                                                Toast.makeText(
-                                                    requireContext(),
-                                                    "User Don't Exist",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        }
-
-                                        is Response.Error -> {
-                                            Toast.makeText(
-                                                requireContext(),
-                                                "Error fetching users: ${usersResponse.exception.message}",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-                                }
-                            } else {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Please verify your email",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    }
-
-                    is Response.Error -> {
-                        showLoader(false)
-                        Toast.makeText(
-                            requireContext(),
-                            "Error Occurred: ${response.exception.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        }
+    private fun navigateToSignUp(loginType: String) {
+        val action = LoginFragmentDirections.actionLoginFragmentToSignUpFragment(loginType)
+        findNavController().navigate(action)
     }
 
+    private fun navigateToForgotPassword() {
+        findNavController().navigate(R.id.action_loginFragment_to_forgetPasswordFragment)
+    }
+
+    private fun navigateBasedOnUserRole(userRole: String) {
+        val destination = when (userRole) {
+            "Attendee" -> R.id.action_loginFragment_to_eventsMainFragment
+            "Admin" -> R.id.action_loginFragment_to_adminMainFragment
+            else -> return
+        }
+
+        findNavController().navigate(
+            destination,
+            null,
+            NavOptions.Builder()
+                .setPopUpTo(R.id.nav_graph_xml, true)
+                .setLaunchSingleTop(true)
+                .build()
+        )
+    }
 
     private fun signInWithGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -231,13 +112,97 @@ class LoginFragment : Fragment() {
         observeViewModel("email_pass")
     }
 
-    private fun handleSignInWithGoogle(account: GoogleSignInAccount) {
-        viewModel.signInWithGoogle(account)
+    private fun observeViewModel(loginType: String) {
+        lifecycleScope.launch {
+            viewModel.loginResult.collect { response ->
+                handleLoginResponse(response, loginType)
+            }
+        }
     }
 
-    private fun showLoader(show: Boolean) {
-        view?.findViewById<FrameLayout>(R.id.loader_overlay)?.visibility =
-            if (show) View.VISIBLE else View.GONE
+    private fun handleLoginResponse(response: Response<Unit>, loginType: String) {
+        when (response) {
+            is Response.Loading -> showLoader(true)
+            is Response.Success -> handleLoginSuccess(loginType)
+            is Response.Error -> {
+                showLoader(false)
+                showToast("Error Occurred: ${response.exception.message}")
+            }
+        }
+    }
+
+    private fun handleLoginSuccess(loginType: String) {
+        lifecycleScope.launch {
+            viewModel.isEmailVerified.collect { isVerified ->
+                showLoader(false)
+                if (isVerified) {
+                    handleUserVerificationSuccess(loginType)
+                } else {
+                    showToast("Please verify your email")
+                }
+            }
+        }
+    }
+
+    private fun handleUserVerificationSuccess(loginType: String) {
+        lifecycleScope.launch {
+            viewModel.usersData.collect { usersResponse ->
+                when (usersResponse) {
+                    is Response.Loading -> Unit
+                    is Response.Success -> handleUserExists(usersResponse.data, loginType)
+                    is Response.Error -> showToast("Error fetching users: ${usersResponse.exception.message}")
+                }
+            }
+        }
+    }
+
+    private fun handleUserExists(users: List<User.UserData>, loginType: String) {
+        val currentUser = viewModel.getCurrentUser()
+        val currentUserId = currentUser?.userId
+
+        if (currentUserId != null) {
+            val user = users.firstOrNull { it.userId == currentUserId }
+            sharedViewModel.initializeObservers()
+            user?.let {
+                if (it.isUserBanned == true) {
+                    handleBannedUser()
+                } else {
+                    saveUserAndNavigate(it)
+                }
+            } ?: navigateToSignUp(loginType)
+        } else {
+            showToast("User Don't Exist")
+        }
+    }
+
+    private fun handleBannedUser() {
+        showAlertDialog(
+            "Attention",
+            "Your account is suspended by admin. Kindly contact the admin for more information at:\n\n dukocommunity@gmail.com",
+            R.drawable.ic_attention
+        )
+        clearInputFields()
+    }
+
+    private fun clearInputFields() {
+        binding.email.text?.clear()
+        binding.password.text?.clear()
+        binding.password.clearFocus()
+    }
+
+    private fun saveUserAndNavigate(user: User.UserData) {
+        viewModel.saveDataToPreferences(user) { isUserSavedInPrefs ->
+            if (isUserSavedInPrefs) {
+                showToast("User instance saved for seamless login")
+                user.userRole?.let { navigateBasedOnUserRole(it) }
+            } else {
+                showToast("Couldn't save user instance")
+            }
+        }
+    }
+
+    private fun handleSignInWithGoogle(account: GoogleSignInAccount) {
+        viewModel.signInWithGoogle(account)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -246,30 +211,30 @@ class LoginFragment : Fragment() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                if (account != null) {
-                    handleSignInWithGoogle(account)
-                }
+                account?.let { handleSignInWithGoogle(it) }
             } catch (e: ApiException) {
                 showLoader(false)
-                Toast.makeText(
-                    requireContext(),
-                    "Google Sign-In failed: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast("Google Sign-In failed: ${e.message}")
             }
         }
     }
-    private fun showAlertDialog(title:String,msg:String,icon:Drawable) {
+
+    private fun showLoader(show: Boolean) {
+        view?.findViewById<FrameLayout>(R.id.loader_overlay)?.visibility =
+            if (show) View.VISIBLE else View.GONE
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showAlertDialog(title: String, message: String, icon: Int) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
-            .setMessage(msg)
+            .setMessage(message)
             .setIcon(icon)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 

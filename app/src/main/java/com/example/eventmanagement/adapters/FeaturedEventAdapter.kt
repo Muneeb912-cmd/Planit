@@ -10,7 +10,7 @@ import com.example.eventmanagement.models.EventData
 
 class FeaturedEventAdapter(
     private var promotionCards: List<EventData>,
-    private var favoriteEvents: List<EventData>,
+    private var favoriteEvents: List<String>,
     private val listener: OnFeaturedEventClickListener
 ) : RecyclerView.Adapter<FeaturedEventAdapter.PromotionCardViewHolder>() {
     interface OnFeaturedEventClickListener {
@@ -27,7 +27,7 @@ class FeaturedEventAdapter(
 
     override fun onBindViewHolder(holder: PromotionCardViewHolder, position: Int) {
         val event = promotionCards[position]
-        val isFavorite = favoriteEvents.any { it.eventId == event.eventId }
+        val isFavorite = favoriteEvents.any { it == event.eventId }
         holder.bind(event, isFavorite)
     }
 
@@ -40,7 +40,7 @@ class FeaturedEventAdapter(
         notifyDataSetChanged()
     }
 
-    fun submitFavEventsList(favEvents: List<EventData>) {
+    fun submitFavEventsList(favEvents: List<String>) {
         favoriteEvents=favEvents
         notifyDataSetChanged()
     }

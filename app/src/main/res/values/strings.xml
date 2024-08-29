@@ -68,4 +68,6 @@
     <string name="banned_users">Banned Users</string>
     <string name="user_management">User Management</string>
     <string name="ban_user">Ban User?</string>
+    <string name="send_invites">Send Invites</string>
+    <string name="sent_invites">Sent Invites</string>
 </resources>

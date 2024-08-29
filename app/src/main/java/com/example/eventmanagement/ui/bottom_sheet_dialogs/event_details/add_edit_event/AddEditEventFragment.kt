@@ -23,6 +23,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.eventmanagement.databinding.FragmentAddEditEventBinding
 import com.example.eventmanagement.di.Categories
+import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -45,12 +46,26 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
     lateinit var categories: ArrayList<String>
     private val viewModel: AddEditEventViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var key: String? = null
+    private var eventData: EventData? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddEditEventBinding.inflate(inflater, container, false)
+
+        arguments?.let {
+            key = it.getString("key")
+            eventData = it.getSerializable("eventData") as EventData?
+        }
+
+        // Populate data if updating
+        if (key == "update") {
+            populateEventData(eventData)
+            binding.saveEventBtn.text = "Update"
+            binding.addEditTitle.text="Update Event"
+        }
         return binding.root
     }
 
@@ -58,10 +73,79 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         populateDropDown()
-        updateEventInfo()
+        if (key == "create") updateEventInfo()
         initializeListeners()
         validateFields()
     }
+
+
+    private fun populateEventData(eventData: EventData?) {
+        eventData?.let {
+            binding.eventTitle.setText(it.eventTitle)
+            binding.eventCategory.setText(it.eventCategory)
+            binding.eventLocation.setText(it.eventLocation)
+            binding.eventFeaturedToggle.isChecked = it.isEventFeatured == true
+            binding.visibilityToggle.isChecked = it.isEventPublic == true
+            binding.eventDescription.setText(it.eventDescription)
+            binding.eventCategory.setText(it.eventCategory)
+
+            // Handle date range
+            if (!it.eventDate.isNullOrEmpty()) {
+                val dates = it.eventDate!!.split(" - ")
+                if (dates.size == 2) {
+                    binding.eventDate.setText(dates[0])
+                    binding.eventEndDate.setText(dates[1])
+                    binding.rangePickerCheckBox.isChecked = true
+                    binding.eventEndDateLayout.visibility = View.VISIBLE
+                } else {
+                    binding.eventDate.setText(it.eventDate)
+                    binding.eventEndDate.setText("")
+                    binding.rangePickerCheckBox.isChecked = false
+                    binding.eventEndDateLayout.visibility = View.GONE
+                }
+            }
+
+            if (!it.eventTiming.isNullOrEmpty()) {
+                val startTime = it.eventTiming!!.split(" - ")
+                if (startTime.size == 2) {
+                    binding.eventStartTime.setText(startTime[0])
+                    binding.eventEndTime.setText(startTime[1])
+                } else {
+                    binding.eventStartTime.setText(it.eventTiming)
+                    binding.eventEndTime.setText("")
+                }
+            }
+            updateDataInViewModel(it)
+        }
+    }
+
+    private fun updateDataInViewModel(it: EventData) {
+        // Update ViewModel with existing event data
+        viewModel.updateEventInfo("eventId", it.eventId ?: "")
+        viewModel.updateEventInfo("eventTitle", it.eventTitle ?: "")
+        viewModel.updateEventInfo("eventOrganizer", it.eventOrganizer ?: "")
+        viewModel.updateEventInfo("eventTiming", it.eventTiming ?: "")
+        viewModel.updateEventInfo("eventCategory", it.eventCategory ?: "")
+        viewModel.updateEventInfo("eventDescription", it.eventDescription ?: "")
+        viewModel.updateEventInfo("eventLocation", it.eventLocation ?: "")
+        viewModel.updateEventInfo("eventDate", it.eventDate ?: "")
+        viewModel.updateEventInfo(
+            "isEventFeatured",
+            if (it.isEventFeatured == true) "yes" else "no"
+        )
+        viewModel.updateEventInfo("isEventPopular", if (it.isEventPopular == true) "yes" else "no")
+        viewModel.updateEventInfo(
+            "numberOfPeopleAttending",
+            it.numberOfPeopleAttending?.toString() ?: ""
+        )
+        viewModel.updateEventInfo("isEventPublic", if (it.isEventPublic == true) "yes" else "no")
+        viewModel.updateEventInfo("eventStatus", it.eventStatus ?: "")
+        viewModel.updateEventInfo("eventCreatedBy", it.eventCreatedBy ?: "")
+        viewModel.updateEventInfo("eventLong", it.eventLong ?: "")
+        viewModel.updateEventInfo("eventLat", it.eventLat ?: "")
+        viewModel.updateEventInfo("isEventDeleted", if (it.isEventDeleted == true) "yes" else "no")
+    }
+
 
     private fun validateFields() {
         lifecycleScope.launch {
@@ -96,6 +180,13 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initializeListeners() {
+        binding.saveEventBtn.setOnClickListener {
+            if (key == "create") {
+                viewModel.saveEvent()
+            } else if (key == "update") {
+                viewModel.saveEvent()
+            }
+        }
         with(binding) {
             eventTitle.addTextChangedListener {
                 viewModel.updateEventInfo("eventTitle", it.toString())
@@ -247,10 +338,10 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
                     if (result) {
                         binding.eventStartTime.error = null
                         binding.eventEndTime.error = null
-                        binding.timeError.visibility=View.GONE
+                        binding.timeError.visibility = View.GONE
                     } else {
-                        binding.timeError.visibility=View.VISIBLE
-                        binding.timeError.text=msg
+                        binding.timeError.visibility = View.VISIBLE
+                        binding.timeError.text = msg
                         when (fieldType) {
                             "start" -> binding.eventStartTime.error = msg
                             "end" -> binding.eventEndTime.error = msg
@@ -290,7 +381,11 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun observeSaveEventState() {
-        viewModel.saveEvent()
+        if (key == "create") {
+            viewModel.saveEvent()
+        } else {
+            viewModel.updateEvent()
+        }
         lifecycleScope.launch {
             viewModel.states.collect { result ->
                 when (result) {
