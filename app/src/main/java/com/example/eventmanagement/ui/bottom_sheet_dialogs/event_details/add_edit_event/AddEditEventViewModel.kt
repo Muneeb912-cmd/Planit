@@ -5,13 +5,21 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.example.eventmanagement.models.EventData
+import com.example.eventmanagement.models.OperationType
+import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
+import com.example.eventmanagement.repository.room_db.Converters
+import com.example.eventmanagement.repository.room_db.PendingOperationDao
+import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.utils.Response
 import com.example.eventmanagement.utils.Validators
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -21,7 +29,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditEventViewModel @Inject constructor(
     private val validators: Validators,
-    private val eventDataMethods: EventDataMethods
+    private val eventDataMethods: EventDataMethods,
+    private val connectivityObserver: ConnectivityObserver,
+    private val pendingOperationDao: PendingOperationDao,
+    private val converters: Converters
 ) : ViewModel() {
 
     private val _events = MutableStateFlow(EventData())
@@ -169,28 +180,79 @@ class AddEditEventViewModel @Inject constructor(
     fun saveEvent() {
         updateEventStatus()
         updateEventInfo("isEventDeleted","No")
+        Log.d("InternetConnectivity", "saveEvent: ${connectivityObserver.isConnected}")
         _states.value = Response.Loading
-        eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
-            if (dataUploaded) {
-                _states.value = Response.Success(Unit)
-            } else {
-                _states.value = Response.Error(Exception(msg))
+        saveEventAsPendingOperation(eventsData.value,"ADD")
+        _states.value = Response.Success(Unit)
+//        eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
+//            if (dataUploaded) {
+//                _states.value = Response.Success(Unit)
+//            } else {
+//                _states.value = Response.Error(Exception(msg))
+//            }
+//        }
+//        if(connectivityObserver.isConnected){
+//            eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
+//                if (dataUploaded) {
+//                    _states.value = Response.Success(Unit)
+//                } else {
+//                    _states.value = Response.Error(Exception(msg))
+//                }
+//            }
+//        }else {
+//            saveEventAsPendingOperation(eventsData.value,"ADD")
+//            _states.value = Response.Success(Unit)
+//        }
+    }
+
+    private fun saveEventAsPendingOperation(eventData: EventData?, operation: String) {
+        if (eventData != null) {
+            val jsonData = converters.fromEvent(eventData)
+            val operationType = when(operation) {
+                "ADD" -> OperationType.ADD
+                "UPDATE" -> OperationType.UPDATE
+                "DELETE" -> OperationType.DELETE
+                else -> throw IllegalArgumentException("Invalid operation type")
             }
+            val pendingOperation = PendingOperations(
+                operationType = operationType,
+                documentId = eventData.eventId.toString(),
+                data = jsonData,
+                userId = eventData.eventCreatedBy.toString(),
+                eventId = eventData.eventId.toString(),
+                dataType = "event"
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                pendingOperationDao.insert(pendingOperation)
+            }
+        } else {
+            _states.value = Response.Error(Exception("Event data is null"))
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateEvent() {
         updateEventStatus()
         updateEventInfo("isEventDeleted","No")
         _states.value = Response.Loading
-        eventDataMethods.updateEventById(eventsData.value.eventId.toString(),eventsData.value) { dataUpdated ->
-            if (dataUpdated) {
-                _states.value = Response.Success(Unit)
-            } else {
-                _states.value = Response.Error(Exception("Error: Couldn't update event"))
-            }
-        }
+        saveEventAsPendingOperation(eventsData.value,"UPDATE")
+        _states.value = Response.Success(Unit)
+//        if(connectivityObserver.isConnected) {
+//            eventDataMethods.updateEventById(
+//                eventsData.value.eventId.toString(),
+//                eventsData.value
+//            ) { dataUpdated ->
+//                if (dataUpdated) {
+//                    _states.value = Response.Success(Unit)
+//                } else {
+//                    _states.value = Response.Error(Exception("Error: Couldn't update event"))
+//                }
+//            }
+//        }else{
+//            saveEventAsPendingOperation(eventsData.value,"UPDATE")
+//            _states.value = Response.Success(Unit)
+//        }
     }
 
     fun validateEventTiming(

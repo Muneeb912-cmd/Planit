@@ -11,6 +11,6 @@ interface InviteMethods {
     fun observeAllInvites(onResult: (List<Invites>) -> Unit)
 
     fun observeCurrentUserInvites(onResult: (List<Invites>) -> Unit)
-    fun deleteInvite(eventId: String, userId:String, onResult: (Boolean) -> Unit)
+    fun deleteInvite(eventId: String, receiverId:String, onResult: (Boolean) -> Unit)
     fun updateInviteStatus(inviteId: String, newStatus: String, onResult: (Boolean) -> Unit)
 }

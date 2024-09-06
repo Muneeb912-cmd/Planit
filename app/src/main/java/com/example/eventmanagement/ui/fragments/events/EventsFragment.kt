@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.FeaturedEventAdapter
-import com.example.eventmanagement.adapters.ManageEventAdapter
 import com.example.eventmanagement.adapters.PopularEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentEventsBinding
 import com.example.eventmanagement.di.Categories
@@ -141,14 +140,14 @@ class EventsFragment : Fragment(),
     private fun observeViewModel() {
         lifecycleScope.launch {
             launch { sharedViewModel.allEvents.collect { filterFeaturedEvents() } }
-            launch { sharedViewModel.allFavEvents.collect {favEvents->
+            launch { sharedViewModel.allFavEvents.collect { favEvents ->
                 (binding.recyclerViewPromotionCards.adapter as? FeaturedEventAdapter)?.submitFavEventsList(
                     favEvents
                 )
                 (binding.recyclerViewEventCards.adapter as? PopularEventCardAdapter)?.submitFavEventsList(
                     favEvents
                 )
-            }}
+            } }
         }
     }
 
@@ -170,7 +169,6 @@ class EventsFragment : Fragment(),
         (binding.recyclerViewEventCards.adapter as? PopularEventCardAdapter)?.submitList(
             filteredPopularEvents
         )
-
     }
 
     private fun handleSearch(query: String) {
@@ -227,11 +225,9 @@ class EventsFragment : Fragment(),
         }
     }
 
-
     private fun animateViewVisibility(view: View, visibility: Int) {
         val duration = 300L
         view.animate()
-            .translationY(if (visibility == View.VISIBLE) 0f else -view.height.toFloat())
             .alpha(if (visibility == View.VISIBLE) 1f else 0f)
             .setDuration(duration)
             .setInterpolator(android.view.animation.AccelerateDecelerateInterpolator())
@@ -242,21 +238,6 @@ class EventsFragment : Fragment(),
 
     override fun onEventCardClick(cardData: EventData) {
         showEventDetails(cardData)
-    }
-
-    override fun onFeaturedEventCardClick(cardData: EventData) {
-        showEventDetails(cardData)
-    }
-
-    private fun showEventDetails(cardData: EventData) {
-        if (!isEventDetailsBottomSheetShown) {
-            isEventDetailsBottomSheetShown = true
-            val bottomSheetFragment = EventDetailsFragment(cardData)
-            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
-            bottomSheetFragment.setOnDismissListener {
-                isEventDetailsBottomSheetShown = false
-            }
-        }
     }
 
     override fun onFavIconClick(cardData: EventData) {
@@ -284,4 +265,20 @@ class EventsFragment : Fragment(),
         Toast.makeText(requireContext(), if (result) message else "Error: $msg", Toast.LENGTH_SHORT)
             .show()
     }
+
+    override fun onFeaturedEventCardClick(cardData: EventData) {
+        showEventDetails(cardData)
+    }
+
+    private fun showEventDetails(cardData: EventData) {
+        if (!isEventDetailsBottomSheetShown) {
+            isEventDetailsBottomSheetShown = true
+            val bottomSheetFragment = EventDetailsFragment(cardData)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEventDetailsBottomSheetShown = false
+            }
+        }
+    }
+
 }

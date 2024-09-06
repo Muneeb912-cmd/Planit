@@ -10,6 +10,6 @@ data class EventInvites (
     var eventTiming: String?=null,
     var eventDate: String?=null,
     var senderName: String?=null,
-    var inviteTime: Timestamp?=null,
+    var inviteTime: String?=null,
     var inviteStatus: String?=null,
 )

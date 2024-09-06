@@ -90,8 +90,8 @@ class UserManagementFragment : Fragment(), UserDataAdapter.OnItemClickListener {
 
     private fun filterUsers(selectedTabPosition: Int) {
         filteredUsers = when (selectedTabPosition) {
-            0 -> sharedViewModel.allUsers.value.filter { it.isUserBanned == false && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
-            1 -> sharedViewModel.allUsers.value.filter { it.isUserBanned == true && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
+            0 -> sharedViewModel.allUsers.value.filter { it.userBanned == false && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
+            1 -> sharedViewModel.allUsers.value.filter { it.userBanned == true && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
             else -> sharedViewModel.allUsers.value
         }
         Log.d("Users", "filterEvents: ${sharedViewModel.allUsers.value}")
@@ -111,9 +111,9 @@ class UserManagementFragment : Fragment(), UserDataAdapter.OnItemClickListener {
 
     private fun updateTabTitles(users: List<User.UserData>) {
         val userCount =
-            users.count { it.isUserBanned == false && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
+            users.count { it.userBanned == false && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
         val bandedUsersCount =
-            users.count { it.isUserBanned == true && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
+            users.count { it.userBanned == true && it.userId != sharedViewModel.currentUser.value?.userId.toString() }
 
         binding.tabLayout.getTabAt(0)?.text = "Users ($userCount)"
         binding.tabLayout.getTabAt(1)?.text = "Suspended Users ($bandedUsersCount)"

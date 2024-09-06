@@ -72,13 +72,13 @@ class InviteMethodsImpl @Inject constructor(
         }
     }
 
-    override fun deleteInvite(eventId: String, userId: String, onResult: (Boolean) -> Unit) {
+    override fun deleteInvite(eventId: String, receiverId: String, onResult: (Boolean) -> Unit) {
         val invitesRef = firestore.collection("Invites")
 
         // Query to find the document with the matching eventId and userId
         invitesRef
             .whereEqualTo("eventId", eventId)
-            .whereEqualTo("receiverId", userId)
+            .whereEqualTo("receiverId", receiverId)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {

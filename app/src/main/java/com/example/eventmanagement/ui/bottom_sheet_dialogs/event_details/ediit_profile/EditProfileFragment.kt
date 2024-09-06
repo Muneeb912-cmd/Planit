@@ -34,12 +34,12 @@ class EditProfileFragment(
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentEditProfileBinding
-    private val userDataViewModel: SharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
     private val viewModel: EditProfileViewModel by viewModels()
-    private var userImg: String = ""
+    private lateinit var userImg: String
     private var onDismissListener: (() -> Unit)? = null
-    private var currentEmail:String=""
+    private var currentEmail: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,8 +65,8 @@ class EditProfileFragment(
             populateCurrentUserData()
         }
         initializeListeners()
+        userImg=userData?.userImg.toString()
     }
-
 
 
     private fun initializeListeners() {
@@ -91,38 +91,33 @@ class EditProfileFragment(
     @SuppressLint("SetTextI18n")
     private fun updateUserData() {
         val userName = binding.fullName.text.toString()
-        val userEmail = binding.userEmail.text.toString()
         val userPhone = binding.userPhone.text.toString()
         val userDob = binding.userDob.text.toString()
         val userId = if (key == "Modify") {
             userData?.userId
         } else {
-            userDataViewModel.currentUser.value?.userId.toString()
+            sharedViewModel.currentUser.value?.userId.toString()
         }
 
         viewModel.updateUserData(
             userId.toString(),
             userName,
-            userEmail,
             userPhone,
             userDob,
-            userImg,
-            currentEmail
+            userImg
         )
 
         lifecycleScope.launch {
             viewModel.editDataStates.collect { response ->
                 when (response) {
                     is Response.Success -> {
-                        if (userEmail != currentEmail) {
-                            showEmailVerificationDialog()
-                        } else {
-                            binding.msgTv.visibility = View.VISIBLE
-                            binding.msgTv.text = "User Data successfully updated!"
-                            binding.updateUserBtn.text = "Update"
-                            binding.updateUserBtn.isClickable = true
-                            dismiss()
-                        }
+
+                        binding.msgTv.visibility = View.VISIBLE
+                        binding.msgTv.text = "User Data successfully updated!"
+                        binding.updateUserBtn.text = "Update"
+                        binding.updateUserBtn.isClickable = true
+                        dismiss()
+
                     }
 
                     is Response.Error -> {
@@ -141,23 +136,10 @@ class EditProfileFragment(
         }
     }
 
-    private fun showEmailVerificationDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Email Verification")
-            .setMessage("Your email has been updated. Please verify your new email address by checking your inbox.")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.cancel()
-            }
-            .show()
-    }
-
-
     @SuppressLint("SetTextI18n")
     private fun populateUserDataFromParams() {
         with(binding) {
             fullName.setText(userData?.userName)
-            userEmail.setText(userData?.userEmail)
-            currentEmail=userData?.userEmail.toString()
             userPhone.setText(userData?.userPhone)
             userDob.setText(userData?.userDob)
             Glide.with(requireContext())
@@ -169,7 +151,7 @@ class EditProfileFragment(
                 )
                 .into(addImage)
 
-            if (userData?.isUserBanned == true) {
+            if (userData?.userBanned == true) {
                 banUserBtn.text = "Un-Suspend User"
             } else {
                 banUserBtn.text = "Suspend User"
@@ -180,15 +162,24 @@ class EditProfileFragment(
             }
         }
     }
+
     private fun toggleUserBanStatus() {
-        val newBanStatus = !(userData?.isUserBanned ?: false)
+        val newBanStatus = !(userData?.userBanned ?: false)
         val newButtonText = if (newBanStatus) "Un-Suspend User" else "Suspend User"
-        viewModel.updateUserBanStatus(userData?.userId ?: "", newBanStatus){result->
-            if (result){
-                Toast.makeText(requireContext(),"User Account Suspend Status Updated!",Toast.LENGTH_SHORT).show()
+        viewModel.updateUserBanStatus(userData?.userId ?: "", newBanStatus) { result ->
+            if (result) {
+                Toast.makeText(
+                    requireContext(),
+                    "User Account Suspend Status Updated!",
+                    Toast.LENGTH_SHORT
+                ).show()
                 dismiss()
-            }else{
-                Toast.makeText(requireContext(),"Error Suspending User Account",Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Error Suspending User Account",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         binding.banUserBtn.text = newButtonText
@@ -196,13 +187,12 @@ class EditProfileFragment(
 
     private fun populateCurrentUserData() {
         with(binding) {
-            fullName.setText(userDataViewModel.currentUser.value?.userName)
-            userEmail.setText(userDataViewModel.currentUser.value?.userEmail)
-            currentEmail=userDataViewModel.currentUser.value?.userEmail.toString()
-            userPhone.setText(userDataViewModel.currentUser.value?.userPhone)
-            userDob.setText(userDataViewModel.currentUser.value?.userDob)
+            fullName.setText(sharedViewModel.currentUser.value?.userName)
+            currentEmail = sharedViewModel.currentUser.value?.userEmail.toString()
+            userPhone.setText(sharedViewModel.currentUser.value?.userPhone)
+            userDob.setText(sharedViewModel.currentUser.value?.userDob)
             Glide.with(requireContext())
-                .load(userDataViewModel.currentUser.value?.userImg)
+                .load(sharedViewModel.currentUser.value?.userImg)
                 .apply(
                     RequestOptions()
                         .placeholder(R.drawable.ic_placeholder)

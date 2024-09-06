@@ -19,7 +19,6 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.HomeEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentHomeBinding
 import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event.AddEditEventFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.kizitonwose.calendar.core.CalendarDay
@@ -74,7 +73,6 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
         observeEvents()
         binding.monthsContainer.prevMonthButton.setOnClickListener { navigateToPreviousMonth() }
         binding.monthsContainer.nextMonthButton.setOnClickListener { navigateToNextMonth() }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -86,16 +84,15 @@ class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
                     setupCalendarView()
                 }
             }
-            launch {
-                sharedViewModel.allFavEvents.collect {
-                    (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFavEvents(
-                        sharedViewModel.allFavEvents.value
-                    )
-                }
+        }
+        lifecycleScope.launch {
+            sharedViewModel.allFavEvents.collect { favEvents ->
+                (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFavEvents(
+                    favEvents
+                )
             }
         }
     }
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)

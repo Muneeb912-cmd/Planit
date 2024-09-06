@@ -1,11 +1,15 @@
 package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.ediit_profile
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.eventmanagement.repository.firebase.login_signup.LoginSignUpMethods
-import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
+import com.example.eventmanagement.models.OperationType
+import com.example.eventmanagement.models.PendingOperations
+import com.example.eventmanagement.models.UserUpdate
+import com.example.eventmanagement.repository.room_db.Converters
+import com.example.eventmanagement.repository.room_db.PendingOperationDao
 import com.example.eventmanagement.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
-    private val userDataMethods: UserDataMethods,
-    private val loginSignUpMethods: LoginSignUpMethods
+    private val pendingOperationDao: PendingOperationDao,
+    private val converters: Converters
 ) : ViewModel() {
 
     private val _states = MutableStateFlow<Response<Unit>>(Response.Loading)
@@ -24,39 +28,62 @@ class EditProfileViewModel @Inject constructor(
     fun updateUserData(
         userId: String,
         userName: String,
-        userEmail: String,
         userPhone: String,
         userDob: String,
         userImg: String,
-        currentUserEmail:String?
     ) {
         _states.value = Response.Loading
-        viewModelScope.launch {
-            userDataMethods.updateUserProfile(
-                userId, userName, userEmail, userPhone, userDob, userImg,currentUserEmail
-            ) { result ->
-                if (result) {
-                    _states.value = Response.Success(Unit)
-                } else {
-                    _states.value = Response.Error(Exception("Error Updating User Data!"))
-                }
+        val updateData = UserUpdate(
+            userId=userId,
+            userName = userName,
+            userPhone = userPhone,
+            userDob = userDob,
+            userImg = userImg
+        )
+        val jsonData = converters.fromUpdateUser(updateData)
+        val pendingOperation = PendingOperations(
+            operationType = OperationType.UPDATE,
+            documentId = userId,
+            data = jsonData,
+            userId = userId,
+            eventId = "",
+            dataType = "user"
+        )
+        CoroutineScope(Dispatchers.IO).launch {
+            val count = pendingOperationDao.countByDocumentId(userId, "UPDATE", "user")
+            if (count > 0) {
+                pendingOperationDao.updateByDocumentId(userId, "UPDATE", "user", jsonData)
+            } else {
+                pendingOperationDao.insert(pendingOperation)
             }
         }
+        _states.value = Response.Success(Unit)
     }
 
-    fun updateUserBanStatus(userId:String,banStatus:Boolean, onResult: (Boolean) -> Unit){
-        viewModelScope.launch {
-            userDataMethods.updateUserBanStatus(
-                userId,
-                banStatus
-            ){result->
-                if(result){
-                    onResult(true)
-                }else{
-                    onResult(false)
-                }
+    fun updateUserBanStatus(userId: String, banStatus: Boolean, onResult: (Boolean) -> Unit) {
+        val pendingOperation = PendingOperations(
+            operationType = OperationType.UPDATE,
+            documentId = userId,
+            data = banStatus.toString(),
+            userId = userId,
+            eventId = "",
+            dataType = "user_suspension_status"
+        )
+        CoroutineScope(Dispatchers.IO).launch {
+            val count =
+                pendingOperationDao.countByDocumentId(userId, "UPDATE", "user_suspension_status")
+            if (count > 0) {
+                pendingOperationDao.updateByDocumentId(
+                    userId,
+                    "UPDATE",
+                    "user_suspension_status",
+                    banStatus.toString()
+                )
+            } else {
+                pendingOperationDao.insert(pendingOperation)
             }
         }
+        onResult(true)
     }
 
 }

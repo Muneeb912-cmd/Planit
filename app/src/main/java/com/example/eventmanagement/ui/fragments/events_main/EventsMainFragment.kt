@@ -83,7 +83,7 @@ class EventsMainFragment : Fragment() {
     private fun observeUser(){
         lifecycleScope.launch {
             sharedViewModel.currentUser.collect{userData->
-                if(userData?.isUserBanned == true){
+                if(userData?.userBanned == true){
                     showAlertDialog("Attention","Your account is suspended by admin. Kindly contact with admin for more information at:\n\n dukocommunity@gmail.com",R.drawable.ic_attention)
                 }
             }

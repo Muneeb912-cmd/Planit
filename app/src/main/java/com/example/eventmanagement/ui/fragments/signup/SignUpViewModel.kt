@@ -55,10 +55,10 @@ class SignUpViewModel @Inject constructor(
             userImg = if (key == "img") value else currentUser.userImg,
             userLocation = if (key == "location") value else currentUser.userLocation,
             userLoginType = if (key == "loginType") value else currentUser.userLoginType,
-            isProfilePrivate = if (key == "profile") value == "Yes" else currentUser.isProfilePrivate,
-            isNotificationsAllowed = if (key == "notification") value == "Yes" else currentUser.isNotificationsAllowed,
+            profilePrivate = if (key == "profile") value == "Yes" else currentUser.profilePrivate,
+            notificationsAllowed = if (key == "notification") value == "Yes" else currentUser.notificationsAllowed,
             userId = if (key == "userId") value else currentUser.userId,
-            isUserBanned = if (key == "userBanned") value == "Yes" else currentUser.isUserBanned
+            userBanned = if (key == "userBanned") value == "Yes" else currentUser.userBanned
         )
         validateField(key, value)
         checkIfDataComplete()

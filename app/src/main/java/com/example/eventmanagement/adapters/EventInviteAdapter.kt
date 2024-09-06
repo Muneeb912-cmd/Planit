@@ -39,6 +39,13 @@ class EventInviteAdapter(
         return invites.size
     }
 
+    private fun parseDateTimeAndFormatTime(dateTime: String): String {
+        val inputFormat = SimpleDateFormat("MMMM dd, yyyy 'at' h:mm:ss a z", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("h:mm:ss a", Locale.getDefault())
+        val date = inputFormat.parse(dateTime)
+        return date?.let { timeFormat.format(it) } ?: ""
+    }
+
     inner class EventCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         private val acceptIcon: View = itemView.findViewById(R.id.acceptBtn)
@@ -54,11 +61,7 @@ class EventInviteAdapter(
             itemView.findViewById<TextView>(R.id.inviteSender).text =
                 "Sender Name: ${invite.senderName}"
             itemView.findViewById<TextView>(R.id.inviteTime).text = "Sent On: ${
-                invite.inviteTime?.let {
-                    formatTimestampToTime(
-                        it
-                    )
-                }
+                parseDateTimeAndFormatTime(invite.inviteTime.toString())
             }"
 
             when (invite.inviteStatus) {
@@ -66,10 +69,12 @@ class EventInviteAdapter(
                     acceptIcon.visibility = View.GONE
                     rejectIcon.visibility = View.GONE
                 }
+
                 "expired" -> {
                     acceptIcon.visibility = View.GONE
                     rejectIcon.visibility = View.GONE
                 }
+
                 else -> {
                     acceptIcon.visibility = View.VISIBLE
                     rejectIcon.visibility = View.VISIBLE

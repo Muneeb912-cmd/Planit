@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -103,5 +106,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-places:17.1.0")
     implementation("com.google.firebase:firebase-messaging:24.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
-
+    runtimeOnly("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    runtimeOnly("androidx.room:room-runtime:2.6.1")
+    implementation ("com.squareup.moshi:moshi:1.15.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
 }

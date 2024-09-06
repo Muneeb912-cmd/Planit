@@ -1,18 +1,21 @@
 package com.example.eventmanagement.ui.activities.fav_events
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.FavEventAdapter
 import com.example.eventmanagement.databinding.ActivityFavEventBinding
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,11 +40,25 @@ class FavEventActivity : AppCompatActivity(), FavEventAdapter.EventCardClickList
 
     private fun observeFavEvents() {
         lifecycleScope.launch {
-            sharedViewModel.allFavEvents.collect { events ->
-                if (events.isNotEmpty()) {
-                    binding.favEventsList.visibility = View.VISIBLE
-                    binding.noEventTv.visibility = View.GONE
-                    eventsByFavs()
+            // Combine both flows to react to changes in either
+            sharedViewModel.allFavEvents.combine(sharedViewModel.allEvents) { allFavEvents, allEvents ->
+                Pair(allFavEvents, allEvents)
+            }.collect { (allFavEvents, allEvents) ->
+                Log.d("FavEventActivity", "All Fav Events: $allFavEvents")
+                Log.d("FavEventActivity", "All Events: $allEvents")
+
+                if (allFavEvents.isNotEmpty() && allEvents.isNotEmpty()) {
+                    val filteredFavEvents = allEvents.filter { event ->
+                        allFavEvents.contains(event.eventId)
+                    }
+                    if (filteredFavEvents.isNotEmpty()) {
+                        binding.favEventsList.visibility = View.VISIBLE
+                        binding.noEventTv.visibility = View.GONE
+                        adapter.updatedFavEvents(filteredFavEvents)
+                    } else {
+                        binding.favEventsList.visibility = View.GONE
+                        binding.noEventTv.visibility = View.VISIBLE
+                    }
                 } else {
                     binding.favEventsList.visibility = View.GONE
                     binding.noEventTv.visibility = View.VISIBLE
@@ -49,6 +66,7 @@ class FavEventActivity : AppCompatActivity(), FavEventAdapter.EventCardClickList
             }
         }
     }
+
 
     private fun eventsByFavs() {
         val filteredFavEvents = sharedViewModel.allEvents.value.filter { event ->

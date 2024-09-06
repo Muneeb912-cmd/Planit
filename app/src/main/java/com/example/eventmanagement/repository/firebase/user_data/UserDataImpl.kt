@@ -14,8 +14,8 @@ import javax.inject.Inject
 class UserDataImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val preferences: PreferencesUtil,
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage,
+    private val preferences: PreferencesUtil
 ) : UserDataMethods {
     override suspend fun getAllUserData(): List<User.UserData> {
         return try {
@@ -119,21 +119,19 @@ class UserDataImpl @Inject constructor(
     override suspend fun updateUserProfile(
         userId: String,
         userName: String,
-        userEmail: String,
         userPhone: String,
         userDob: String,
         userImg: String,
-        currentEmail: String?,
         onResult: (Boolean) -> Unit
     ) {
         try {
             val updates = mutableMapOf<String, Any>(
                 "userName" to userName,
                 "userPhone" to userPhone,
-                "userDob" to userDob
+                "userDob" to userDob,
+                "userImg" to userImg
             )
 
-            // Handle image upload if userImg is not empty
             if (userImg.isNotEmpty()) {
                 val storageRef = firebaseStorage.reference
                 val userImgRef = storageRef.child("ProfileImages/$userId")
@@ -141,23 +139,6 @@ class UserDataImpl @Inject constructor(
                 val downloadUrl = userImgRef.downloadUrl.await()
                 updates["userImg"] = downloadUrl.toString()
             }
-
-            // Handle email update if userEmail is different from currentEmail
-            if (currentEmail != null && userEmail != currentEmail) {
-                val signInMethods = auth.fetchSignInMethodsForEmail(userEmail).await()
-                if (signInMethods.signInMethods?.isNotEmpty() == true) {
-                    onResult(false)
-                    return
-                }
-
-                updates["userEmail"] = userEmail
-                val firebaseUser = auth.currentUser
-                if (firebaseUser != null && firebaseUser.email == currentEmail) {
-                    firebaseUser.updateEmail(userEmail).await()
-                    firebaseUser.sendEmailVerification().await()
-                }
-            }
-
             firestore.collection("UserData")
                 .document(userId)
                 .update(updates)
@@ -168,7 +149,6 @@ class UserDataImpl @Inject constructor(
             onResult(false)
         }
     }
-
 
     private var currentUserListener: ListenerRegistration? = null
     private var usersListener: ListenerRegistration? = null
@@ -190,6 +170,9 @@ class UserDataImpl @Inject constructor(
                 }
                 if (snapshot != null && snapshot.exists()) {
                     val userData = snapshot.toObject(User.UserData::class.java)
+                    if (userData != null) {
+                        preferences.updateUser(userData)
+                    }
                     onResult(userData)
                 } else {
                     onResult(null)

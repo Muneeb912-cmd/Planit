@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.eventmanagement.databinding.FragmentEventDetailsBinding
+import com.example.eventmanagement.models.Attendees
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -47,10 +48,10 @@ class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogF
         mapView.getMapAsync(this)
         val latLng = cardData.eventLong + "," + cardData.eventLat
         eventLocation = parseLocation(latLng)
+        observeEventAttendees()
 
         if(sharedViewModel.currentUser.value?.userRole!="Admin"){
-            viewModel.observeEventAttendees(cardData.eventId.toString())
-            observeEventAttendees()
+            binding.attendingEventLayout.visibility=View.VISIBLE
         }else{
             binding.attendingEventLayout.visibility=View.GONE
         }
@@ -74,28 +75,39 @@ class EventDetailsFragment(private val cardData: EventData) : BottomSheetDialogF
             if (cardData.eventStatus == "Missed") {
                 attendingTv.text = "You missed the Event!"
                 attendingToggleButton.visibility = View.GONE
+            } else {
+                attendingToggleButton.visibility = View.VISIBLE
+                attendingToggleButton.setOnCheckedChangeListener(null)
+                attendingToggleButton.isChecked = false
             }
-
-            attendingToggleButton.setOnCheckedChangeListener { _, isChecked ->
+            updateToggleButtonState(sharedViewModel.observeCurrentUserFromAttendees.value)
+            binding.attendingToggleButton.setOnCheckedChangeListener { _, isChecked ->
                 handleToggleButtonState(isChecked)
             }
         }
     }
 
-    private fun updateToggleButtonState(attendees: List<String>) {
-        val isAttending = attendees.contains(sharedViewModel.currentUser.value?.userId.toString())
+
+    private fun updateToggleButtonState(attendees: List<Attendees>) {
+        val currentUserId = sharedViewModel.currentUser.value?.userId.toString()
+        val currentEventId = cardData.eventId.toString()
+        val isAttending = attendees.any { attendee ->
+            attendee.userId == currentUserId && attendee.eventId == currentEventId
+        }
         Log.d("EventDetails", "User is attending: $isAttending")
         binding.attendingToggleButton.isChecked = isAttending
     }
 
+
     private fun observeEventAttendees(){
         lifecycleScope.launch {
-            viewModel.eventAttendee.collect { attendees ->
+            sharedViewModel.observeCurrentUserFromAttendees.collect { attendees ->
                 Log.d("EventDetails", "Attendees updated: $attendees")
                 updateToggleButtonState(attendees)
             }
         }
     }
+
 
     private fun handleToggleButtonState(isChecked: Boolean) {
         if (isChecked) {

@@ -65,9 +65,9 @@ class ProfileFragment : Fragment() {
             .into(binding.userProfileImg)
 
         binding.notificationToggle.isChecked =
-            sharedViewModel.currentUser.value?.isNotificationsAllowed == true
+            sharedViewModel.currentUser.value?.notificationsAllowed == true
         binding.profileToggle.isChecked =
-            sharedViewModel.currentUser.value?.isProfilePrivate == true
+            sharedViewModel.currentUser.value?.profilePrivate == true
 
         if (sharedViewModel.currentUser.value?.userLoginType == "google") binding.passwordRestLayout.visibility =
             View.GONE

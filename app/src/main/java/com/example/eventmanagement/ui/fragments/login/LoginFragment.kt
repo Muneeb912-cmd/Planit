@@ -2,7 +2,6 @@ package com.example.eventmanagement.ui.fragments.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.service.autofill.UserData
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,7 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentLoginBinding
 import com.example.eventmanagement.models.User
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.utils.Response
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -33,6 +34,8 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val viewModel: LoginViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    @Inject
+    lateinit var connectivityObserver: ConnectivityObserver
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +50,7 @@ class LoginFragment : Fragment() {
         setupListeners()
         checkUserPrefs()
     }
+
 
     private fun checkUserPrefs() {
         viewModel.checkUserInPrefs { userExists, userRole ->
@@ -164,7 +168,7 @@ class LoginFragment : Fragment() {
             val user = users.firstOrNull { it.userId == currentUserId }
             sharedViewModel.initializeObservers()
             user?.let {
-                if (it.isUserBanned == true) {
+                if (it.userBanned == true) {
                     handleBannedUser()
                 } else {
                     saveUserAndNavigate(it)

@@ -1,5 +1,6 @@
 package com.example.eventmanagement.repository.firebase.events_data
 
+import android.util.Log
 import com.example.eventmanagement.models.Attendees
 import com.example.eventmanagement.models.EventData
 import com.google.firebase.firestore.FirebaseFirestore
@@ -143,15 +144,15 @@ class EventsDataMethodsImpl @Inject constructor(
 
     override fun addEventToUserFav(
         userId: String,
-        eventData: EventData,
+        eventId: String,
         onResult: (Boolean, String) -> Unit
     ) {
         val userFavEventsRef = firestore.collection("UserData")
             .document(userId)
             .collection("FavEvents")
-            .document(eventData.eventId.toString())
+            .document(eventId)
 
-        val data = mapOf("eventId" to eventData.eventId.toString())
+        val data = mapOf("eventId" to eventId)
 
         userFavEventsRef.set(data).addOnSuccessListener {
             onResult(true, "")
@@ -163,13 +164,13 @@ class EventsDataMethodsImpl @Inject constructor(
 
     override fun removeEventFromUserFav(
         userId: String,
-        eventData: EventData,
+        eventId: String,
         onResult: (Boolean, String) -> Unit
     ) {
         val userFavEventsRef = firestore.collection("UserData")
             .document(userId)
             .collection("FavEvents")
-            .document(eventData.eventId.toString())
+            .document(eventId)
 
         userFavEventsRef.delete().addOnSuccessListener {
             onResult(true, "Event removed from favorites successfully.")
@@ -204,30 +205,37 @@ class EventsDataMethodsImpl @Inject constructor(
         }
     }
 
-    // Method to add an attendee and update the count of people attending
+
     override fun addAttendeeUpdatePeopleGoingCount(
         eventId: String,
         userId: String,
         onResult: (Boolean) -> Unit
     ) {
         val eventRef = firestore.collection("Events").document(eventId)
-        val attendeeRef = firestore.collection("Attendees").document(eventId)
+        val attendeesCollection = firestore.collection("Attendees")
 
         firestore.runTransaction { transaction ->
             val eventSnapshot = transaction.get(eventRef)
-            val attendeeSnapshot = transaction.get(attendeeRef)
+            val newDocumentRef = attendeesCollection.document()
+            val docId = newDocumentRef.id
+            val attendeeSnapshot = transaction.get(attendeesCollection.document(docId))
 
             if (!attendeeSnapshot.exists()) {
-                val newAttendee = mapOf("userId" to userId, "eventId" to eventId)
-                transaction.set(attendeeRef, newAttendee)
+
+                val newAttendee = mapOf(
+                    "attendeeId" to docId,
+                    "userId" to userId,
+                    "eventId" to eventId
+                )
+                transaction.set(newDocumentRef, newAttendee)
             } else {
                 throw Exception("User is already an attendee.")
             }
 
             val currentPeopleAttending = eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
             val updatedPeopleAttending = currentPeopleAttending + 1
-
             transaction.update(eventRef, "numberOfPeopleAttending", updatedPeopleAttending)
+            null
         }.addOnSuccessListener {
             onResult(true)
         }.addOnFailureListener {
@@ -235,35 +243,53 @@ class EventsDataMethodsImpl @Inject constructor(
         }
     }
 
-    // Method to remove an attendee and update the count of people attending
+
+
     override fun removeAttendeeUpdatePeopleGoingCount(
         eventId: String,
         userId: String,
         onResult: (Boolean) -> Unit
     ) {
         val eventRef = firestore.collection("Events").document(eventId)
-        val attendeeRef = firestore.collection("Attendees").document(eventId)
 
-        firestore.runTransaction { transaction ->
-            val eventSnapshot = transaction.get(eventRef)
-            val attendeeSnapshot = transaction.get(attendeeRef)
+        firestore.collection("Attendees")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("eventId", eventId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val attendeeDoc = querySnapshot.documents[0].reference
 
-            if (attendeeSnapshot.exists()) {
-                transaction.delete(attendeeRef)
-            } else {
-                throw Exception("User is not an attendee.")
+                    firestore.runTransaction { transaction ->
+                        val eventSnapshot = transaction.get(eventRef)
+                        val attendeeSnapshot = transaction.get(attendeeDoc)
+
+                        if (attendeeSnapshot.exists()) {
+                            transaction.delete(attendeeDoc)
+                        } else {
+                            throw Exception("User is not an attendee.")
+                        }
+
+                        val currentPeopleAttending = eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
+                        val updatedPeopleAttending = currentPeopleAttending - 1
+
+                        transaction.update(eventRef, "numberOfPeopleAttending", updatedPeopleAttending)
+                    }.addOnSuccessListener {
+                        onResult(true)
+                    }.addOnFailureListener { exception ->
+                        Log.e("FirestoreTransaction", "Transaction failed: ${exception.message}")
+                        onResult(false)
+                    }
+                } else {
+                    // No attendee found with the matching userId and eventId
+                    onResult(false)
+                }
+            }.addOnFailureListener { exception ->
+                Log.e("FirestoreQuery", "Query failed: ${exception.message}")
+                onResult(false)
             }
-
-            val currentPeopleAttending = eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
-            val updatedPeopleAttending = currentPeopleAttending - 1
-
-            transaction.update(eventRef, "numberOfPeopleAttending", updatedPeopleAttending)
-        }.addOnSuccessListener {
-            onResult(true)
-        }.addOnFailureListener {
-            onResult(false)
-        }
     }
+
 
     // Method to observe attendees by eventId
     override fun observeAttendeesByEventId(eventId: String, onResult: (Boolean, List<String>) -> Unit) {

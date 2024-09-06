@@ -13,13 +13,13 @@ interface EventDataMethods {
     fun saveEvent(eventData: EventData, onResult: (Boolean, String) -> Unit)
     fun addEventToUserFav(
         userId: String,
-        eventData: EventData,
+        eventId: String,
         onResult: (Boolean, String) -> Unit
     )
 
     fun removeEventFromUserFav(
         userId: String,
-        eventData: EventData,
+        eventId: String,
         onResult: (Boolean, String) -> Unit
     )
 

@@ -88,8 +88,22 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
 
             else -> sharedViewModel.allUsers.value
         }
+
+        updateTabTitles()
+
         adapter.updatedUsersList(filteredUsers)
         adapter.updatedCurrentEventInvites(currentEventInvites)
+    }
+
+    private fun updateTabTitles() {
+        val allInvites = sharedViewModel.allInvites.value
+        val sentCount = allInvites.count { it.eventId == eventId }
+        val unsentCount = sharedViewModel.allUsers.value.count { user ->
+            user.userId != sharedViewModel.currentUser.value?.userId.toString() && allInvites.none { invite -> invite.receiverId == user.userId && invite.eventId == eventId }
+        }
+
+        binding.tabLayout.getTabAt(0)?.text = "Unsent Invites ($unsentCount)"
+        binding.tabLayout.getTabAt(1)?.text = "Sent Invites ($sentCount)"
     }
 
     private fun setupSearchListener() {
@@ -165,7 +179,8 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
         } else {
             viewModel.deleteInvite(
                 eventId.toString(),
-                userData.userId.toString(),
+                sharedViewModel.currentUser.value?.userId.toString(),
+                userData
             ) { result ->
                 if (result) {
                     Toast.makeText(this, "Invite UnSent!", Toast.LENGTH_SHORT)
@@ -181,26 +196,6 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
         }
 
     }
-
-//    private fun observeStates() {
-//        lifecycleScope.launch {
-//            viewModel.states.collect { response ->
-//                when (response) {
-//                    is Response.Loading -> {
-//
-//                    }
-//
-//                    is Response.Error -> {
-//
-//                    }
-//
-//                    is Response.Success -> {
-//
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     companion object {
         const val EXTRA_EVENT_ID = "com.example.eventmanagement.EXTRA_EVENT_ID"

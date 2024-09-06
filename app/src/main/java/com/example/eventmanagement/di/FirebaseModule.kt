@@ -62,9 +62,9 @@ class FirebaseModule {
     fun provideUserDataMethods(
         auth: FirebaseAuth,
         firestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage,
         preferencesUtil: PreferencesUtil,
-        firebaseStorage: FirebaseStorage
-    ): UserDataMethods = UserDataImpl(auth, firestore, preferencesUtil,firebaseStorage)
+    ): UserDataMethods = UserDataImpl(auth, firestore,firebaseStorage,preferencesUtil)
 
     @Provides
     @Singleton

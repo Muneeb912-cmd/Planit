@@ -1,6 +1,7 @@
 package com.example.eventmanagement.ui.activities.event_invites
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -31,7 +32,6 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
         super.onCreate(savedInstanceState)
         binding = ActivityEventInviteBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupTabLayout()
         setupRecyclerView()
         observeInviteEvents()
@@ -44,12 +44,14 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
     private fun observeInviteEvents() {
         lifecycleScope.launch {
             sharedViewModel.currentUserInvites.collect { eventInvites ->
+                Log.d("EventInvites", "observeInviteEvents: $eventInvites")
                 handleInviteVisibility(eventInvites.isEmpty())
                 updateTabTitles(eventInvites)
                 filterEvents(currentTabPosition)
             }
         }
     }
+
 
     private fun setupTabLayout() {
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -69,6 +71,7 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
         })
     }
 
+
     private fun filterEvents(selectedTabPosition: Int) {
         val status = when (selectedTabPosition) {
             0 -> "pending"
@@ -85,7 +88,10 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
         handleInviteVisibility(filteredEvents.isEmpty(), selectedTabPosition)
     }
 
-    private fun handleInviteVisibility(isEmpty: Boolean, selectedTabPosition: Int = currentTabPosition) {
+    private fun handleInviteVisibility(
+        isEmpty: Boolean,
+        selectedTabPosition: Int = currentTabPosition
+    ) {
         if (isEmpty) {
             binding.invitesList.visibility = View.GONE
             binding.noInvitesTv.visibility = View.VISIBLE

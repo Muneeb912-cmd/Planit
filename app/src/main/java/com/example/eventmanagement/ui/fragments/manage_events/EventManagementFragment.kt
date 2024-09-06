@@ -178,7 +178,7 @@ class EventManagementFragment : Fragment(), ManageEventAdapter.OnItemClickListen
     }
 
     override fun onDeleteInviteClick(cardData: EventData) {
-        viewModel.deleteEventById(cardData.eventId.toString(),true){result->
+        viewModel.deleteEventById(cardData,true){result->
             if(result){
                 Toast.makeText(requireContext(),"Event Deleted!",Toast.LENGTH_SHORT).show()
             }else{
