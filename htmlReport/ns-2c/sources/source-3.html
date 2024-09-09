@@ -1,0 +1,292 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SyncFavEventsDataWorker</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.workers.sync_data_from_firebase</a>
+</div>
+
+<h1>Coverage Summary for Class: SyncFavEventsDataWorker (com.example.eventmanagement.workers.sync_data_from_firebase)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SyncFavEventsDataWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SyncFavEventsDataWorker$doWork$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SyncFavEventsDataWorker$fetchFavEventsFromFirestore$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SyncFavEventsDataWorker$syncFavEvents$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/51)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/86)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.workers.sync_data_from_firebase
+&nbsp;
+&nbsp;import android.content.Context
+&nbsp;import android.util.Log
+&nbsp;import androidx.work.Worker
+&nbsp;import androidx.work.WorkerParameters
+&nbsp;import com.example.eventmanagement.models.FavEvents
+&nbsp;import com.example.eventmanagement.repository.room_db.LocalDB
+&nbsp;import com.example.eventmanagement.receivers.ConnectivityObserver
+&nbsp;import com.google.firebase.auth.FirebaseAuth
+&nbsp;import com.google.firebase.firestore.FirebaseFirestore
+&nbsp;import kotlinx.coroutines.Dispatchers
+&nbsp;import kotlinx.coroutines.runBlocking
+&nbsp;import kotlinx.coroutines.tasks.await
+&nbsp;import kotlinx.coroutines.withContext
+&nbsp;
+&nbsp;
+&nbsp;class SyncFavEventsDataWorker (
+&nbsp;    context: Context,
+&nbsp;    workerParams: WorkerParameters
+<b class="nc">&nbsp;) : Worker(context, workerParams) {</b>
+<b class="nc">&nbsp;    private val firestore = FirebaseFirestore.getInstance()</b>
+<b class="nc">&nbsp;    private val auth = FirebaseAuth.getInstance()</b>
+<b class="nc">&nbsp;    private val database = LocalDB.getInstance(context)</b>
+<b class="nc">&nbsp;    private val favEventsDao = database.favEventsDao()</b>
+<b class="nc">&nbsp;    private val connectivityObserver = ConnectivityObserver(context)</b>
+&nbsp;
+&nbsp;    override fun doWork(): Result {
+<b class="nc">&nbsp;        return try {</b>
+<b class="nc">&nbsp;            if (!connectivityObserver.isConnected) {</b>
+<b class="nc">&nbsp;                return Result.retry()</b>
+&nbsp;            }
+<b class="nc">&nbsp;            runBlocking {</b>
+<b class="nc">&nbsp;                val favEvents = fetchFavEventsFromFirestore()</b>
+<b class="nc">&nbsp;                syncFavEvents(favEvents)</b>
+&nbsp;            }
+<b class="nc">&nbsp;            Result.success()</b>
+<b class="nc">&nbsp;        } catch (exception: Exception) {</b>
+<b class="nc">&nbsp;            Log.e(&quot;Worker&quot;, &quot;Error in syncing fav events&quot;, exception)</b>
+<b class="nc">&nbsp;            Result.failure()</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private suspend fun fetchFavEventsFromFirestore(): List&lt;FavEvents&gt; =
+<b class="nc">&nbsp;        withContext(Dispatchers.IO) {</b>
+<b class="nc">&nbsp;            try {</b>
+<b class="nc">&nbsp;                val favEvents = mutableListOf&lt;FavEvents&gt;()</b>
+<b class="nc">&nbsp;                val querySnapshot = firestore.collection(&quot;UserData&quot;)</b>
+<b class="nc">&nbsp;                    .document(auth.currentUser?.uid.orEmpty())</b>
+<b class="nc">&nbsp;                    .collection(&quot;FavEvents&quot;)</b>
+<b class="nc">&nbsp;                    .get()</b>
+<b class="nc">&nbsp;                    .await()</b>
+&nbsp;
+<b class="nc">&nbsp;                for (document in querySnapshot.documents) {</b>
+<b class="nc">&nbsp;                    val event = document.toObject(FavEvents::class.java)</b>
+<b class="nc">&nbsp;                    event?.let { favEvents.add(it) }</b>
+&nbsp;                }
+<b class="nc">&nbsp;                favEvents</b>
+<b class="nc">&nbsp;            } catch (e: Exception) {</b>
+<b class="nc">&nbsp;                Log.e(&quot;Worker&quot;, &quot;Error fetching fav events&quot;, e)</b>
+<b class="nc">&nbsp;                emptyList()</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    private suspend fun syncFavEvents(favEvents: List&lt;FavEvents&gt;) {
+<b class="nc">&nbsp;        withContext(Dispatchers.IO) {</b>
+<b class="nc">&nbsp;            val existingFavEvents = favEventsDao.getAllCurrentUserFavEvents(auth.currentUser?.uid.orEmpty())</b>
+&nbsp;
+&nbsp;            // Determine favorite events to update
+<b class="nc">&nbsp;            val favEventsToUpdate = existingFavEvents.mapNotNull { existingEvent -&gt;</b>
+<b class="nc">&nbsp;                val newFavEvent = favEvents.find { it.eventId == existingEvent.eventId }</b>
+<b class="nc">&nbsp;                if (newFavEvent != null &amp;&amp; !areFavEventsEqual(existingEvent, newFavEvent)) {</b>
+<b class="nc">&nbsp;                    existingEvent.apply {</b>
+<b class="nc">&nbsp;                        userId = auth.currentUser?.uid.toString()</b>
+<b class="nc">&nbsp;                        eventId = newFavEvent.eventId</b>
+<b class="nc">&nbsp;                    }</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    null</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Determine favorite events to insert
+<b class="nc">&nbsp;            val favEventsToInsert = favEvents.mapNotNull { newFavEvent -&gt;</b>
+<b class="nc">&nbsp;                val eventNotExists = existingFavEvents.none { it.eventId == newFavEvent.eventId }</b>
+<b class="nc">&nbsp;                if (eventNotExists) {</b>
+<b class="nc">&nbsp;                    newFavEvent.apply {</b>
+<b class="nc">&nbsp;                        userId = auth.currentUser?.uid.toString()</b>
+<b class="nc">&nbsp;                        eventId = newFavEvent.eventId</b>
+<b class="nc">&nbsp;                    }</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    null</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Determine favorite events to delete
+<b class="nc">&nbsp;            val favEventIdsFromFirestore = favEvents.map { it.eventId }.toSet()</b>
+<b class="nc">&nbsp;            val favEventsToDelete = existingFavEvents.filter { it.eventId !in favEventIdsFromFirestore }</b>
+&nbsp;
+&nbsp;            // Perform updates
+<b class="nc">&nbsp;            for (event in favEventsToUpdate) {</b>
+<b class="nc">&nbsp;                Log.d(&quot;Worker&quot;, &quot;Updating fav event: $event&quot;)</b>
+<b class="nc">&nbsp;                favEventsDao.updateEventToUserFav(event)</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Perform inserts
+<b class="nc">&nbsp;            for (event in favEventsToInsert) {</b>
+<b class="nc">&nbsp;                Log.d(&quot;Worker&quot;, &quot;Inserting fav event: $event&quot;)</b>
+<b class="nc">&nbsp;                favEventsDao.addEventToUserFav(event)</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Perform deletions
+<b class="nc">&nbsp;            for (event in favEventsToDelete) {</b>
+<b class="nc">&nbsp;                Log.d(&quot;Worker&quot;, &quot;Deleting fav event: $event&quot;)</b>
+<b class="nc">&nbsp;                favEventsDao.removeEventFromUserFav(event.userId.toString(),event.eventId.toString())</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private fun areFavEventsEqual(existingFavEvent: FavEvents, newFavEvent: FavEvents): Boolean {
+<b class="nc">&nbsp;        return existingFavEvent.userId == newFavEvent.userId &amp;&amp;</b>
+<b class="nc">&nbsp;                existingFavEvent.eventId == newFavEvent.eventId</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

@@ -24,9 +24,7 @@ class ProfileViewModel @Inject constructor(
     private val loginSignUpMethods: LoginSignUpMethods,
     private val preferencesUtil: PreferencesUtil,
     private val userDataMethods: UserDataMethods,
-    private val connectivityObserver: ConnectivityObserver,
     private val pendingOperationDao: PendingOperationDao,
-    private val converters: Converters
 ) : ViewModel() {
 
     private val _states = MutableStateFlow<Response<Unit>>(Response.Loading)

@@ -1,0 +1,171 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventDao</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.room_db.events_dao</a>
+</div>
+
+<h1>Coverage Summary for Class: EventDao (com.example.eventmanagement.repository.room_db.events_dao)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">EventDao$MockitoMock$fw78DLVh</td>
+  </tr>
+  <tr>
+    <td class="name">EventDao$MockitoMock$fw78DLVh$auxiliary$rOtXkh1U</td>
+  </tr>
+  <tr>
+    <td class="name">EventDao$MockitoMock$fw78DLVh$auxiliary$T48m1WLh</td>
+  </tr>
+  <tr>
+    <td class="name">EventDao$MockitoMock$RsuuzBj1</td>
+  </tr>
+  <tr>
+    <td class="name">EventDao$MockitoMock$RsuuzBj1$auxiliary$0fxCcM9b</td>
+  </tr>
+  <tr>
+    <td class="name">EventDao$MockitoMock$RsuuzBj1$auxiliary$hpZVP9WF</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.room_db.events_dao
+&nbsp;
+&nbsp;import androidx.room.Dao
+&nbsp;import androidx.room.Insert
+&nbsp;import androidx.room.OnConflictStrategy
+&nbsp;import androidx.room.Query
+&nbsp;import com.example.eventmanagement.models.EventData
+&nbsp;import kotlinx.coroutines.flow.Flow
+&nbsp;
+&nbsp;@Dao
+&nbsp;interface EventDao {
+&nbsp;    @Query(&quot;SELECT * FROM events WHERE isEventDeleted = 0&quot;)
+&nbsp;    fun getAllEvents(): List&lt;EventData&gt;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM events WHERE eventId = :eventId AND isEventDeleted = 0 LIMIT 1&quot;)
+&nbsp;    suspend fun getEventById(eventId: String): EventData?
+&nbsp;
+&nbsp;    @Query(
+&nbsp;        &quot;&quot;&quot;
+&nbsp;        UPDATE events 
+&nbsp;        SET 
+&nbsp;            eventTitle = :eventTitle,
+&nbsp;            eventOrganizer = :eventOrganizer,
+&nbsp;            eventTiming = :eventTiming,
+&nbsp;            eventCategory = :eventCategory,
+&nbsp;            eventDescription = :eventDescription,
+&nbsp;            eventLocation = :eventLocation,
+&nbsp;            eventLong = :eventLong,
+&nbsp;            eventLat = :eventLat,
+&nbsp;            eventDate = :eventDate,
+&nbsp;            isEventFeatured = :isEventFeatured,
+&nbsp;            isEventPopular = :isEventPopular,
+&nbsp;            numberOfPeopleAttending = :numberOfPeopleAttending,
+&nbsp;            isEventPublic = :isEventPublic,
+&nbsp;            eventStatus = :eventStatus,
+&nbsp;            eventCreatedBy = :eventCreatedBy,
+&nbsp;            isEventDeleted = :isEventDeleted
+&nbsp;        WHERE eventId = :eventId
+&nbsp;    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    suspend fun updateEventById(
+&nbsp;        eventId: String,
+&nbsp;        eventTitle: String?,
+&nbsp;        eventOrganizer: String?,
+&nbsp;        eventTiming: String?,
+&nbsp;        eventCategory: String?,
+&nbsp;        eventDescription: String?,
+&nbsp;        eventLocation: String?,
+&nbsp;        eventLong: String?,
+&nbsp;        eventLat: String?,
+&nbsp;        eventDate: String?,
+&nbsp;        isEventFeatured: Boolean?,
+&nbsp;        isEventPopular: Boolean?,
+&nbsp;        numberOfPeopleAttending: Int?,
+&nbsp;        isEventPublic: Boolean?,
+&nbsp;        eventStatus: String?,
+&nbsp;        eventCreatedBy: String?,
+&nbsp;        isEventDeleted: Boolean?
+&nbsp;    ): Int
+&nbsp;
+&nbsp;    @Query(&quot;Delete from events WHERE eventId = :eventId&quot;)
+&nbsp;    suspend fun deleteEventById(eventId: String)
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM events WHERE eventCreatedBy = :creatorId AND isEventDeleted = 0&quot;)
+&nbsp;    fun getEventsByCreator(creatorId: String): List&lt;EventData&gt;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM events WHERE isEventDeleted = 0&quot;)
+&nbsp;    fun observeAllEvents(): Flow&lt;List&lt;EventData&gt;&gt;
+&nbsp;
+&nbsp;    @Insert(onConflict = OnConflictStrategy.REPLACE)
+&nbsp;    suspend fun saveEvent(eventData: EventData)
+&nbsp;
+&nbsp;    @Query(
+&nbsp;        &quot;&quot;&quot;
+&nbsp;        UPDATE events 
+&nbsp;        SET
+&nbsp;            eventStatus = :eventStatus
+&nbsp;        WHERE eventId = :eventId
+&nbsp;    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    suspend fun updateEventStatusId(
+&nbsp;        eventId: String?,
+&nbsp;        eventStatus: String?,
+&nbsp;        ): Int
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

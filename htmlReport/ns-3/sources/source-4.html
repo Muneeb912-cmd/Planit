@@ -1,0 +1,330 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DataBinderMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement</a>
+</div>
+
+<h1>Coverage Summary for Class: DataBinderMapperImpl (com.example.eventmanagement)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DataBinderMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DataBinderMapperImpl$InnerBrLookup</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DataBinderMapperImpl$InnerLayoutIdLookup</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/71)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement;
+&nbsp;
+&nbsp;import android.util.SparseArray;
+&nbsp;import android.util.SparseIntArray;
+&nbsp;import android.view.View;
+&nbsp;import androidx.databinding.DataBinderMapper;
+&nbsp;import androidx.databinding.DataBindingComponent;
+&nbsp;import androidx.databinding.ViewDataBinding;
+&nbsp;import com.example.eventmanagement.databinding.FragmentAddEditEventBindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentAdminMainBindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentEditProfileBindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentEventsMainBindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentProfileBindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentSignUpBindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentSignUpStep2BindingImpl;
+&nbsp;import com.example.eventmanagement.databinding.FragmentSignUpStep3BindingImpl;
+&nbsp;import java.lang.IllegalArgumentException;
+&nbsp;import java.lang.Integer;
+&nbsp;import java.lang.Object;
+&nbsp;import java.lang.Override;
+&nbsp;import java.lang.RuntimeException;
+&nbsp;import java.lang.String;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class DataBinderMapperImpl extends DataBinderMapper {</b>
+&nbsp;  private static final int LAYOUT_FRAGMENTADDEDITEVENT = 1;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTADMINMAIN = 2;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTEDITPROFILE = 3;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTEVENTSMAIN = 4;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTPROFILE = 5;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTSIGNUP = 6;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTSIGNUPSTEP2 = 7;
+&nbsp;
+&nbsp;  private static final int LAYOUT_FRAGMENTSIGNUPSTEP3 = 8;
+&nbsp;
+<b class="nc">&nbsp;  private static final SparseIntArray INTERNAL_LAYOUT_ID_LOOKUP = new SparseIntArray(8);</b>
+&nbsp;
+&nbsp;  static {
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_add_edit_event, LAYOUT_FRAGMENTADDEDITEVENT);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_admin_main, LAYOUT_FRAGMENTADMINMAIN);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_edit_profile, LAYOUT_FRAGMENTEDITPROFILE);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_events_main, LAYOUT_FRAGMENTEVENTSMAIN);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_profile, LAYOUT_FRAGMENTPROFILE);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_sign_up, LAYOUT_FRAGMENTSIGNUP);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_sign_up_step2, LAYOUT_FRAGMENTSIGNUPSTEP2);</b>
+<b class="nc">&nbsp;    INTERNAL_LAYOUT_ID_LOOKUP.put(com.example.eventmanagement.R.layout.fragment_sign_up_step3, LAYOUT_FRAGMENTSIGNUPSTEP3);</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public ViewDataBinding getDataBinder(DataBindingComponent component, View view, int layoutId) {
+<b class="nc">&nbsp;    int localizedLayoutId = INTERNAL_LAYOUT_ID_LOOKUP.get(layoutId);</b>
+<b class="nc">&nbsp;    if(localizedLayoutId &gt; 0) {</b>
+<b class="nc">&nbsp;      final Object tag = view.getTag();</b>
+<b class="nc">&nbsp;      if(tag == null) {</b>
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;view must have a tag&quot;);</b>
+&nbsp;      }
+<b class="nc">&nbsp;      switch(localizedLayoutId) {</b>
+&nbsp;        case  LAYOUT_FRAGMENTADDEDITEVENT: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_add_edit_event_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentAddEditEventBindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_add_edit_event is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTADMINMAIN: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_admin_main_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentAdminMainBindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_admin_main is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTEDITPROFILE: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_edit_profile_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentEditProfileBindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_edit_profile is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTEVENTSMAIN: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_events_main_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentEventsMainBindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_events_main is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTPROFILE: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_profile_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentProfileBindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_profile is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTSIGNUP: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_sign_up_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentSignUpBindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_sign_up is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTSIGNUPSTEP2: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_sign_up_step2_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentSignUpStep2BindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_sign_up_step2 is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;        case  LAYOUT_FRAGMENTSIGNUPSTEP3: {
+<b class="nc">&nbsp;          if (&quot;layout/fragment_sign_up_step3_0&quot;.equals(tag)) {</b>
+<b class="nc">&nbsp;            return new FragmentSignUpStep3BindingImpl(component, view);</b>
+&nbsp;          }
+<b class="nc">&nbsp;          throw new IllegalArgumentException(&quot;The tag for fragment_sign_up_step3 is invalid. Received: &quot; + tag);</b>
+&nbsp;        }
+&nbsp;      }
+&nbsp;    }
+<b class="nc">&nbsp;    return null;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public ViewDataBinding getDataBinder(DataBindingComponent component, View[] views, int layoutId) {
+<b class="nc">&nbsp;    if(views == null || views.length == 0) {</b>
+<b class="nc">&nbsp;      return null;</b>
+&nbsp;    }
+<b class="nc">&nbsp;    int localizedLayoutId = INTERNAL_LAYOUT_ID_LOOKUP.get(layoutId);</b>
+<b class="nc">&nbsp;    if(localizedLayoutId &gt; 0) {</b>
+<b class="nc">&nbsp;      final Object tag = views[0].getTag();</b>
+<b class="nc">&nbsp;      if(tag == null) {</b>
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;view must have a tag&quot;);</b>
+&nbsp;      }
+<b class="nc">&nbsp;      switch(localizedLayoutId) {</b>
+&nbsp;      }
+&nbsp;    }
+<b class="nc">&nbsp;    return null;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public int getLayoutId(String tag) {
+<b class="nc">&nbsp;    if (tag == null) {</b>
+<b class="nc">&nbsp;      return 0;</b>
+&nbsp;    }
+<b class="nc">&nbsp;    Integer tmpVal = InnerLayoutIdLookup.sKeys.get(tag);</b>
+<b class="nc">&nbsp;    return tmpVal == null ? 0 : tmpVal;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public String convertBrIdToString(int localId) {
+<b class="nc">&nbsp;    String tmpVal = InnerBrLookup.sKeys.get(localId);</b>
+<b class="nc">&nbsp;    return tmpVal;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public List&lt;DataBinderMapper&gt; collectDependencies() {
+<b class="nc">&nbsp;    ArrayList&lt;DataBinderMapper&gt; result = new ArrayList&lt;DataBinderMapper&gt;(1);</b>
+<b class="nc">&nbsp;    result.add(new androidx.databinding.library.baseAdapters.DataBinderMapperImpl());</b>
+<b class="nc">&nbsp;    return result;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  private static class InnerBrLookup {
+<b class="nc">&nbsp;    static final SparseArray&lt;String&gt; sKeys = new SparseArray&lt;String&gt;(2);</b>
+&nbsp;
+&nbsp;    static {
+<b class="nc">&nbsp;      sKeys.put(0, &quot;_all&quot;);</b>
+<b class="nc">&nbsp;      sKeys.put(1, &quot;viewModel&quot;);</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  private static class InnerLayoutIdLookup {
+<b class="nc">&nbsp;    static final HashMap&lt;String, Integer&gt; sKeys = new HashMap&lt;String, Integer&gt;(8);</b>
+&nbsp;
+&nbsp;    static {
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_add_edit_event_0&quot;, com.example.eventmanagement.R.layout.fragment_add_edit_event);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_admin_main_0&quot;, com.example.eventmanagement.R.layout.fragment_admin_main);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_edit_profile_0&quot;, com.example.eventmanagement.R.layout.fragment_edit_profile);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_events_main_0&quot;, com.example.eventmanagement.R.layout.fragment_events_main);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_profile_0&quot;, com.example.eventmanagement.R.layout.fragment_profile);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_sign_up_0&quot;, com.example.eventmanagement.R.layout.fragment_sign_up);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_sign_up_step2_0&quot;, com.example.eventmanagement.R.layout.fragment_sign_up_step2);</b>
+<b class="nc">&nbsp;      sKeys.put(&quot;layout/fragment_sign_up_step3_0&quot;, com.example.eventmanagement.R.layout.fragment_sign_up_step3);</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

@@ -81,6 +81,24 @@ class EventsDataMethodsImpl @Inject constructor(
             }
     }
 
+    override fun updateEventStatusById(
+        eventId: String,
+        eventStatus: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        val eventMap = mapOf(
+            "eventStatus" to eventStatus,
+        )
+        firestore.collection("Events").document(eventId)
+            .update(eventMap)
+            .addOnSuccessListener {
+                onResult(true)
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
+    }
+
     override fun deleteEventById(eventId: String, deleted: Boolean, onResult: (Boolean) -> Unit) {
         firestore.collection("Events").document(eventId)
             .update("eventDeleted", deleted)

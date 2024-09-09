@@ -29,14 +29,13 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditEventViewModel @Inject constructor(
     private val validators: Validators,
-    private val eventDataMethods: EventDataMethods,
     private val connectivityObserver: ConnectivityObserver,
     private val pendingOperationDao: PendingOperationDao,
     private val converters: Converters
 ) : ViewModel() {
 
     private val _events = MutableStateFlow(EventData())
-    private val eventsData: StateFlow<EventData> = _events.asStateFlow()
+    val eventsData: StateFlow<EventData> = _events.asStateFlow()
 
 
     private val _states = MutableStateFlow<Response<Unit>>(Response.Loading)
@@ -73,7 +72,6 @@ class AddEditEventViewModel @Inject constructor(
         validateField(key, value)
         checkIfDataComplete()
         _events.value = updatedEvent
-        Log.d("Updated Event", "updateEventInfo: $updatedEvent and $isDataComplete")
     }
 
     private fun checkIfDataComplete() {
@@ -180,29 +178,9 @@ class AddEditEventViewModel @Inject constructor(
     fun saveEvent() {
         updateEventStatus()
         updateEventInfo("isEventDeleted","No")
-        Log.d("InternetConnectivity", "saveEvent: ${connectivityObserver.isConnected}")
         _states.value = Response.Loading
         saveEventAsPendingOperation(eventsData.value,"ADD")
         _states.value = Response.Success(Unit)
-//        eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
-//            if (dataUploaded) {
-//                _states.value = Response.Success(Unit)
-//            } else {
-//                _states.value = Response.Error(Exception(msg))
-//            }
-//        }
-//        if(connectivityObserver.isConnected){
-//            eventDataMethods.saveEvent(eventsData.value) { dataUploaded, msg ->
-//                if (dataUploaded) {
-//                    _states.value = Response.Success(Unit)
-//                } else {
-//                    _states.value = Response.Error(Exception(msg))
-//                }
-//            }
-//        }else {
-//            saveEventAsPendingOperation(eventsData.value,"ADD")
-//            _states.value = Response.Success(Unit)
-//        }
     }
 
     private fun saveEventAsPendingOperation(eventData: EventData?, operation: String) {
@@ -238,21 +216,6 @@ class AddEditEventViewModel @Inject constructor(
         _states.value = Response.Loading
         saveEventAsPendingOperation(eventsData.value,"UPDATE")
         _states.value = Response.Success(Unit)
-//        if(connectivityObserver.isConnected) {
-//            eventDataMethods.updateEventById(
-//                eventsData.value.eventId.toString(),
-//                eventsData.value
-//            ) { dataUpdated ->
-//                if (dataUpdated) {
-//                    _states.value = Response.Success(Unit)
-//                } else {
-//                    _states.value = Response.Error(Exception("Error: Couldn't update event"))
-//                }
-//            }
-//        }else{
-//            saveEventAsPendingOperation(eventsData.value,"UPDATE")
-//            _states.value = Response.Success(Unit)
-//        }
     }
 
     fun validateEventTiming(

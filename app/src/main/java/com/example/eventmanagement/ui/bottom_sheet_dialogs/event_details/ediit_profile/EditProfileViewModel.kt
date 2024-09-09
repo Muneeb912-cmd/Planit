@@ -30,31 +30,36 @@ class EditProfileViewModel @Inject constructor(
         userName: String,
         userPhone: String,
         userDob: String,
-        userImg: String,
+        userImg: String?
     ) {
         _states.value = Response.Loading
         val updateData = UserUpdate(
-            userId=userId,
+            userId = userId,
             userName = userName,
             userPhone = userPhone,
             userDob = userDob,
             userImg = userImg
         )
         val jsonData = converters.fromUpdateUser(updateData)
-        val pendingOperation = PendingOperations(
-            operationType = OperationType.UPDATE,
-            documentId = userId,
-            data = jsonData,
-            userId = userId,
-            eventId = "",
-            dataType = "user"
-        )
         CoroutineScope(Dispatchers.IO).launch {
             val count = pendingOperationDao.countByDocumentId(userId, "UPDATE", "user")
             if (count > 0) {
-                pendingOperationDao.updateByDocumentId(userId, "UPDATE", "user", jsonData)
+                if (userImg != null) {
+                    pendingOperationDao.updateByDocumentId(userId, "UPDATE", "user", jsonData)
+                } else {
+                    pendingOperationDao.updateByDocumentId(userId, "UPDATE", "user", jsonData)
+                }
             } else {
-                pendingOperationDao.insert(pendingOperation)
+                pendingOperationDao.insert(
+                    PendingOperations(
+                        operationType = OperationType.UPDATE,
+                        documentId = userId,
+                        data = jsonData,
+                        userId = userId,
+                        eventId = "",
+                        dataType = "user"
+                    )
+                )
             }
         }
         _states.value = Response.Success(Unit)

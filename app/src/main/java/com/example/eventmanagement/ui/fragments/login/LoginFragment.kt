@@ -137,13 +137,18 @@ class LoginFragment : Fragment() {
 
     private fun handleLoginSuccess(loginType: String) {
         lifecycleScope.launch {
-            viewModel.isEmailVerified.collect { isVerified ->
-                showLoader(false)
-                if (isVerified) {
-                    handleUserVerificationSuccess(loginType)
-                } else {
-                    showToast("Please verify your email")
-                }
+            viewModel.loginResult.collect { response->
+               when(response){
+                   is Response.Error -> {
+                       showLoader(false)
+                       showToast("User don't exist or email not verified")
+                   }
+                   Response.Loading -> TODO()
+                   is Response.Success -> {
+                       showLoader(false)
+                       handleUserVerificationSuccess(loginType)
+                   }
+               }
             }
         }
     }

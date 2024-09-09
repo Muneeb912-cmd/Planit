@@ -1,0 +1,106 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserDataMethods</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.firebase.user_data</a>
+</div>
+
+<h1>Coverage Summary for Class: UserDataMethods (com.example.eventmanagement.repository.firebase.user_data)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">UserDataMethods$MockitoMock$OnJuDb9D</td>
+  </tr>
+  <tr>
+    <td class="name">UserDataMethods$MockitoMock$OnJuDb9D$auxiliary$fS5sFHGG</td>
+  </tr>
+  <tr>
+    <td class="name">UserDataMethods$MockitoMock$OnJuDb9D$auxiliary$KpNO0odq</td>
+  </tr>
+  <tr>
+    <td class="name">UserDataMethods$MockitoMock$PnpnScIW</td>
+  </tr>
+  <tr>
+    <td class="name">UserDataMethods$MockitoMock$PnpnScIW$auxiliary$K5tDrwap</td>
+  </tr>
+  <tr>
+    <td class="name">UserDataMethods$MockitoMock$PnpnScIW$auxiliary$ySbDU1qt</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.firebase.user_data
+&nbsp;
+&nbsp;import com.example.eventmanagement.models.User
+&nbsp;
+&nbsp;interface UserDataMethods {
+&nbsp;    suspend fun getAllUserData(): List&lt;User.UserData&gt;
+&nbsp;    fun getCurrentUser(): User.UserData?
+&nbsp;    suspend fun getUserDataFromFireStore(
+&nbsp;        userId: String,
+&nbsp;        onResult: (Boolean, User.UserData?,String) -&gt; Unit
+&nbsp;    )
+&nbsp;    suspend fun updateUserLocation(userId:String,newLocation:String,onResult: (Boolean) -&gt; Unit)
+&nbsp;    suspend fun updateUserNotificationSettings(userId:String,newSettings:Boolean,onResult: (Boolean) -&gt; Unit)
+&nbsp;    suspend fun updateUserProfileStatus(userId:String,newSettings: Boolean,onResult: (Boolean) -&gt; Unit)
+&nbsp;    suspend fun updateUserProfile(userId: String,userName:String,userPhone:String,userDob:String,userImg:String,onResult: (Boolean) -&gt; Unit)
+&nbsp;    fun observeCurrentUser(onResult: (User.UserData?) -&gt; Unit)
+&nbsp;    fun observeUsers(onResult: (List&lt;User.UserData&gt;?) -&gt; Unit)
+&nbsp;    fun removeCurrentUserListener()
+&nbsp;    suspend fun updateUserBanStatus(userId:String, banStatus:Boolean,onResult: (Boolean) -&gt; Unit)
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

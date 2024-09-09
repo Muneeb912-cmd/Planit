@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventDataMethods</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.firebase.events_data</a>
+</div>
+
+<h1>Coverage Summary for Class: EventDataMethods (com.example.eventmanagement.repository.firebase.events_data)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">EventDataMethods$MockitoMock$sHd9kXS7</td>
+  </tr>
+  <tr>
+    <td class="name">EventDataMethods$MockitoMock$sHd9kXS7$auxiliary$6hUccImt</td>
+  </tr>
+  <tr>
+    <td class="name">EventDataMethods$MockitoMock$sHd9kXS7$auxiliary$t2hRL7dT</td>
+  </tr>
+  <tr>
+    <td class="name">EventDataMethods$MockitoMock$ThwBaDP1</td>
+  </tr>
+  <tr>
+    <td class="name">EventDataMethods$MockitoMock$ThwBaDP1$auxiliary$3jy5JSdV</td>
+  </tr>
+  <tr>
+    <td class="name">EventDataMethods$MockitoMock$ThwBaDP1$auxiliary$XvSwwb4N</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.firebase.events_data
+&nbsp;
+&nbsp;import com.example.eventmanagement.models.Attendees
+&nbsp;import com.example.eventmanagement.models.EventData
+&nbsp;
+&nbsp;interface EventDataMethods {
+&nbsp;    fun getAllEvents(): List&lt;EventData&gt;
+&nbsp;    fun getEventById(eventId: String, onResult: (EventData?) -&gt; Unit)
+&nbsp;    fun updateEventById(eventId: String,eventData:EventData,onResult: (Boolean) -&gt; Unit)
+&nbsp;    fun updateEventStatusById(eventId: String,eventStatus:String,onResult: (Boolean) -&gt; Unit)
+&nbsp;    fun deleteEventById(eventId: String, deleted:Boolean, onResult: (Boolean) -&gt; Unit)
+&nbsp;    fun getEventsByCreator(creatorId: String): List&lt;EventData&gt;
+&nbsp;    fun observeAllEvents(onResult: (List&lt;EventData&gt;) -&gt; Unit)
+&nbsp;    fun saveEvent(eventData: EventData, onResult: (Boolean, String) -&gt; Unit)
+&nbsp;    fun addEventToUserFav(
+&nbsp;        userId: String,
+&nbsp;        eventId: String,
+&nbsp;        onResult: (Boolean, String) -&gt; Unit
+&nbsp;    )
+&nbsp;
+&nbsp;    fun removeEventFromUserFav(
+&nbsp;        userId: String,
+&nbsp;        eventId: String,
+&nbsp;        onResult: (Boolean, String) -&gt; Unit
+&nbsp;    )
+&nbsp;
+&nbsp;    fun observeCurrentUserFavEvents(
+&nbsp;        userId: String,
+&nbsp;        onResult: (List&lt;String&gt;) -&gt; Unit
+&nbsp;    )
+&nbsp;
+&nbsp;    fun addAttendeeUpdatePeopleGoingCount(
+&nbsp;        eventId: String,
+&nbsp;        userId: String,
+&nbsp;        onResult: (Boolean) -&gt; Unit
+&nbsp;    )
+&nbsp;
+&nbsp;    fun removeAttendeeUpdatePeopleGoingCount(
+&nbsp;        eventId: String,
+&nbsp;        userId: String,
+&nbsp;        onResult: (Boolean) -&gt; Unit
+&nbsp;    )
+&nbsp;
+&nbsp;    fun observeAttendeesByEventId(eventId:String,onResult: (Boolean,List&lt;String&gt;) -&gt; Unit)
+&nbsp;
+&nbsp;    fun observeCurrentUserFromAttendees(userId: String, onResult: (List&lt;Attendees&gt;) -&gt; Unit)
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

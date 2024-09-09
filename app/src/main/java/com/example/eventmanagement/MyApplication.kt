@@ -3,6 +3,7 @@ package com.example.eventmanagement
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.work.Configuration
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ListenableWorker
@@ -10,6 +11,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
 import com.example.eventmanagement.repository.firebase.invites_data.InviteMethods
 import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
@@ -22,7 +24,6 @@ import com.example.eventmanagement.repository.room_db.invites_dao.InvitesDao
 import com.example.eventmanagement.repository.room_db.user_dao.UserDao
 import com.example.eventmanagement.service.EventNotificationService
 import com.example.eventmanagement.utils.PreferencesUtil
-import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.workers.sync_pending_operarions.SyncPendingOperationsWorker
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -37,8 +38,8 @@ class MyApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         scheduleSyncPendingOperationsWorker()
-        val serviceIntent = Intent(this, EventNotificationService::class.java)
-        startService(serviceIntent)
+        val intent = Intent(this, EventNotificationService::class.java)
+        ContextCompat.startForegroundService(this, intent)
 
     }
 
@@ -98,6 +99,7 @@ class CustomWorkerFactory @Inject constructor(
                     preferencesUtil
                 )
             }
+
             else -> {
                 null
             }

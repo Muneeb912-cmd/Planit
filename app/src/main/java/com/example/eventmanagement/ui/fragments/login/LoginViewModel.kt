@@ -26,8 +26,6 @@ class LoginViewModel @Inject constructor(
     private val _loginResult = MutableStateFlow<Response<Unit>>(Response.Loading)
     val loginResult: StateFlow<Response<Unit>> get() = _loginResult.asStateFlow()
 
-    private val _isEmailVerified = MutableStateFlow(false)
-    val isEmailVerified: StateFlow<Boolean> get() = _isEmailVerified.asStateFlow()
 
     private val _usersData = MutableStateFlow<Response<List<User.UserData>>>(Response.Loading)
     val usersData: StateFlow<Response<List<User.UserData>>> get() = _usersData.asStateFlow()
@@ -36,10 +34,11 @@ class LoginViewModel @Inject constructor(
         _loginResult.value = Response.Loading
         loginSignUpMethods.signInWithEmailPassword(email, password) { isVerified, msg ->
             if (isVerified) {
-                checkEmailVerification()
                 getAllUsers()
+                _loginResult.value=Response.Success(Unit)
             } else {
                 _loginResult.value = Response.Error(java.lang.Exception(msg))
+                loginSignUpMethods.sendVerificationEmail()
             }
         }
     }
@@ -48,26 +47,16 @@ class LoginViewModel @Inject constructor(
         _loginResult.value = Response.Loading
         loginSignUpMethods.signInWithGoogle(account) { isVerified ->
             if (isVerified) {
-                checkEmailVerification()
                 getAllUsers()
+                _loginResult.value=Response.Success(Unit)
             } else {
                 _loginResult.value = Response.Error(Exception("User Don't Exist"))
+                loginSignUpMethods.sendVerificationEmail()
             }
         }
     }
 
-    private fun checkEmailVerification() {
-        loginSignUpMethods.checkEmailVerification { isVerified ->
-            _isEmailVerified.value = isVerified
-            _loginResult.value = if (isVerified) {
-                Response.Success(Unit)
-            } else {
-                Response.Error(Exception("Email not verified"))
-            }
-        }
-    }
-
-    private fun getAllUsers() {
+    fun getAllUsers() {
         _usersData.value = Response.Loading
         viewModelScope.launch {
             try {
@@ -89,28 +78,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun getUserDataFromFireStore(userId: String, onResult: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            try {
-                Log.d("userId", "getUserDataFromFireStore: $userId")
-                userDataMethods.getUserDataFromFireStore(userId) { success, userData,msg ->
-                    if (success && userData != null) {
-                        saveDataToPreferences(userData) { isUserSavedToPreferences ->
-                            onResult(isUserSavedToPreferences)
-                        }
-                    } else {
-                        onResult(false)
-                        Log.d("exception", "getUserDataFromFireStore: $msg")
-                    }
-                }
-            } catch (e: Exception) {
-                // Optionally log the exception
-                onResult(false)
-            }
-        }
-    }
-
-     fun saveDataToPreferences(userData: User.UserData, onResult: (Boolean) -> Unit) {
+    fun saveDataToPreferences(userData: User.UserData, onResult: (Boolean) -> Unit) {
         try {
             preferencesUtil.saveUser(userData)
             Log.d("UserData", "saveDataToPreferences: ${preferencesUtil.getUser()}")

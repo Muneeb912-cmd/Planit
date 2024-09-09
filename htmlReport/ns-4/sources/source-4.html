@@ -1,0 +1,248 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventInviteAdapter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.adapters</a>
+</div>
+
+<h1>Coverage Summary for Class: EventInviteAdapter (com.example.eventmanagement.adapters)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EventInviteAdapter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EventInviteAdapter$EventCardClickListener</td>
+  </tr>
+  <tr>
+    <td class="name">EventInviteAdapter$EventCardViewHolder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/30)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/49)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.adapters
+&nbsp;
+&nbsp;import android.annotation.SuppressLint
+&nbsp;import android.view.LayoutInflater
+&nbsp;import android.view.View
+&nbsp;import android.view.ViewGroup
+&nbsp;import android.widget.TextView
+&nbsp;import androidx.recyclerview.widget.RecyclerView
+&nbsp;import com.example.eventmanagement.R
+&nbsp;import com.example.eventmanagement.models.EventInvites
+&nbsp;import com.google.firebase.Timestamp
+&nbsp;import java.text.SimpleDateFormat
+&nbsp;import java.util.Date
+&nbsp;import java.util.Locale
+&nbsp;
+&nbsp;
+&nbsp;class EventInviteAdapter(
+<b class="nc">&nbsp;    private var invites: List&lt;EventInvites&gt;,</b>
+<b class="nc">&nbsp;    private val listener: EventCardClickListener</b>
+<b class="nc">&nbsp;) : RecyclerView.Adapter&lt;EventInviteAdapter.EventCardViewHolder&gt;() {</b>
+&nbsp;    interface EventCardClickListener {
+&nbsp;        fun onEventCardClick(invite: EventInvites)
+&nbsp;        fun onAcceptIconClick(invite: EventInvites)
+&nbsp;        fun onRejectIconClick(invite: EventInvites)
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventCardViewHolder {
+<b class="nc">&nbsp;        val view = LayoutInflater.from(parent.context)</b>
+<b class="nc">&nbsp;            .inflate(R.layout.event_invite, parent, false)</b>
+<b class="nc">&nbsp;        return EventCardViewHolder(view)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onBindViewHolder(holder: EventCardViewHolder, position: Int) {
+<b class="nc">&nbsp;        val eventInvites = invites[position]</b>
+<b class="nc">&nbsp;        holder.bind(eventInvites)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun getItemCount(): Int {
+<b class="nc">&nbsp;        return invites.size</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun parseDateTimeAndFormatTime(dateTime: String): String {
+<b class="nc">&nbsp;        val inputFormat = SimpleDateFormat(&quot;MMMM dd, yyyy &#39;at&#39; h:mm:ss a z&quot;, Locale.getDefault())</b>
+<b class="nc">&nbsp;        val timeFormat = SimpleDateFormat(&quot;h:mm:ss a&quot;, Locale.getDefault())</b>
+<b class="nc">&nbsp;        val date = inputFormat.parse(dateTime)</b>
+<b class="nc">&nbsp;        return date?.let { timeFormat.format(it) } ?: &quot;&quot;</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    inner class EventCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),</b>
+&nbsp;        View.OnClickListener {
+<b class="nc">&nbsp;        private val acceptIcon: View = itemView.findViewById(R.id.acceptBtn)</b>
+<b class="nc">&nbsp;        private val rejectIcon: View = itemView.findViewById(R.id.rejectBtn)</b>
+&nbsp;
+&nbsp;        @SuppressLint(&quot;SetTextI18n&quot;)
+&nbsp;        fun bind(invite: EventInvites) {
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.eventTitle).text = invite.eventTitle</b>
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.eventOrganizer).text = invite.eventOrganizer</b>
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.eventTiming).text = invite.eventTiming</b>
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.eventDate).text = invite.eventDate</b>
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.inviteStatus).text = invite.inviteStatus</b>
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.inviteSender).text =</b>
+<b class="nc">&nbsp;                &quot;Sender Name: ${invite.senderName}&quot;</b>
+<b class="nc">&nbsp;            itemView.findViewById&lt;TextView&gt;(R.id.inviteTime).text = &quot;Sent On: ${</b>
+<b class="nc">&nbsp;                parseDateTimeAndFormatTime(invite.inviteTime.toString())</b>
+&nbsp;            }&quot;
+&nbsp;
+<b class="nc">&nbsp;            when (invite.inviteStatus) {</b>
+<b class="nc">&nbsp;                &quot;accepted&quot; -&gt; {</b>
+<b class="nc">&nbsp;                    acceptIcon.visibility = View.GONE</b>
+<b class="nc">&nbsp;                    rejectIcon.visibility = View.GONE</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                &quot;expired&quot; -&gt; {</b>
+<b class="nc">&nbsp;                    acceptIcon.visibility = View.GONE</b>
+<b class="nc">&nbsp;                    rejectIcon.visibility = View.GONE</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                else -&gt; {
+<b class="nc">&nbsp;                    acceptIcon.visibility = View.VISIBLE</b>
+<b class="nc">&nbsp;                    rejectIcon.visibility = View.VISIBLE</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            itemView.setOnClickListener {</b>
+<b class="nc">&nbsp;                listener.onEventCardClick(invite)</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            acceptIcon.setOnClickListener {</b>
+<b class="nc">&nbsp;                listener.onAcceptIconClick(invite)</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            rejectIcon.setOnClickListener {</b>
+<b class="nc">&nbsp;                listener.onRejectIconClick(invite)</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        override fun onClick(v: View?) {
+<b class="nc">&nbsp;            val position = adapterPosition</b>
+<b class="nc">&nbsp;            if (position != RecyclerView.NO_POSITION) {</b>
+<b class="nc">&nbsp;                listener.onEventCardClick(invites[position])</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun formatTimestampToTime(timestamp: Timestamp): String {
+<b class="nc">&nbsp;        val date = Date(timestamp.seconds * 1000)</b>
+<b class="nc">&nbsp;        val dateFormat = SimpleDateFormat(&quot;h:mm a&quot;, Locale.getDefault())</b>
+<b class="nc">&nbsp;        return dateFormat.format(date)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun updateData(filteredEvents: List&lt;EventInvites&gt;) {
+<b class="nc">&nbsp;        invites = filteredEvents</b>
+<b class="nc">&nbsp;        notifyDataSetChanged()</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

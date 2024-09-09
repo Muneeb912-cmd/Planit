@@ -1,0 +1,412 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AddEditEventViewModel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event</a>
+</div>
+
+<h1>Coverage Summary for Class: AddEditEventViewModel (com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AddEditEventViewModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    61.5%
+  </span>
+  <span class="absValue">
+    (8/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.8%
+  </span>
+  <span class="absValue">
+    (65/152)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AddEditEventViewModel$saveEventAsPendingOperation$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    64.3%
+  </span>
+  <span class="absValue">
+    (9/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.1%
+  </span>
+  <span class="absValue">
+    (66/153)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event
+&nbsp;
+&nbsp;import android.os.Build
+&nbsp;import android.util.Log
+&nbsp;import androidx.annotation.RequiresApi
+&nbsp;import androidx.lifecycle.ViewModel
+&nbsp;import com.example.eventmanagement.models.EventData
+&nbsp;import com.example.eventmanagement.models.OperationType
+&nbsp;import com.example.eventmanagement.models.PendingOperations
+&nbsp;import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
+&nbsp;import com.example.eventmanagement.repository.room_db.Converters
+&nbsp;import com.example.eventmanagement.repository.room_db.PendingOperationDao
+&nbsp;import com.example.eventmanagement.receivers.ConnectivityObserver
+&nbsp;import com.example.eventmanagement.utils.Response
+&nbsp;import com.example.eventmanagement.utils.Validators
+&nbsp;import dagger.hilt.android.lifecycle.HiltViewModel
+&nbsp;import kotlinx.coroutines.CoroutineScope
+&nbsp;import kotlinx.coroutines.Dispatchers
+&nbsp;import kotlinx.coroutines.flow.MutableStateFlow
+&nbsp;import kotlinx.coroutines.flow.StateFlow
+&nbsp;import kotlinx.coroutines.flow.asStateFlow
+&nbsp;import kotlinx.coroutines.launch
+&nbsp;import java.time.LocalDate
+&nbsp;import java.time.LocalDateTime
+&nbsp;import java.time.LocalTime
+&nbsp;import java.time.format.DateTimeFormatter
+&nbsp;import javax.inject.Inject
+&nbsp;
+&nbsp;@HiltViewModel
+&nbsp;class AddEditEventViewModel @Inject constructor(
+<b class="fc">&nbsp;    private val validators: Validators,</b>
+<b class="fc">&nbsp;    private val connectivityObserver: ConnectivityObserver,</b>
+<b class="fc">&nbsp;    private val pendingOperationDao: PendingOperationDao,</b>
+<b class="fc">&nbsp;    private val converters: Converters</b>
+<b class="fc">&nbsp;) : ViewModel() {</b>
+&nbsp;
+<b class="fc">&nbsp;    private val _events = MutableStateFlow(EventData())</b>
+<b class="fc">&nbsp;    val eventsData: StateFlow&lt;EventData&gt; = _events.asStateFlow()</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private val _states = MutableStateFlow&lt;Response&lt;Unit&gt;&gt;(Response.Loading)</b>
+<b class="nc">&nbsp;    val states: StateFlow&lt;Response&lt;Unit&gt;&gt; get() = _states.asStateFlow()</b>
+&nbsp;
+<b class="fc">&nbsp;    private val _errors = MutableStateFlow&lt;Map&lt;String, String?&gt;&gt;(emptyMap())</b>
+<b class="fc">&nbsp;    val errors: StateFlow&lt;Map&lt;String, String?&gt;&gt; get() = _errors</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;    var isDataComplete: Boolean = false</b>
+<b class="nc">&nbsp;    var isDataValid: Boolean = false</b>
+&nbsp;
+&nbsp;    fun updateEventInfo(key: String, value: String) {
+<b class="fc">&nbsp;        val currentEvent = _events.value</b>
+<b class="fc">&nbsp;        val updatedEvent = currentEvent.copy(</b>
+<b class="fc">&nbsp;            eventId = if (key == &quot;eventId&quot;) value else currentEvent.eventId,</b>
+<b class="fc">&nbsp;            eventTitle = if (key == &quot;eventTitle&quot;) value else currentEvent.eventTitle,</b>
+<b class="fc">&nbsp;            eventOrganizer = if (key == &quot;eventOrganizer&quot;) value else currentEvent.eventOrganizer,</b>
+<b class="fc">&nbsp;            eventTiming = if (key == &quot;eventTiming&quot;) value else currentEvent.eventTiming,</b>
+<b class="fc">&nbsp;            eventCategory = if (key == &quot;eventCategory&quot;) value else currentEvent.eventCategory,</b>
+<b class="fc">&nbsp;            eventDescription = if (key == &quot;eventDescription&quot;) value else currentEvent.eventDescription,</b>
+<b class="fc">&nbsp;            eventLocation = if (key == &quot;eventLocation&quot;) value else currentEvent.eventLocation,</b>
+<b class="fc">&nbsp;            eventDate = if (key == &quot;eventDate&quot;) value else currentEvent.eventDate,</b>
+<b class="fc">&nbsp;            isEventFeatured = if (key == &quot;isEventFeatured&quot;) value == &quot;yes&quot; else currentEvent.isEventFeatured,</b>
+<b class="fc">&nbsp;            isEventPopular = if (key == &quot;isEventPopular&quot;) value == &quot;yes&quot; else currentEvent.isEventPopular,</b>
+<b class="fc">&nbsp;            numberOfPeopleAttending = if (key == &quot;numberOfPeopleAttending&quot;) value.toIntOrNull() else currentEvent.numberOfPeopleAttending,</b>
+<b class="fc">&nbsp;            isEventPublic = if (key == &quot;isEventPublic&quot;) value == &quot;yes&quot; else currentEvent.isEventPublic,</b>
+<b class="fc">&nbsp;            eventStatus = if (key == &quot;eventStatus&quot;) value else currentEvent.eventStatus,</b>
+<b class="fc">&nbsp;            eventCreatedBy = if (key == &quot;eventCreatedBy&quot;) value else currentEvent.eventCreatedBy,</b>
+<b class="fc">&nbsp;            eventLong = if (key == &quot;eventLong&quot;) value else currentEvent.eventLong,</b>
+<b class="fc">&nbsp;            eventLat = if (key == &quot;eventLat&quot;) value else currentEvent.eventLat,</b>
+<b class="fc">&nbsp;            isEventDeleted = if (key == &quot;isEventDeleted&quot;) value == &quot;Yes&quot; else currentEvent.isEventDeleted,</b>
+&nbsp;        )
+<b class="fc">&nbsp;        validateField(key, value)</b>
+<b class="fc">&nbsp;        checkIfDataComplete()</b>
+<b class="fc">&nbsp;        _events.value = updatedEvent</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun checkIfDataComplete() {
+<b class="fc">&nbsp;        isDataComplete = !eventsData.value.eventTitle.isNullOrEmpty() &amp;&amp;</b>
+<b class="fc">&nbsp;                !eventsData.value.eventOrganizer.isNullOrEmpty() &amp;&amp;</b>
+<b class="nc">&nbsp;                !eventsData.value.eventTiming.isNullOrEmpty() &amp;&amp;</b>
+<b class="nc">&nbsp;                !eventsData.value.eventCategory.isNullOrEmpty() &amp;&amp;</b>
+<b class="nc">&nbsp;                !eventsData.value.eventDescription.isNullOrEmpty() &amp;&amp;</b>
+<b class="nc">&nbsp;                !eventsData.value.eventLocation.isNullOrEmpty() &amp;&amp;</b>
+<b class="nc">&nbsp;                !eventsData.value.eventDate.isNullOrEmpty() &amp;&amp;</b>
+<b class="nc">&nbsp;                eventsData.value.numberOfPeopleAttending != null &amp;&amp;</b>
+<b class="nc">&nbsp;                eventsData.value.isEventFeatured != null &amp;&amp;</b>
+<b class="nc">&nbsp;                eventsData.value.isEventPopular != null &amp;&amp;</b>
+<b class="nc">&nbsp;                eventsData.value.isEventPublic != null &amp;&amp;</b>
+<b class="nc">&nbsp;                !eventsData.value.eventCreatedBy.isNullOrEmpty()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private fun validateField(field: String, value: String) {
+<b class="fc">&nbsp;        val updatedErrors = _errors.value.toMutableMap()</b>
+&nbsp;
+<b class="fc">&nbsp;        when (field) {</b>
+&nbsp;            &quot;eventTitle&quot; -&gt; {
+<b class="fc">&nbsp;                updatedErrors[&quot;eventTitle&quot;] =</b>
+<b class="fc">&nbsp;                    if (validators.validateName(value)) null</b>
+<b class="fc">&nbsp;                    else &quot;Invalid Title. Example Input: (Promotion Ceremony)&quot;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            &quot;eventCategory&quot; -&gt; updatedErrors[&quot;eventCategory&quot;] =</b>
+<b class="nc">&nbsp;                if (value.isNotBlank()) null else &quot;Category cannot be empty.&quot;</b>
+&nbsp;
+<b class="nc">&nbsp;            &quot;eventDescription&quot; -&gt; updatedErrors[&quot;eventDescription&quot;] =</b>
+<b class="nc">&nbsp;                if (value.isNotBlank()) null else &quot;Description cannot be empty.&quot;</b>
+&nbsp;
+<b class="nc">&nbsp;            &quot;eventLocation&quot; -&gt; updatedErrors[&quot;eventLocation&quot;] =</b>
+<b class="nc">&nbsp;                if (value.isNotBlank()) null else &quot;Location cannot be empty.&quot;</b>
+&nbsp;
+<b class="nc">&nbsp;            &quot;eventDate&quot; -&gt; updatedErrors[&quot;eventDate&quot;] =</b>
+<b class="nc">&nbsp;                if (value.isNotBlank()) null else &quot;Date cannot be empty.&quot;</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        isDataValid = updatedErrors.values.all { it == null }</b>
+<b class="fc">&nbsp;        _errors.value = updatedErrors</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @RequiresApi(Build.VERSION_CODES.O)
+&nbsp;    private fun updateEventStatus() {
+<b class="fc">&nbsp;        val currentDateTime = LocalDateTime.now()</b>
+&nbsp;
+<b class="fc">&nbsp;        val eventDateString = eventsData.value.eventDate</b>
+<b class="fc">&nbsp;        val eventTiming = eventsData.value.eventTiming</b>
+&nbsp;
+<b class="fc">&nbsp;        var eventStartDateTime: LocalDateTime</b>
+<b class="fc">&nbsp;        var eventEndDateTime: LocalDateTime</b>
+&nbsp;
+<b class="fc">&nbsp;        if (eventDateString != null) {</b>
+<b class="nc">&nbsp;            val dateRange = eventDateString.split(&quot; - &quot;)</b>
+&nbsp;
+<b class="nc">&nbsp;            if (dateRange.size == 2) {</b>
+<b class="nc">&nbsp;                val startDate =</b>
+<b class="nc">&nbsp;                    LocalDate.parse(dateRange[0].trim(), DateTimeFormatter.ISO_LOCAL_DATE)</b>
+<b class="nc">&nbsp;                val endDate = LocalDate.parse(dateRange[1].trim(), DateTimeFormatter.ISO_LOCAL_DATE)</b>
+<b class="nc">&nbsp;                val startTime = LocalTime.MIN</b>
+<b class="nc">&nbsp;                val endTime = LocalTime.MAX</b>
+&nbsp;
+<b class="nc">&nbsp;                eventStartDateTime = startDate.atTime(startTime)</b>
+<b class="nc">&nbsp;                eventEndDateTime = endDate.atTime(endTime)</b>
+&nbsp;            } else {
+&nbsp;                // Event is a single date
+<b class="nc">&nbsp;                val eventDate = LocalDate.parse(eventDateString, DateTimeFormatter.ISO_LOCAL_DATE)</b>
+<b class="nc">&nbsp;                eventStartDateTime = eventDate.atStartOfDay()</b>
+<b class="nc">&nbsp;                eventEndDateTime = eventDate.atTime(LocalTime.MAX)</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (eventTiming != null &amp;&amp; eventTiming.contains(&quot; - &quot;)) {</b>
+&nbsp;                // Handle time range if provided
+<b class="nc">&nbsp;                val timeFormatter = DateTimeFormatter.ofPattern(&quot;hh:mm a&quot;)</b>
+<b class="nc">&nbsp;                val times = eventTiming.split(&quot; - &quot;)</b>
+<b class="nc">&nbsp;                if (times.size == 2) {</b>
+<b class="nc">&nbsp;                    val startTime = LocalTime.parse(times[0].trim(), timeFormatter)</b>
+<b class="nc">&nbsp;                    val endTime = LocalTime.parse(times[1].trim(), timeFormatter)</b>
+<b class="nc">&nbsp;                    eventStartDateTime = eventStartDateTime.with(startTime)</b>
+<b class="nc">&nbsp;                    eventEndDateTime = eventEndDateTime.with(endTime)</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            val status = when {</b>
+<b class="nc">&nbsp;                currentDateTime.toLocalDate() != eventStartDateTime.toLocalDate() &amp;&amp; currentDateTime.isBefore(</b>
+<b class="nc">&nbsp;                    eventStartDateTime</b>
+<b class="nc">&nbsp;                ) -&gt; &quot;Up-Coming&quot;</b>
+&nbsp;
+<b class="nc">&nbsp;                currentDateTime.isAfter(eventEndDateTime) -&gt; &quot;Missed&quot;</b>
+<b class="nc">&nbsp;                else -&gt; &quot;On-Going&quot;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            _events.value = eventsData.value.copy(eventStatus = status)</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            _events.value = eventsData.value.copy(eventStatus = &quot;Unknown&quot;)</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequiresApi(Build.VERSION_CODES.O)
+&nbsp;    fun saveEvent() {
+<b class="fc">&nbsp;        updateEventStatus()</b>
+<b class="fc">&nbsp;        updateEventInfo(&quot;isEventDeleted&quot;,&quot;No&quot;)</b>
+<b class="fc">&nbsp;        _states.value = Response.Loading</b>
+<b class="fc">&nbsp;        saveEventAsPendingOperation(eventsData.value,&quot;ADD&quot;)</b>
+<b class="fc">&nbsp;        _states.value = Response.Success(Unit)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun saveEventAsPendingOperation(eventData: EventData?, operation: String) {
+<b class="fc">&nbsp;        if (eventData != null) {</b>
+<b class="fc">&nbsp;            val jsonData = converters.fromEvent(eventData)</b>
+<b class="fc">&nbsp;            val operationType = when(operation) {</b>
+<b class="fc">&nbsp;                &quot;ADD&quot; -&gt; OperationType.ADD</b>
+<b class="nc">&nbsp;                &quot;UPDATE&quot; -&gt; OperationType.UPDATE</b>
+<b class="nc">&nbsp;                &quot;DELETE&quot; -&gt; OperationType.DELETE</b>
+<b class="nc">&nbsp;                else -&gt; throw IllegalArgumentException(&quot;Invalid operation type&quot;)</b>
+&nbsp;            }
+<b class="fc">&nbsp;            val pendingOperation = PendingOperations(</b>
+<b class="fc">&nbsp;                operationType = operationType,</b>
+<b class="fc">&nbsp;                documentId = eventData.eventId.toString(),</b>
+<b class="fc">&nbsp;                data = jsonData,</b>
+<b class="fc">&nbsp;                userId = eventData.eventCreatedBy.toString(),</b>
+<b class="fc">&nbsp;                eventId = eventData.eventId.toString(),</b>
+<b class="fc">&nbsp;                dataType = &quot;event&quot;</b>
+&nbsp;            )
+<b class="fc">&nbsp;            CoroutineScope(Dispatchers.IO).launch {</b>
+<b class="fc">&nbsp;                pendingOperationDao.insert(pendingOperation)</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            _states.value = Response.Error(Exception(&quot;Event data is null&quot;))</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @RequiresApi(Build.VERSION_CODES.O)
+&nbsp;    fun updateEvent() {
+<b class="nc">&nbsp;        updateEventStatus()</b>
+<b class="nc">&nbsp;        updateEventInfo(&quot;isEventDeleted&quot;,&quot;No&quot;)</b>
+<b class="nc">&nbsp;        _states.value = Response.Loading</b>
+<b class="nc">&nbsp;        saveEventAsPendingOperation(eventsData.value,&quot;UPDATE&quot;)</b>
+<b class="nc">&nbsp;        _states.value = Response.Success(Unit)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun validateEventTiming(
+&nbsp;        value: String,
+&nbsp;        callback: (Boolean, String, String) -&gt; Unit
+&nbsp;    ) {
+<b class="nc">&nbsp;        val timePattern = &quot; - &quot;</b>
+<b class="nc">&nbsp;        val times = value.split(timePattern)</b>
+&nbsp;
+<b class="nc">&nbsp;        if (times.size == 2) {</b>
+<b class="nc">&nbsp;            val startTime = times[0].trim()</b>
+<b class="nc">&nbsp;            val endTime = times[1].trim()</b>
+&nbsp;
+<b class="nc">&nbsp;            when {</b>
+<b class="nc">&nbsp;                startTime.isEmpty() &amp;&amp; endTime.isEmpty() -&gt; {</b>
+<b class="nc">&nbsp;                    callback(</b>
+<b class="nc">&nbsp;                        false,</b>
+<b class="nc">&nbsp;                        &quot;Event start time not selected. Event end time not selected.&quot;,</b>
+<b class="nc">&nbsp;                        &quot;both&quot;</b>
+&nbsp;                    )
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                startTime.isEmpty() -&gt; {</b>
+<b class="nc">&nbsp;                    callback(false, &quot;Event start time not selected.&quot;, &quot;start&quot;)</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                endTime.isEmpty() -&gt; {</b>
+<b class="nc">&nbsp;                    callback(false, &quot;Event end time not selected.&quot;, &quot;end&quot;)</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                else -&gt; {
+<b class="nc">&nbsp;                    val isStartTimeValid = validators.validateEventStartTime(startTime, endTime)</b>
+<b class="nc">&nbsp;                    val isEndTimeValid = validators.validateEventEndTimings(startTime, endTime)</b>
+&nbsp;
+<b class="nc">&nbsp;                    when {</b>
+<b class="nc">&nbsp;                        !isEndTimeValid -&gt; {</b>
+<b class="nc">&nbsp;                            callback(</b>
+<b class="nc">&nbsp;                                false,</b>
+<b class="nc">&nbsp;                                &quot;Invalid end time. Ensure it&#39;s after the start time and the minimum event time is 15 minutes.&quot;,</b>
+<b class="nc">&nbsp;                                &quot;end&quot;</b>
+&nbsp;                            )
+&nbsp;                        }
+&nbsp;
+<b class="nc">&nbsp;                        !isStartTimeValid -&gt; {</b>
+<b class="nc">&nbsp;                            callback(</b>
+<b class="nc">&nbsp;                                false,</b>
+<b class="nc">&nbsp;                                &quot;Invalid start time. Ensure it&#39;s before the end time and the minimum event time is 15 minutes.&quot;,</b>
+<b class="nc">&nbsp;                                &quot;start&quot;</b>
+&nbsp;                            )
+&nbsp;                        }
+&nbsp;
+&nbsp;
+&nbsp;                        else -&gt; {
+<b class="nc">&nbsp;                            callback(true, &quot;Event timing is valid.&quot;, &quot;none&quot;)</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            callback(false, &quot;Timing cannot be empty or incomplete.&quot;, &quot;both&quot;)</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

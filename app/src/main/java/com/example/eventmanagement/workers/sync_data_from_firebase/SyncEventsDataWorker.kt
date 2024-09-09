@@ -26,6 +26,7 @@ class SyncEventsDataWorker(
             if (!connectivityObserver.isConnected) {
                 return Result.retry()
             }
+            Log.d("EventDataSyncer", "syncEvents: Triggered")
             runBlocking {
                 val events = fetchEventsFromFirestore()
                 syncEvents(events)
@@ -54,7 +55,7 @@ class SyncEventsDataWorker(
     private suspend fun syncEvents(events: List<EventData>) {
         withContext(Dispatchers.IO) {
             val existingEvents = eventsDao.getAllEvents()
-
+            Log.d("ExistingEvents", "syncEvents: $existingEvents")
             // Determine events to update
             val eventsToUpdate = existingEvents.mapNotNull { existingEvent ->
                 val newEvent = events.find { it.eventId == existingEvent.eventId }
@@ -81,6 +82,8 @@ class SyncEventsDataWorker(
                     null
                 }
             }
+            Log.d("EventsToUpdate", "syncEvents: $eventsToUpdate")
+
 
             val eventsToInsert = events.filter { event ->
                 existingEvents.none { it.eventId == event.eventId }
@@ -90,6 +93,7 @@ class SyncEventsDataWorker(
             val eventsToDelete = existingEvents.filter { it.eventId !in eventIdsFromFirestore }
 
             for (event in eventsToUpdate) {
+                Log.d("EventsToUpdate", "syncEvents: $event")
                 eventsDao.updateEventById(
                     eventTitle = event.eventTitle,
                     eventOrganizer = event.eventOrganizer,

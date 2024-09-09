@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AdminMainFragment</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.ui.fragments.admin_main</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminMainFragment (com.example.eventmanagement.ui.fragments.admin_main)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminMainFragment</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminMainFragment$onViewCreated$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AdminMainFragment$special$$inlined$activityViewModels$default$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AdminMainFragment$special$$inlined$activityViewModels$default$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AdminMainFragment$special$$inlined$activityViewModels$default$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/32)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.ui.fragments.admin_main
+&nbsp;
+&nbsp;import android.os.Bundle
+&nbsp;import androidx.fragment.app.Fragment
+&nbsp;import android.view.LayoutInflater
+&nbsp;import android.view.View
+&nbsp;import android.view.ViewGroup
+&nbsp;import androidx.fragment.app.activityViewModels
+&nbsp;import androidx.viewpager2.widget.ViewPager2
+&nbsp;import com.example.eventmanagement.R
+&nbsp;import com.example.eventmanagement.adapters.AdminBottomNavAdapter
+&nbsp;import com.example.eventmanagement.adapters.BottomNavAdapter
+&nbsp;import com.example.eventmanagement.databinding.FragmentAdminMainBinding
+&nbsp;import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+&nbsp;import dagger.hilt.android.AndroidEntryPoint
+&nbsp;
+&nbsp;@AndroidEntryPoint
+<b class="nc">&nbsp;class AdminMainFragment : Fragment() {</b>
+&nbsp;    private lateinit var binding:FragmentAdminMainBinding
+&nbsp;    private lateinit var viewPagerAdapter: AdminBottomNavAdapter
+<b class="nc">&nbsp;    private val sharedViewModel:SharedViewModel by activityViewModels()</b>
+&nbsp;    override fun onCreateView(
+&nbsp;        inflater: LayoutInflater, container: ViewGroup?,
+&nbsp;        savedInstanceState: Bundle?
+&nbsp;    ): View {
+<b class="nc">&nbsp;        binding= FragmentAdminMainBinding.inflate(inflater,container,false)</b>
+<b class="nc">&nbsp;        binding.viewModel = sharedViewModel</b>
+<b class="nc">&nbsp;        binding.lifecycleOwner = viewLifecycleOwner</b>
+<b class="nc">&nbsp;        return binding.root</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+<b class="nc">&nbsp;        super.onViewCreated(view, savedInstanceState)</b>
+<b class="nc">&nbsp;        viewPagerAdapter = AdminBottomNavAdapter(requireActivity())</b>
+<b class="nc">&nbsp;        binding.viewPager.adapter = viewPagerAdapter</b>
+<b class="nc">&nbsp;        binding.viewPager.isUserInputEnabled = false</b>
+&nbsp;
+<b class="nc">&nbsp;        binding.bottomNavView.setOnItemSelectedListener { item -&gt;</b>
+<b class="nc">&nbsp;            when (item.itemId) {</b>
+<b class="nc">&nbsp;                R.id.home -&gt; binding.viewPager.currentItem = 0</b>
+<b class="nc">&nbsp;                R.id.events -&gt; binding.viewPager.currentItem = 1</b>
+<b class="nc">&nbsp;                R.id.myEvents -&gt; binding.viewPager.currentItem = 2</b>
+<b class="nc">&nbsp;                R.id.profile -&gt; binding.viewPager.currentItem = 3</b>
+<b class="nc">&nbsp;                else -&gt; false</b>
+&nbsp;            }
+<b class="nc">&nbsp;            true</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        binding.bottomNavView.selectedItemId = R.id.bottomNavView</b>
+&nbsp;
+<b class="nc">&nbsp;        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {</b>
+&nbsp;            override fun onPageSelected(position: Int) {
+<b class="nc">&nbsp;                super.onPageSelected(position)</b>
+<b class="nc">&nbsp;                binding.bottomNavView.menu.getItem(position).isChecked = true</b>
+&nbsp;            }
+&nbsp;        })
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

@@ -11,13 +11,24 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.fragment.app.activityViewModels
 import com.example.eventmanagement.R
 import com.example.eventmanagement.models.EventData
+import com.example.eventmanagement.models.OperationType
+import com.example.eventmanagement.models.PendingOperations
+import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
+import com.example.eventmanagement.repository.room_db.PendingOperationDao
 import com.example.eventmanagement.repository.room_db.events_dao.EventDao
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,7 +37,25 @@ class EventNotificationService : Service() {
     @Inject
     lateinit var eventDao: EventDao
 
+    @Inject
+    lateinit var pendingOperationDao: PendingOperationDao
+
+    @Inject
+    lateinit var eventDataMethods: EventDataMethods
+
     private val coroutineScope = CoroutineScope(Dispatchers.IO + Job())
+
+    enum class NotificationType {
+        REMINDER_15_MIN, START_EVENT, ENDING_20_MIN, END_EVENT
+    }
+
+    data class EventQueueItem(
+        val event: EventData,
+        val triggerTime: LocalTime,
+        val notificationType: NotificationType
+    )
+
+    private val eventQueue = ArrayList<EventQueueItem>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
@@ -36,39 +65,168 @@ class EventNotificationService : Service() {
             createNotificationChannel()
         }
         startForeground(1, createForegroundNotification())
-        startNotificationLoop()
+        coroutineScope.launch { observeEventsAndUpdateQueue() }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null // No binding necessary
     }
 
+    // In your service class
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun observeEventsAndUpdateQueue() {
+        try {
+            eventDao.observeAllEvents().collect { events ->
+                Log.d("EventNotificationService", "observeEventsAndUpdateQueue: $events")
+                eventQueue.clear()
+                for (event in events) {
+                    addEventToQueue(event)
+                }
+                eventQueue.sortBy { it.triggerTime }
+                processNextEvent()
+            }
+        } catch (e: Exception) {
+            Log.e("EventNotificationService", "Error observing events: ${e.message}")
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun processNextEvent() {
+        if (eventQueue.isNotEmpty()) {
+            eventQueue.sortBy { it.triggerTime }
+
+            val nextEvent = eventQueue.first()
+            val now = LocalTime.now()
+            val delayTime = ChronoUnit.MILLIS.between(now, nextEvent.triggerTime)
+
+            val minutesUntilNextEvent = ChronoUnit.MINUTES.between(now, nextEvent.triggerTime)
+            Log.d(
+                "EventNotificationService",
+                "Next event '${nextEvent.event.eventTitle}' will trigger in $minutesUntilNextEvent minutes at ${nextEvent.triggerTime}"
+            )
+
+            if (delayTime > 0) {
+                delay(delayTime)  // Delay until the next event's trigger time
+            }
+
+            triggerNotification(nextEvent.event, nextEvent.notificationType)
+            updateEventStatus(nextEvent.event, nextEvent.notificationType)
+
+            eventQueue.remove(nextEvent)
+
+            processNextEvent()
+        }
+    }
+
+
+    private suspend fun updateEventStatus(event: EventData, notificationType: NotificationType) {
+        when (notificationType) {
+            NotificationType.START_EVENT -> {
+                val pendingOperation = PendingOperations(
+                    operationType = OperationType.UPDATE,
+                    documentId = event.eventId.toString(),
+                    data = "On-Going",
+                    userId = "",
+                    eventId = event.eventId.toString(),
+                    dataType = "event_Status"
+                )
+                pendingOperationDao.insert(pendingOperation)
+            }
+
+            NotificationType.ENDING_20_MIN -> {}
+            NotificationType.END_EVENT -> {
+                val pendingOperation = PendingOperations(
+                    operationType = OperationType.UPDATE,
+                    documentId = event.eventId.toString(),
+                    data = "Missed",
+                    userId = "",
+                    eventId = event.eventId.toString(),
+                    dataType = "event_Status"
+                )
+                pendingOperationDao.insert(pendingOperation)
+            }
+
+            NotificationType.REMINDER_15_MIN -> {}
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun parseTime(timeString: String): LocalTime {
-        val formatter = DateTimeFormatter.ofPattern("hh:mm a")
-        return LocalTime.parse(timeString, formatter)
+        val timeStringTrimmed = timeString.trim()
+        val formatter12Hour = java.time.format.DateTimeFormatter.ofPattern("hh:mm a")
+
+        return try {
+            LocalTime.parse(timeStringTrimmed, formatter12Hour)
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Invalid time format: $timeStringTrimmed")
+        }
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun isEventActive(startTime: String, endTime: String): Boolean {
-        val currentTime = LocalTime.now()
-        val start = parseTime(startTime)
-        val end = parseTime(endTime)
-        Log.d("EventTiming", "isEventActive: ${currentTime.isAfter(start) && currentTime.isBefore(end)}")
-        return currentTime.isAfter(start) && currentTime.isBefore(end)
+    private fun addEventToQueue(event: EventData) {
+        val (startTimeString, endTimeString) = event.eventTiming.toString().split(" - ")
+        val startTime = parseTime(startTimeString)
+        val endTime = parseTime(endTimeString)
+
+        val now = LocalTime.now()
+
+        Log.d(
+            "EventNotificationService",
+            "Current Time: $now, Start Time: $startTime, End Time: $endTime"
+        )
+
+        // Comparison should happen in 12-hour format
+        if (now.isBefore(startTime)) {
+            eventQueue.add(
+                EventQueueItem(
+                    event,
+                    startTime.minusMinutes(15),
+                    NotificationType.REMINDER_15_MIN
+                )
+            )
+            eventQueue.add(EventQueueItem(event, startTime, NotificationType.START_EVENT))
+        }
+
+        if (now.isBefore(endTime)) {
+            eventQueue.add(
+                EventQueueItem(
+                    event,
+                    endTime.minusMinutes(20),
+                    NotificationType.ENDING_20_MIN
+                )
+            )
+            eventQueue.add(EventQueueItem(event, endTime, NotificationType.END_EVENT))
+        }
     }
 
-    private fun createNotification(event: EventData) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    private fun triggerNotification(event: EventData, notificationType: NotificationType) {
+        val notificationText = when (notificationType) {
+            NotificationType.REMINDER_15_MIN -> "Event '${event.eventTitle}' starts in 15 minutes."
+            NotificationType.START_EVENT -> "Event '${event.eventTitle}' is starting now!"
+            NotificationType.ENDING_20_MIN -> "Event '${event.eventTitle}' is ending in 20 minutes."
+            NotificationType.END_EVENT -> "Event '${event.eventTitle}' has ended."
+        }
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = NotificationCompat.Builder(this, "event_channel")
-            .setContentTitle("Event Reminder")
-            .setContentText("Event '${event.eventTitle}' is active now!")
+            .setContentTitle("PlanIt")
+            .setContentText(notificationText)
             .setSmallIcon(R.drawable.splash_logo)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
         notificationManager.notify(event.eventId.hashCode(), notification)
     }
+
 
     private fun createForegroundNotification(): Notification {
         return NotificationCompat.Builder(this, "event_channel")
@@ -77,28 +235,6 @@ class EventNotificationService : Service() {
             .setSmallIcon(R.drawable.splash_logo)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun startNotificationLoop() {
-        coroutineScope.launch {
-            while (true) {
-                try {
-                    val activeEvents = eventDao.getAllEvents()
-                    Log.d("EventNotificationService", "Checking for active events")
-                    for (event in activeEvents) {
-                        Log.d("CheckingEvent", "startNotificationLoop: $event")
-                        val (startTime, endTime) = event.eventTiming.toString().split(" - ")
-                        if (isEventActive(startTime, endTime)) {
-                            createNotification(event)
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("EventNotificationService", "Error checking events: ${e.message}")
-                }
-                delay(1 * 60 * 1000) // Check every 1 minutes
-            }
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

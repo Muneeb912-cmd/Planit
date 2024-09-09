@@ -236,6 +236,18 @@ class SyncPendingOperationsWorker @AssistedInject constructor(
                 }
             }
 
+            "event_status" -> {
+                eventDataMethods.updateEventStatusById(
+                    operation.documentId,
+                    operation.data
+                ) { result ->
+                    if (result) {
+                        enqueueWorker<SyncFavEventsDataWorker>("SyncFavEventsDataWorker")
+                        deleteOperation(operation)
+                    }
+                }
+            }
+
         }
     }
 
@@ -388,6 +400,13 @@ class SyncPendingOperationsWorker @AssistedInject constructor(
                 invitesDao.updateInviteStatus(
                     invite.inviteId.toString(),
                     invite.inviteStatus.toString()
+                )
+            }
+
+            "event_status" -> {
+                invitesDao.updateInviteStatus(
+                    operation.documentId,
+                    operation.data
                 )
             }
         }

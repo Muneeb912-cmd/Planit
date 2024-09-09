@@ -79,7 +79,7 @@
                         android:id="@+id/overlayButton"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:background="@drawable/ic_add" />
+                        android:background="@drawable/ic_edit" />
                 </RelativeLayout>
             </RelativeLayout>
 

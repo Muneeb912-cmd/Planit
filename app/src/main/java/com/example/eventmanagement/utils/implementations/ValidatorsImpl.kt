@@ -9,6 +9,7 @@ import java.time.LocalTime
 import java.time.Duration
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Locale
 
 class ValidatorsImpl @Inject constructor(): Validators {
 
@@ -41,7 +42,8 @@ class ValidatorsImpl @Inject constructor(): Validators {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun validateEventEndTimings(eventStartTime: String, eventEndTime: String): Boolean {
-        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
+
 
         return try {
             val startTime = LocalTime.parse(eventStartTime, timeFormatter)
@@ -56,7 +58,7 @@ class ValidatorsImpl @Inject constructor(): Validators {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun validateEventStartTime(eventStartTime: String, eventEndTime: String): Boolean {
-        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
 
         return try {
             val startTime = LocalTime.parse(eventStartTime, timeFormatter)

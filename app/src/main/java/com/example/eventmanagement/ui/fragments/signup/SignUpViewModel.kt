@@ -201,10 +201,8 @@ class SignUpViewModel @Inject constructor(
         updateUserInfo("userId", user1?.userId.toString())
         try {
             preferencesUtil.saveUser(user.value)
-            Log.d("UserData", "saveDataToPreferences: ${preferencesUtil.getUser()}")
             onResult(true)
         } catch (e: Exception) {
-            Log.d("UserDataPrefs", "getUserDataFromFireStore: $e")
             onResult(false)
         }
     }

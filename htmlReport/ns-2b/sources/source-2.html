@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ValidatorsImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.utils.implementations</a>
+</div>
+
+<h1>Coverage Summary for Class: ValidatorsImpl (com.example.eventmanagement.utils.implementations)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ValidatorsImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.utils.implementations
+&nbsp;
+&nbsp;import android.os.Build
+&nbsp;import androidx.annotation.RequiresApi
+&nbsp;import com.example.eventmanagement.utils.Validators
+&nbsp;import java.util.regex.Pattern
+&nbsp;import javax.inject.Inject
+&nbsp;import java.time.LocalTime
+&nbsp;import java.time.Duration
+&nbsp;import java.time.format.DateTimeFormatter
+&nbsp;import java.time.format.DateTimeParseException
+&nbsp;import java.util.Locale
+&nbsp;
+<b class="fc">&nbsp;class ValidatorsImpl @Inject constructor(): Validators {</b>
+&nbsp;
+&nbsp;    override fun validateName(name: String): Boolean {
+<b class="fc">&nbsp;        return name.isNotBlank() &amp;&amp; name.matches(Regex(&quot;^[a-zA-Z\\s]+$&quot;))</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun validateEmail(email: String): Boolean {
+<b class="fc">&nbsp;        val emailPattern = Pattern.compile(</b>
+<b class="fc">&nbsp;            &quot;^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$&quot;</b>
+&nbsp;        )
+<b class="fc">&nbsp;        return emailPattern.matcher(email).matches()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun validatePhone(phone: String): Boolean {
+<b class="fc">&nbsp;        val phonePattern = Pattern.compile(</b>
+<b class="fc">&nbsp;            &quot;^\\+?[0-9]{10,15}$&quot;</b>
+&nbsp;        )
+<b class="fc">&nbsp;        return phonePattern.matcher(phone).matches()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun validatePassword(password: String): Boolean {
+<b class="fc">&nbsp;        val hasSpecialChar = Pattern.compile(&quot;[!@#\$%^&amp;*(),.?\&quot;:{}|&lt;&gt;]&quot;).matcher(password).find()</b>
+<b class="fc">&nbsp;        val hasUppercase = Pattern.compile(&quot;[A-Z]&quot;).matcher(password).find()</b>
+<b class="fc">&nbsp;        val hasNumber = Pattern.compile(&quot;[0-9]&quot;).matcher(password).find()</b>
+<b class="fc">&nbsp;        val minLength = 5</b>
+&nbsp;
+<b class="fc">&nbsp;        return password.length &gt;= minLength &amp;&amp; hasSpecialChar &amp;&amp; hasUppercase &amp;&amp; hasNumber</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequiresApi(Build.VERSION_CODES.O)
+&nbsp;    override fun validateEventEndTimings(eventStartTime: String, eventEndTime: String): Boolean {
+<b class="fc">&nbsp;        val timeFormatter = DateTimeFormatter.ofPattern(&quot;hh:mm a&quot;, Locale.US)</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return try {</b>
+<b class="fc">&nbsp;            val startTime = LocalTime.parse(eventStartTime, timeFormatter)</b>
+<b class="fc">&nbsp;            val endTime = LocalTime.parse(eventEndTime, timeFormatter)</b>
+<b class="fc">&nbsp;            val isAfter = endTime.isAfter(startTime)</b>
+<b class="fc">&nbsp;            val duration = Duration.between(startTime, endTime).toMinutes()</b>
+<b class="fc">&nbsp;            isAfter &amp;&amp; duration &gt;= 15</b>
+<b class="fc">&nbsp;        } catch (e: DateTimeParseException) {</b>
+<b class="fc">&nbsp;            false</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequiresApi(Build.VERSION_CODES.O)
+&nbsp;    override fun validateEventStartTime(eventStartTime: String, eventEndTime: String): Boolean {
+<b class="fc">&nbsp;        val timeFormatter = DateTimeFormatter.ofPattern(&quot;hh:mm a&quot;, Locale.US)</b>
+&nbsp;
+<b class="fc">&nbsp;        return try {</b>
+<b class="fc">&nbsp;            val startTime = LocalTime.parse(eventStartTime, timeFormatter)</b>
+<b class="fc">&nbsp;            val endTime = LocalTime.parse(eventEndTime, timeFormatter)</b>
+<b class="fc">&nbsp;            val isBefore = startTime.isBefore(endTime)</b>
+<b class="fc">&nbsp;            val duration = Duration.between(startTime, endTime).toMinutes()</b>
+<b class="fc">&nbsp;            isBefore &amp;&amp; duration &gt;= 15</b>
+<b class="fc">&nbsp;        } catch (e: DateTimeParseException) {</b>
+<b class="fc">&nbsp;            false</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

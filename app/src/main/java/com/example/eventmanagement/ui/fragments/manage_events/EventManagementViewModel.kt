@@ -19,20 +19,6 @@ class EventManagementViewModel @Inject constructor(
     fun deleteEventById(eventData: EventData,deleteStatus:Boolean, onResult: (Boolean)->Unit){
         saveEventAsPendingOperation(eventData)
         onResult(true)
-//        if(connectivityObserver.isConnected){
-//            eventDataMethods.deleteEventById(
-//                eventData.eventId.toString(),deleteStatus
-//            ){result->
-//                if(result){
-//                    onResult(true)
-//                }else{
-//                    onResult(false)
-//                }
-//            }
-//        }else{
-//            saveEventAsPendingOperation(eventData)
-//            onResult(true)
-//        }
     }
 
     private fun saveEventAsPendingOperation(eventData: EventData?) {

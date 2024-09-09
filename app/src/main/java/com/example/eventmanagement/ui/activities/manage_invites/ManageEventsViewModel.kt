@@ -44,7 +44,7 @@ class ManageEventsViewModel @Inject constructor(
         }
     }
 
-    private fun getCurrentFormattedTimestamp(): String {
+    fun getCurrentFormattedTimestamp(): String {
         val dateFormat = SimpleDateFormat("MMMM dd, yyyy 'at' h:mm:ss a z", Locale.getDefault())
         dateFormat.timeZone = TimeZone.getDefault()
         return dateFormat.format(Date())
@@ -74,36 +74,30 @@ class ManageEventsViewModel @Inject constructor(
         operation: String,
         onResult: (Boolean) -> Unit
     ) {
-        if (operation == "add") {
-            val jsonData = converters.fromInvite(inviteData)
-            val pendingOperation = PendingOperations(
-                operationType = OperationType.ADD,
-                documentId = inviteData.inviteId.toString(),
-                data = jsonData,
-                userId = inviteData.receiverId.toString(),
-                eventId = inviteData.eventId.toString(),
-                dataType = "invite"
-            )
-            CoroutineScope(Dispatchers.IO).launch {
-                pendingOperationDao.insert(pendingOperation)
-            }
-            onResult(true)
-        } else {
-            val jsonData = converters.fromInvite(inviteData)
-            val pendingOperation = PendingOperations(
-                operationType = OperationType.DELETE,
-                documentId = inviteData.inviteId.toString(),
-                data = jsonData,
-                userId = inviteData.receiverId.toString(),
-                eventId = inviteData.eventId.toString(),
-                dataType = "invite"
-            )
-            CoroutineScope(Dispatchers.IO).launch {
-                pendingOperationDao.insert(pendingOperation)
-            }
-            onResult(true)
+        val jsonData = converters.fromInvite(inviteData) ?: run {
+            // Handle the null case or log an error
+            onResult(false)
+            return
         }
-        onResult(false)
+
+        val pendingOperation = PendingOperations(
+            operationType = if (operation == "add") OperationType.ADD else OperationType.DELETE,
+            documentId = inviteData.inviteId.toString(),
+            data = jsonData,
+            userId = inviteData.receiverId.toString(),
+            eventId = inviteData.eventId.toString(),
+            dataType = "invite"
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            if (operation == "add" || operation == "del") {
+                pendingOperationDao.insert(pendingOperation)
+                onResult(true) // Notify success
+            } else {
+                onResult(false) // Invalid operation type
+            }
+        }
     }
+
 
 }

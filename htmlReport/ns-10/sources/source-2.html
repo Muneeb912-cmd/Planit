@@ -1,0 +1,115 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FavEventsDao</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.room_db.fav_events_dao</a>
+</div>
+
+<h1>Coverage Summary for Class: FavEventsDao (com.example.eventmanagement.repository.room_db.fav_events_dao)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">FavEventsDao$MockitoMock$5FQCvPTi</td>
+  </tr>
+  <tr>
+    <td class="name">FavEventsDao$MockitoMock$5FQCvPTi$auxiliary$BPeKHlWi</td>
+  </tr>
+  <tr>
+    <td class="name">FavEventsDao$MockitoMock$5FQCvPTi$auxiliary$CmH22Vfe</td>
+  </tr>
+  <tr>
+    <td class="name">FavEventsDao$MockitoMock$DxMCDxsi</td>
+  </tr>
+  <tr>
+    <td class="name">FavEventsDao$MockitoMock$DxMCDxsi$auxiliary$3CQ31ekF</td>
+  </tr>
+  <tr>
+    <td class="name">FavEventsDao$MockitoMock$DxMCDxsi$auxiliary$3rn5r9vb</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.room_db.fav_events_dao
+&nbsp;
+&nbsp;import androidx.room.Dao
+&nbsp;import androidx.room.Insert
+&nbsp;import androidx.room.OnConflictStrategy
+&nbsp;import androidx.room.Query
+&nbsp;import androidx.room.Update
+&nbsp;import com.example.eventmanagement.models.FavEvents
+&nbsp;import kotlinx.coroutines.flow.Flow
+&nbsp;import kotlinx.coroutines.flow.StateFlow
+&nbsp;
+&nbsp;@Dao
+&nbsp;interface FavEventsDao {
+&nbsp;    @Insert(onConflict = OnConflictStrategy.REPLACE)
+&nbsp;    suspend fun addEventToUserFav(favEvent: FavEvents)
+&nbsp;
+&nbsp;    @Update(onConflict = OnConflictStrategy.REPLACE)
+&nbsp;    suspend fun updateEventToUserFav(favEvent: FavEvents)
+&nbsp;
+&nbsp;    @Query(&quot;DELETE FROM fav_events WHERE userId = :userId AND eventId = :eventId&quot;)
+&nbsp;    suspend fun removeEventFromUserFav(userId: String, eventId: String)
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM fav_events WHERE userId = :userId&quot;)
+&nbsp;    fun getAllCurrentUserFavEvents(userId: String): List&lt;FavEvents&gt;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT eventId FROM fav_events WHERE userId = :userId&quot;)
+&nbsp;    fun observeCurrentUserFavEvents(userId: String): Flow&lt;List&lt;String&gt;&gt;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

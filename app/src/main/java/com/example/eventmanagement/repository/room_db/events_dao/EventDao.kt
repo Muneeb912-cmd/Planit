@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.example.eventmanagement.models.EventData
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +15,8 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE eventId = :eventId AND isEventDeleted = 0 LIMIT 1")
     suspend fun getEventById(eventId: String): EventData?
 
-    @Query("""
+    @Query(
+        """
         UPDATE events 
         SET 
             eventTitle = :eventTitle,
@@ -36,7 +36,8 @@ interface EventDao {
             eventCreatedBy = :eventCreatedBy,
             isEventDeleted = :isEventDeleted
         WHERE eventId = :eventId
-    """)
+    """
+    )
     suspend fun updateEventById(
         eventId: String,
         eventTitle: String?,
@@ -68,4 +69,17 @@ interface EventDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveEvent(eventData: EventData)
+
+    @Query(
+        """
+        UPDATE events 
+        SET
+            eventStatus = :eventStatus
+        WHERE eventId = :eventId
+    """
+    )
+    suspend fun updateEventStatusId(
+        eventId: String?,
+        eventStatus: String?,
+        ): Int
 }

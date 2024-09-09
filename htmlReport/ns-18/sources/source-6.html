@@ -1,0 +1,366 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LocationSearchActivity</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event</a>
+</div>
+
+<h1>Coverage Summary for Class: LocationSearchActivity (com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LocationSearchActivity</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/70)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">LocationSearchActivity$onCreate$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">LocationSearchActivity$onItemClick$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">LocationSearchActivity$performPlaceSearch$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/95)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event
+&nbsp;
+&nbsp;import android.content.Intent
+&nbsp;import android.os.Bundle
+&nbsp;import android.util.Log
+&nbsp;import android.view.View
+&nbsp;import android.widget.SearchView
+&nbsp;import androidx.activity.result.ActivityResultLauncher
+&nbsp;import androidx.activity.result.contract.ActivityResultContracts
+&nbsp;import androidx.appcompat.app.AppCompatActivity
+&nbsp;import androidx.recyclerview.widget.LinearLayoutManager
+&nbsp;import com.example.eventmanagement.R
+&nbsp;import com.example.eventmanagement.adapters.PlaceAdapter
+&nbsp;import com.example.eventmanagement.databinding.ActivityLocationSearchBinding
+&nbsp;import com.google.android.gms.maps.CameraUpdateFactory
+&nbsp;import com.google.android.gms.maps.GoogleMap
+&nbsp;import com.google.android.gms.maps.MapView
+&nbsp;import com.google.android.gms.maps.OnMapReadyCallback
+&nbsp;import com.google.android.gms.maps.model.LatLng
+&nbsp;import com.google.android.gms.maps.model.MarkerOptions
+&nbsp;import com.google.android.libraries.places.api.Places
+&nbsp;import com.google.android.libraries.places.api.model.Place
+&nbsp;import com.google.android.libraries.places.api.net.FetchPlaceRequest
+&nbsp;import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+&nbsp;import com.google.android.libraries.places.api.net.PlacesClient
+&nbsp;import com.google.android.libraries.places.widget.Autocomplete
+&nbsp;import com.google.android.libraries.places.widget.AutocompleteActivity
+&nbsp;
+<b class="nc">&nbsp;class LocationSearchActivity : AppCompatActivity(), OnMapReadyCallback, PlaceAdapter.OnItemClickListener {</b>
+&nbsp;
+&nbsp;    private lateinit var placesClient: PlacesClient
+&nbsp;    private lateinit var binding: ActivityLocationSearchBinding
+&nbsp;    private lateinit var placeAdapter: PlaceAdapter
+&nbsp;    private var googleMap: GoogleMap? = null
+&nbsp;
+&nbsp;    private var selectedLatLng: LatLng? = null
+&nbsp;    private var selectedPlaceName: String? = null
+&nbsp;
+&nbsp;    private val autocompleteActivityResultLauncher: ActivityResultLauncher&lt;Intent&gt; =
+<b class="nc">&nbsp;        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result -&gt;</b>
+<b class="nc">&nbsp;            if (result.resultCode == AutocompleteActivity.RESULT_OK &amp;&amp; result.data != null) {</b>
+<b class="nc">&nbsp;                val place = Autocomplete.getPlaceFromIntent(result.data!!)</b>
+<b class="nc">&nbsp;                val intent = Intent().apply {</b>
+<b class="nc">&nbsp;                    putExtra(&quot;location_name&quot;, place.name)</b>
+<b class="nc">&nbsp;                    putExtra(&quot;latitude&quot;, place.latLng?.latitude)</b>
+<b class="nc">&nbsp;                    putExtra(&quot;longitude&quot;, place.latLng?.longitude)</b>
+<b class="nc">&nbsp;                }</b>
+<b class="nc">&nbsp;                setResult(RESULT_OK, intent)</b>
+&nbsp;
+<b class="nc">&nbsp;                val latLng = place.latLng</b>
+<b class="nc">&nbsp;                if (latLng != null) {</b>
+<b class="nc">&nbsp;                    updateMap(latLng, place.name ?: &quot;Selected Place&quot;)</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                finish()</b>
+<b class="nc">&nbsp;            } else if (result.resultCode == AutocompleteActivity.RESULT_ERROR) {</b>
+<b class="nc">&nbsp;                val status = Autocomplete.getStatusFromIntent(result.data!!)</b>
+<b class="nc">&nbsp;                Log.e(&quot;LocationSearch&quot;, &quot;Error: ${status.statusMessage}&quot;)</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    override fun onCreate(savedInstanceState: Bundle?) {
+<b class="nc">&nbsp;        super.onCreate(savedInstanceState)</b>
+&nbsp;
+&nbsp;        // Initialize view binding
+<b class="nc">&nbsp;        binding = ActivityLocationSearchBinding.inflate(layoutInflater)</b>
+<b class="nc">&nbsp;        setContentView(binding.root)</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!Places.isInitialized()) {</b>
+<b class="nc">&nbsp;            Places.initialize(applicationContext, &quot;AIzaSyB7EIFMRQe-9Ijp2e-Bjwy6PnZ6ksByABg&quot;)</b>
+&nbsp;        }
+<b class="nc">&nbsp;        placesClient = Places.createClient(this)</b>
+&nbsp;
+&nbsp;        // Set up RecyclerView and Adapter
+<b class="nc">&nbsp;        binding.recyclerView.layoutManager = LinearLayoutManager(this)</b>
+<b class="nc">&nbsp;        placeAdapter = PlaceAdapter(this)</b>
+<b class="nc">&nbsp;        binding.recyclerView.adapter = placeAdapter</b>
+&nbsp;
+&nbsp;        // Set up SearchView listener
+<b class="nc">&nbsp;        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {</b>
+&nbsp;            override fun onQueryTextSubmit(query: String?): Boolean {
+<b class="nc">&nbsp;                if (query != null) {</b>
+<b class="nc">&nbsp;                    performPlaceSearch(query)</b>
+&nbsp;                }
+<b class="nc">&nbsp;                return true</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            override fun onQueryTextChange(newText: String?): Boolean {
+<b class="nc">&nbsp;                if (!newText.isNullOrEmpty()) {</b>
+<b class="nc">&nbsp;                    performPlaceSearch(newText)</b>
+<b class="nc">&nbsp;                    binding.recyclerView.visibility = View.VISIBLE</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    placeAdapter.submitList(emptyList())</b>
+<b class="nc">&nbsp;                    binding.recyclerView.visibility = View.GONE</b>
+<b class="nc">&nbsp;                    binding.doneBtn.isClickable = false</b>
+<b class="nc">&nbsp;                    binding.doneBtn.setBackgroundColor(resources.getColor(R.color.md_theme_outlineVariant, null))</b>
+&nbsp;                }
+<b class="nc">&nbsp;                return true</b>
+&nbsp;            }
+&nbsp;        })
+&nbsp;
+&nbsp;        // Set up done button click listener
+<b class="nc">&nbsp;        binding.doneBtn.setOnClickListener {</b>
+<b class="nc">&nbsp;            selectedLatLng?.let { latLng -&gt;</b>
+<b class="nc">&nbsp;                val intent = Intent().apply {</b>
+<b class="nc">&nbsp;                    putExtra(&quot;location_name&quot;, selectedPlaceName)</b>
+<b class="nc">&nbsp;                    putExtra(&quot;latitude&quot;, latLng.latitude)</b>
+<b class="nc">&nbsp;                    putExtra(&quot;longitude&quot;, latLng.longitude)</b>
+<b class="nc">&nbsp;                }</b>
+<b class="nc">&nbsp;                setResult(RESULT_OK, intent)</b>
+<b class="nc">&nbsp;                finish()</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Initialize the MapView
+<b class="nc">&nbsp;        binding.mapView.onCreate(savedInstanceState)</b>
+<b class="nc">&nbsp;        binding.mapView.getMapAsync(this)</b>
+&nbsp;
+&nbsp;        // Set SearchView to be expanded by default
+<b class="nc">&nbsp;        binding.searchView.isIconified = false</b>
+<b class="nc">&nbsp;        binding.searchView.requestFocus()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun performPlaceSearch(query: String) {
+<b class="nc">&nbsp;        val request = FindAutocompletePredictionsRequest.builder()</b>
+<b class="nc">&nbsp;            .setQuery(query)</b>
+<b class="nc">&nbsp;            .build()</b>
+&nbsp;
+<b class="nc">&nbsp;        placesClient.findAutocompletePredictions(request)</b>
+<b class="nc">&nbsp;            .addOnSuccessListener { response -&gt;</b>
+<b class="nc">&nbsp;                val predictions = response.autocompletePredictions</b>
+<b class="nc">&nbsp;                placeAdapter.submitList(predictions)</b>
+&nbsp;            }
+<b class="nc">&nbsp;            .addOnFailureListener { exception -&gt;</b>
+<b class="nc">&nbsp;                Log.e(&quot;LocationSearch&quot;, &quot;Place search failed&quot;, exception)</b>
+&nbsp;            }
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onItemClick(placeId: String, placeName: String) {
+<b class="nc">&nbsp;        val placeFields = listOf(Place.Field.LAT_LNG)</b>
+<b class="nc">&nbsp;        val request = FetchPlaceRequest.newInstance(placeId, placeFields)</b>
+&nbsp;
+<b class="nc">&nbsp;        placesClient.fetchPlace(request)</b>
+<b class="nc">&nbsp;            .addOnSuccessListener { response -&gt;</b>
+<b class="nc">&nbsp;                val place = response.place</b>
+<b class="nc">&nbsp;                val latLng = place.latLng</b>
+<b class="nc">&nbsp;                if (latLng != null) {</b>
+<b class="nc">&nbsp;                    selectedLatLng = latLng</b>
+<b class="nc">&nbsp;                    selectedPlaceName = placeName</b>
+&nbsp;
+<b class="nc">&nbsp;                    binding.searchView.setQuery(placeName, false)</b>
+<b class="nc">&nbsp;                    binding.recyclerView.visibility = View.GONE</b>
+<b class="nc">&nbsp;                    binding.doneBtn.isClickable = true</b>
+<b class="nc">&nbsp;                    binding.doneBtn.setBackgroundColor(resources.getColor(R.color.md_theme_primary, null))</b>
+<b class="nc">&nbsp;                    updateMap(latLng, placeName)</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    Log.e(&quot;LocationSearch&quot;, &quot;LatLng not available for place: $placeId&quot;)</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            .addOnFailureListener { exception -&gt;</b>
+<b class="nc">&nbsp;                Log.e(&quot;LocationSearch&quot;, &quot;Error fetching place details: &quot;, exception)</b>
+&nbsp;            }
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onMapReady(map: GoogleMap) {
+<b class="nc">&nbsp;        googleMap = map</b>
+<b class="nc">&nbsp;        val lahoreLatLng = LatLng(31.5204, 74.3587)</b>
+<b class="nc">&nbsp;        updateMap(lahoreLatLng, &quot;Lahore, Pakistan&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun updateMap(latLng: LatLng, placeName: String) {
+<b class="nc">&nbsp;        googleMap?.let {</b>
+<b class="nc">&nbsp;            it.clear()</b>
+<b class="nc">&nbsp;            it.addMarker(MarkerOptions().position(latLng).title(placeName))</b>
+<b class="nc">&nbsp;            it.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onResume() {
+<b class="nc">&nbsp;        super.onResume()</b>
+<b class="nc">&nbsp;        binding.mapView.onResume()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onPause() {
+<b class="nc">&nbsp;        super.onPause()</b>
+<b class="nc">&nbsp;        binding.mapView.onPause()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onDestroy() {
+<b class="nc">&nbsp;        super.onDestroy()</b>
+<b class="nc">&nbsp;        binding.mapView.onDestroy()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onLowMemory() {
+<b class="nc">&nbsp;        super.onLowMemory()</b>
+<b class="nc">&nbsp;        binding.mapView.onLowMemory()</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>

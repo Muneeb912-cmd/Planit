@@ -1,0 +1,318 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SyncEventsDataWorker</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.workers.sync_data_from_firebase</a>
+</div>
+
+<h1>Coverage Summary for Class: SyncEventsDataWorker (com.example.eventmanagement.workers.sync_data_from_firebase)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SyncEventsDataWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/31)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SyncEventsDataWorker$doWork$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SyncEventsDataWorker$fetchEventsFromFirestore$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SyncEventsDataWorker$syncEvents$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/75)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/119)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.workers.sync_data_from_firebase
+&nbsp;
+&nbsp;import android.content.Context
+&nbsp;import android.util.Log
+&nbsp;import androidx.work.Worker
+&nbsp;import androidx.work.WorkerParameters
+&nbsp;import com.example.eventmanagement.models.EventData
+&nbsp;import com.example.eventmanagement.repository.room_db.LocalDB
+&nbsp;import com.example.eventmanagement.receivers.ConnectivityObserver
+&nbsp;import com.google.firebase.firestore.FirebaseFirestore
+&nbsp;import kotlinx.coroutines.Dispatchers
+&nbsp;import kotlinx.coroutines.runBlocking
+&nbsp;import kotlinx.coroutines.tasks.await
+&nbsp;import kotlinx.coroutines.withContext
+&nbsp;
+&nbsp;class SyncEventsDataWorker(
+&nbsp;    context: Context,
+&nbsp;    workerParams: WorkerParameters
+<b class="nc">&nbsp;) : Worker(context, workerParams) {</b>
+<b class="nc">&nbsp;    val firestore = FirebaseFirestore.getInstance()</b>
+<b class="nc">&nbsp;    val database = LocalDB.getInstance(context)</b>
+<b class="nc">&nbsp;    private val eventsDao = database.eventsDao()</b>
+<b class="nc">&nbsp;    private val connectivityObserver = ConnectivityObserver(context)</b>
+&nbsp;    override fun doWork(): Result {
+<b class="nc">&nbsp;        return try {</b>
+<b class="nc">&nbsp;            if (!connectivityObserver.isConnected) {</b>
+<b class="nc">&nbsp;                return Result.retry()</b>
+&nbsp;            }
+<b class="nc">&nbsp;            Log.d(&quot;EventDataSyncer&quot;, &quot;syncEvents: Triggered&quot;)</b>
+<b class="nc">&nbsp;            runBlocking {</b>
+<b class="nc">&nbsp;                val events = fetchEventsFromFirestore()</b>
+<b class="nc">&nbsp;                syncEvents(events)</b>
+&nbsp;            }
+<b class="nc">&nbsp;            Result.success()</b>
+<b class="nc">&nbsp;        } catch (exception: Exception) {</b>
+<b class="nc">&nbsp;            Result.failure()</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private suspend fun fetchEventsFromFirestore(): List&lt;EventData&gt; = withContext(Dispatchers.IO) {</b>
+<b class="nc">&nbsp;        try {</b>
+<b class="nc">&nbsp;            val events = mutableListOf&lt;EventData&gt;()</b>
+<b class="nc">&nbsp;            val querySnapshot =</b>
+<b class="nc">&nbsp;                firestore.collection(&quot;Events&quot;).whereEqualTo(&quot;eventDeleted&quot;, false).get().await()</b>
+<b class="nc">&nbsp;            for (document in querySnapshot.documents) {</b>
+<b class="nc">&nbsp;                val event = document.toObject(EventData::class.java)</b>
+<b class="nc">&nbsp;                event?.let { events.add(it) }</b>
+&nbsp;            }
+<b class="nc">&nbsp;            events</b>
+<b class="nc">&nbsp;        } catch (e: Exception) {</b>
+<b class="nc">&nbsp;            emptyList()</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private suspend fun syncEvents(events: List&lt;EventData&gt;) {
+<b class="nc">&nbsp;        withContext(Dispatchers.IO) {</b>
+<b class="nc">&nbsp;            val existingEvents = eventsDao.getAllEvents()</b>
+<b class="nc">&nbsp;            Log.d(&quot;ExistingEvents&quot;, &quot;syncEvents: $existingEvents&quot;)</b>
+&nbsp;            // Determine events to update
+<b class="nc">&nbsp;            val eventsToUpdate = existingEvents.mapNotNull { existingEvent -&gt;</b>
+<b class="nc">&nbsp;                val newEvent = events.find { it.eventId == existingEvent.eventId }</b>
+<b class="nc">&nbsp;                if (newEvent != null &amp;&amp; !areEventsEqual(existingEvent, newEvent)) {</b>
+<b class="nc">&nbsp;                    existingEvent.apply {</b>
+<b class="nc">&nbsp;                        eventTitle = newEvent.eventTitle</b>
+<b class="nc">&nbsp;                        eventOrganizer = newEvent.eventOrganizer</b>
+<b class="nc">&nbsp;                        eventTiming = newEvent.eventTiming</b>
+<b class="nc">&nbsp;                        eventCategory = newEvent.eventCategory</b>
+<b class="nc">&nbsp;                        eventDescription = newEvent.eventDescription</b>
+<b class="nc">&nbsp;                        eventLocation = newEvent.eventLocation</b>
+<b class="nc">&nbsp;                        eventLong = newEvent.eventLong</b>
+<b class="nc">&nbsp;                        eventLat = newEvent.eventLat</b>
+<b class="nc">&nbsp;                        eventDate = newEvent.eventDate</b>
+<b class="nc">&nbsp;                        isEventFeatured = newEvent.isEventFeatured</b>
+<b class="nc">&nbsp;                        isEventPopular = newEvent.isEventPopular</b>
+<b class="nc">&nbsp;                        numberOfPeopleAttending = newEvent.numberOfPeopleAttending</b>
+<b class="nc">&nbsp;                        isEventPublic = newEvent.isEventPublic</b>
+<b class="nc">&nbsp;                        eventStatus = newEvent.eventStatus</b>
+<b class="nc">&nbsp;                        eventCreatedBy = newEvent.eventCreatedBy</b>
+<b class="nc">&nbsp;                        isEventDeleted = newEvent.isEventDeleted</b>
+<b class="nc">&nbsp;                    }</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    null</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            Log.d(&quot;EventsToUpdate&quot;, &quot;syncEvents: $eventsToUpdate&quot;)</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            val eventsToInsert = events.filter { event -&gt;</b>
+<b class="nc">&nbsp;                existingEvents.none { it.eventId == event.eventId }</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            val eventIdsFromFirestore = events.map { it.eventId }.toSet()</b>
+<b class="nc">&nbsp;            val eventsToDelete = existingEvents.filter { it.eventId !in eventIdsFromFirestore }</b>
+&nbsp;
+<b class="nc">&nbsp;            for (event in eventsToUpdate) {</b>
+<b class="nc">&nbsp;                Log.d(&quot;EventsToUpdate&quot;, &quot;syncEvents: $event&quot;)</b>
+<b class="nc">&nbsp;                eventsDao.updateEventById(</b>
+<b class="nc">&nbsp;                    eventTitle = event.eventTitle,</b>
+<b class="nc">&nbsp;                    eventOrganizer = event.eventOrganizer,</b>
+<b class="nc">&nbsp;                    eventTiming = event.eventTiming,</b>
+<b class="nc">&nbsp;                    eventCategory = event.eventCategory,</b>
+<b class="nc">&nbsp;                    eventDescription = event.eventDescription,</b>
+<b class="nc">&nbsp;                    eventLocation = event.eventLocation,</b>
+<b class="nc">&nbsp;                    eventLong = event.eventLong,</b>
+<b class="nc">&nbsp;                    eventLat = event.eventLat,</b>
+<b class="nc">&nbsp;                    eventDate = event.eventDate,</b>
+<b class="nc">&nbsp;                    isEventFeatured = event.isEventFeatured,</b>
+<b class="nc">&nbsp;                    isEventPopular = event.isEventPopular,</b>
+<b class="nc">&nbsp;                    numberOfPeopleAttending = event.numberOfPeopleAttending,</b>
+<b class="nc">&nbsp;                    isEventPublic = event.isEventPublic,</b>
+<b class="nc">&nbsp;                    eventStatus = event.eventStatus,</b>
+<b class="nc">&nbsp;                    eventCreatedBy = event.eventCreatedBy,</b>
+<b class="nc">&nbsp;                    isEventDeleted = event.isEventDeleted,</b>
+<b class="nc">&nbsp;                    eventId = event.eventId.toString()</b>
+&nbsp;                )
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for (event in eventsToInsert) {</b>
+<b class="nc">&nbsp;                Log.d(&quot;EventsToAdd&quot;, &quot;syncEvents: $event&quot;)</b>
+<b class="nc">&nbsp;                eventsDao.saveEvent(event)</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for (event in eventsToDelete) {</b>
+<b class="nc">&nbsp;                Log.d(&quot;EventsToDelete&quot;, &quot;syncEvents: $event&quot;)</b>
+<b class="nc">&nbsp;                eventsDao.deleteEventById(event.eventId.toString())</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private fun areEventsEqual(existingEvent: EventData, newEvent: EventData): Boolean {
+<b class="nc">&nbsp;        return existingEvent.eventTitle == newEvent.eventTitle &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventOrganizer == newEvent.eventOrganizer &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventTiming == newEvent.eventTiming &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventCategory == newEvent.eventCategory &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventDescription == newEvent.eventDescription &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventLocation == newEvent.eventLocation &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventLong == newEvent.eventLong &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventLat == newEvent.eventLat &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventDate == newEvent.eventDate &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.isEventFeatured == newEvent.isEventFeatured &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.isEventPopular == newEvent.isEventPopular &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.numberOfPeopleAttending == newEvent.numberOfPeopleAttending &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.isEventPublic == newEvent.isEventPublic &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventStatus == newEvent.eventStatus &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.eventCreatedBy == newEvent.eventCreatedBy &amp;&amp;</b>
+<b class="nc">&nbsp;                existingEvent.isEventDeleted == newEvent.isEventDeleted</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-09 23:10</div>
+</div>
+</body>
+</html>
