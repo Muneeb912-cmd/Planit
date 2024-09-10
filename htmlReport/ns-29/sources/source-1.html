@@ -49,10 +49,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    48%
+    48.9%
   </span>
   <span class="absValue">
-    (36/75)
+    (43/88)
   </span>
 </td>
 </tr>
@@ -71,7 +71,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/3)
+    (0/5)
   </span>
 </td>
   </tr>
@@ -204,7 +204,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/3)
+    (0/5)
   </span>
 </td>
   </tr>
@@ -261,7 +261,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/3)
+    (0/5)
   </span>
 </td>
   </tr>
@@ -318,7 +318,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/3)
+    (0/5)
   </span>
 </td>
   </tr>
@@ -432,7 +432,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/3)
+    (0/5)
   </span>
 </td>
   </tr>
@@ -524,10 +524,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    27.5%
+    27.9%
   </span>
   <span class="absValue">
-    (36/131)
+    (43/154)
   </span>
 </td>
 </tr>
@@ -571,7 +571,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import javax.inject.Inject
 &nbsp;
 &nbsp;@HiltViewModel
-&nbsp;class SharedViewModel @Inject constructor(
+<b class="fc">&nbsp;class SharedViewModel @Inject constructor(</b>
 <b class="fc">&nbsp;    private val userDataMethods: UserDataMethods,</b>
 <b class="fc">&nbsp;    private val inviteMethods: InviteMethods,</b>
 <b class="fc">&nbsp;    private val eventDataMethods: EventDataMethods,</b>
@@ -622,7 +622,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        if (isConnected) {</b>
 <b class="nc">&nbsp;            initializeObservers()</b>
 &nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun initializeObservers() {
 <b class="fc">&nbsp;        observePendingOperations()</b>
@@ -630,22 +630,22 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        observeAllUsers()</b>
 <b class="fc">&nbsp;        observeAllEvents()</b>
 <b class="fc">&nbsp;        observeAllInvites()</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;
 &nbsp;    @OptIn(FlowPreview::class)
 &nbsp;    private fun observePendingOperations() {
-<b class="fc">&nbsp;        viewModelScope.launch {</b>
+<b class="pc">&nbsp;        viewModelScope.launch {</b>
 <b class="nc">&nbsp;            pendingOperationDao.observePendingOperations()</b>
 <b class="nc">&nbsp;                .debounce(500)</b>
 <b class="nc">&nbsp;                .collect {</b>
 <b class="nc">&nbsp;                    syncRepository.scheduleSyncPendingOperationsWorker()</b>
 &nbsp;                }
-&nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun observeCurrentUser() {
-<b class="fc">&nbsp;        viewModelScope.launch {</b>
+<b class="pc">&nbsp;        viewModelScope.launch {</b>
 <b class="nc">&nbsp;            if (connectivityObserver.isConnected) {</b>
 <b class="nc">&nbsp;                userDataMethods.observeCurrentUser { user -&gt;</b>
 <b class="nc">&nbsp;                    _currentUser.value = user</b>
@@ -667,11 +667,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                }
 &nbsp;
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun observeAllInvites() {
-<b class="fc">&nbsp;        viewModelScope.launch {</b>
+<b class="pc">&nbsp;        viewModelScope.launch {</b>
 <b class="nc">&nbsp;            if (connectivityObserver.isConnected) {</b>
 <b class="nc">&nbsp;                inviteMethods.observeAllInvites { invites -&gt;</b>
 <b class="nc">&nbsp;                    _allInvites.value = invites</b>
@@ -681,8 +681,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                    _allInvites.value = invites</b>
 &nbsp;                }
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun observeCurrentUserFromAttendees(userId: String) {
 <b class="nc">&nbsp;        viewModelScope.launch {</b>
@@ -696,7 +696,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                }
 &nbsp;            }
 &nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun observeUserInvites() {
 <b class="nc">&nbsp;        viewModelScope.launch {</b>
@@ -711,7 +711,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                }
 &nbsp;            }
 &nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun updateUserInvitesAndEvents(invites: List&lt;Invites&gt;) {
 <b class="nc">&nbsp;        val invitedEventsList = _allEvents.value.filter { event -&gt;</b>
@@ -737,11 +737,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                }
 &nbsp;            }
 &nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;
 &nbsp;    private fun observeAllUsers() {
-<b class="fc">&nbsp;        viewModelScope.launch {</b>
+<b class="pc">&nbsp;        viewModelScope.launch {</b>
 <b class="nc">&nbsp;            if (connectivityObserver.isConnected) {</b>
 <b class="nc">&nbsp;                userDataMethods.observeUsers { users -&gt;</b>
 <b class="nc">&nbsp;                    _allUsers.value = users.orEmpty()</b>
@@ -753,11 +753,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                    }
 &nbsp;                }
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun observeAllEvents() {
-<b class="fc">&nbsp;        viewModelScope.launch {</b>
+<b class="pc">&nbsp;        viewModelScope.launch {</b>
 <b class="nc">&nbsp;            if (connectivityObserver.isConnected) {</b>
 <b class="nc">&nbsp;                eventDataMethods.observeAllEvents { events -&gt;</b>
 <b class="nc">&nbsp;                    _allEvents.value = events</b>
@@ -767,8 +767,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                    _allEvents.value = events</b>
 &nbsp;                }
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun observeAllFavEvents(userId: String) {
 <b class="nc">&nbsp;        if (connectivityObserver.isConnected) {</b>
@@ -785,7 +785,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                }
 &nbsp;            }
 &nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun getProfileStatus(): String {
 <b class="nc">&nbsp;        return if (currentUser.value?.profilePrivate == true) &quot;Public&quot; else &quot;Private&quot;</b>
@@ -797,7 +797,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        _userInvites.value = emptyList()</b>
 <b class="nc">&nbsp;        _allUsers.value = emptyList()</b>
 <b class="nc">&nbsp;        _allEvents.value = emptyList()</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;}
 </code>
 </pre>
@@ -822,7 +822,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-09-09 23:10</div>
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
 </div>
 </body>
 </html>

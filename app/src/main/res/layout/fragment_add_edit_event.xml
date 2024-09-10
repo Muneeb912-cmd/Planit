@@ -71,7 +71,7 @@
                     android:layout_marginBottom="10dp"
                     android:hint="@string/event_title"
                     android:orientation="vertical"
-                    app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                    
                     app:startIconDrawable="@drawable/ic_title">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/category"
-                    app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                    
                     app:endIconMode="dropdown_menu"
                     app:startIconDrawable="@drawable/ic_category">
 
@@ -113,7 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/event_date"
-                    app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                    
                     app:startIconDrawable="@drawable/ic_calender">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -146,7 +146,7 @@
                     android:layout_marginBottom="10dp"
                     android:hint="Ending Date"
                     android:visibility="gone"
-                    app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                    
                     app:startIconDrawable="@drawable/ic_calender">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -178,7 +178,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:hint="@string/start_time"
-                        app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                        
                         app:startIconDrawable="@drawable/ic_time">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -202,7 +202,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:hint="@string/end_time"
-                        app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                        
                         app:startIconDrawable="@drawable/ic_time">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -237,7 +237,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/event_location"
-                    app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
+                    
                     app:startIconDrawable="@drawable/ic_location">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -306,7 +306,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:hint="@string/event_description"
-                    app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/eventDescription"
@@ -349,8 +349,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:backgroundTint="#8F4C35"
                     android:text="Save"
+                    android:backgroundTint="@color/md_theme_primary"
+                    app:strokeColor="@color/md_theme_secondary"
                     android:textColor="@android:color/white"
                     app:cornerRadius="5dp" />
             </LinearLayout>

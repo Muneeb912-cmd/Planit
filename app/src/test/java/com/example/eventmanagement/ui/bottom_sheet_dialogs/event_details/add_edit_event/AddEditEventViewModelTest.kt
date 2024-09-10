@@ -8,6 +8,7 @@ import com.example.eventmanagement.repository.room_db.PendingOperationDao
 import com.example.eventmanagement.utils.Validators
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -39,7 +40,7 @@ class AddEditEventViewModelTest {
     }
 
     @Test
-    fun `test updateEventInfo updates event data`() = runTest {
+    fun `test updateEventInfo updates event data`() = runBlocking {
         // Given
         val key = "eventTitle"
         val value = "New Event Title"

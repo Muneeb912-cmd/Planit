@@ -60,7 +60,6 @@
                     android:padding="8dp"
                     android:src="@drawable/ic_avatar_male"
                     app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeColor="@color/md_theme_tertiaryContainer_mediumContrast"
                     app:strokeWidth="5dp" />
 
                 <!-- Overlay Button -->
@@ -115,8 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/full_name"
-                app:startIconDrawable="@drawable/ic_person"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                app:startIconDrawable="@drawable/ic_person">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fullName"
@@ -138,8 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/phone_number"
-                app:startIconDrawable="@drawable/ic_phone"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                app:startIconDrawable="@drawable/ic_phone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/userPhone"
@@ -160,8 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/birth_date"
-                app:startIconDrawable="@drawable/ic_calender"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                app:startIconDrawable="@drawable/ic_calender">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/userDob"

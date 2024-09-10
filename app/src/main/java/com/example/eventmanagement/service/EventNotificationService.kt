@@ -133,7 +133,7 @@ class EventNotificationService : Service() {
                     data = "On-Going",
                     userId = "",
                     eventId = event.eventId.toString(),
-                    dataType = "event_Status"
+                    dataType = "event_status"
                 )
                 pendingOperationDao.insert(pendingOperation)
             }
@@ -146,7 +146,7 @@ class EventNotificationService : Service() {
                     data = "Missed",
                     userId = "",
                     eventId = event.eventId.toString(),
-                    dataType = "event_Status"
+                    dataType = "event_status"
                 )
                 pendingOperationDao.insert(pendingOperation)
             }

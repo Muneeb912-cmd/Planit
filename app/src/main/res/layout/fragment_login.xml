@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/planit"
-                    android:textColor="@android:color/white"
+
                     android:textSize="30sp"
                     android:textStyle="bold" />
 
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/let_s_make_it_happen"
-                    android:textColor="@android:color/white"
+
                     android:textSize="25sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -275,7 +275,7 @@
                     android:backgroundTint="@color/md_theme_secondaryFixedDim_mediumContrast"
                     android:elevation="10dp"
                     android:text="@string/sign_up"
-                    android:textColor="@android:color/white" />
+                     />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

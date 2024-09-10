@@ -52,7 +52,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/35)
+    (0/42)
   </span>
 </td>
 </tr>
@@ -74,7 +74,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/2)
+    (0/3)
   </span>
 </td>
   </tr>
@@ -131,7 +131,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/49)
+    (0/57)
   </span>
 </td>
 </tr>
@@ -197,7 +197,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                    Log.e(&quot;ConnectivityReceiver&quot;, &quot;Error handling connectivity change&quot;, e)</b>
 &nbsp;                }
 &nbsp;            }
-&nbsp;        }
+<b class="nc">&nbsp;        }</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
@@ -207,7 +207,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        enqueueWorker&lt;SyncInvitesDataWorker&gt;(&quot;SyncInvitesDataWorker&quot;)</b>
 <b class="nc">&nbsp;        enqueueWorker&lt;SyncAttendeeDataWorker&gt;(&quot;SyncAttendeeDataWorker&quot;)</b>
 <b class="nc">&nbsp;        enqueueWorker&lt;SyncFavEventsDataWorker&gt;(&quot;SyncFavEventsDataWorker&quot;)</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private inline fun &lt;reified T : androidx.work.Worker&gt; enqueueWorker(tag: String) {
 <b class="nc">&nbsp;        val workRequest = OneTimeWorkRequest.Builder(T::class.java)</b>
@@ -215,7 +215,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            .build()</b>
 <b class="nc">&nbsp;        WorkManager.getInstance(context)</b>
 <b class="nc">&nbsp;            .enqueueUniqueWork(tag, ExistingWorkPolicy.REPLACE, workRequest)</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 <b class="nc">&nbsp;    init {</b>
 <b class="nc">&nbsp;        registerReceiver()</b>
@@ -225,7 +225,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)</b>
 <b class="nc">&nbsp;        context.registerReceiver(connectivityReceiver, filter)</b>
 <b class="nc">&nbsp;        isConnected = checkConnectivity()</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun checkConnectivity(): Boolean {
 <b class="nc">&nbsp;        val connectivityManager =</b>
@@ -243,21 +243,21 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    fun registerListener(listener: ConnectivityListener) {
 <b class="nc">&nbsp;        connectivityListeners.add(listener)</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun unregisterListener(listener: ConnectivityListener) {
 <b class="nc">&nbsp;        connectivityListeners.remove(listener)</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun notifyListeners() {
 <b class="nc">&nbsp;        connectivityListeners.forEach { listener -&gt;</b>
 <b class="nc">&nbsp;            listener.onConnectivityChanged(isConnected)</b>
 <b class="nc">&nbsp;        }</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun unregisterReceiver() {
 <b class="nc">&nbsp;        context.unregisterReceiver(connectivityReceiver)</b>
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;}
 </code>
 </pre>
@@ -282,7 +282,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-09-09 23:10</div>
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
 </div>
 </body>
 </html>

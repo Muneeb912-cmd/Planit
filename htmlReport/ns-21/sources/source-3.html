@@ -52,7 +52,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (12/12)
+    (16/16)
   </span>
 </td>
 </tr>
@@ -68,10 +68,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    93.5%
+    93.9%
   </span>
   <span class="absValue">
-    (29/31)
+    (31/33)
   </span>
 </td>
   </tr>
@@ -87,10 +87,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    95.3%
+    95.9%
   </span>
   <span class="absValue">
-    (41/43)
+    (47/49)
   </span>
 </td>
 </tr>
@@ -117,7 +117,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import javax.inject.Inject
 &nbsp;
 &nbsp;@HiltViewModel
-&nbsp;class HomeViewModel @Inject constructor(
+<b class="fc">&nbsp;class HomeViewModel @Inject constructor(</b>
 <b class="fc">&nbsp;    private val pendingOperationDao: PendingOperationDao,</b>
 <b class="fc">&nbsp;    private val converters: Converters</b>
 <b class="fc">&nbsp;) : ViewModel() {</b>
@@ -129,7 +129,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    ) {
 <b class="fc">&nbsp;        addRemoveEventFromUserFav(userId, eventData, &quot;add&quot;)</b>
 <b class="fc">&nbsp;        onResult(true, &quot;All Good&quot;)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun removeEventFromUserFav(
 &nbsp;        userId: String,
@@ -138,7 +138,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    ) {
 <b class="fc">&nbsp;        addRemoveEventFromUserFav(userId, eventData, &quot;del&quot;)</b>
 <b class="fc">&nbsp;        onResult(true, &quot;All Good&quot;)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun addRemoveEventFromUserFav(userId: String, eventData: EventData, key: String) {
 <b class="fc">&nbsp;        val favEvents = FavEvents(</b>
@@ -192,8 +192,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                )
 <b class="fc">&nbsp;                pendingOperationDao.insert(pendingOperation)</b>
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;}
 </code>
 </pre>
@@ -218,7 +218,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-09-09 23:10</div>
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
 </div>
 </body>
 </html>

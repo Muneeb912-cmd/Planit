@@ -27,11 +27,11 @@
             <ImageButton
                 android:id="@+id/doneBtn"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_done"
-                android:layout_weight="0"
+                android:layout_height="33dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
-                android:layout_gravity="center_vertical" />
+                android:layout_weight="0"
+                android:src="@drawable/ic_done" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

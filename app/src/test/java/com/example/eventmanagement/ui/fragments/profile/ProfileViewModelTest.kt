@@ -2,6 +2,7 @@ package com.example.eventmanagement.ui.fragments.profile
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.eventmanagement.models.OperationType
+import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.repository.firebase.login_signup.LoginSignUpMethods
 import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
 import com.example.eventmanagement.repository.room_db.PendingOperationDao
@@ -12,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.*
@@ -97,24 +100,31 @@ class ProfileViewModelTest {
         // Mock DAO behavior
         whenever(pendingOperationDao.countByDocumentId(userId, "UPDATE", "user_location")).thenReturn(0)
 
-        viewModel.updateUserLocation(userId, newLocation) {}
+        viewModel.updateUserLocation(userId, newLocation) {
+            verify(pendingOperationDao).insert(any())
+        }
 
-        verify(pendingOperationDao).insert(any())
+
     }
 
 
     @Test
-    fun `updateUserProfileStatus should insert or update pending operation`()= runBlocking {
+    fun `updateUserProfileStatus should insert or update pending operation`() = runBlocking {
         val userId = "user123"
         val newSetting = true
 
         // Mock DAO behavior
         whenever(pendingOperationDao.countByDocumentId(userId, "UPDATE", "user_profile_status")).thenReturn(0)
 
-        viewModel.updateUserProfileStatus(userId, newSetting) {}
+        // When
+        viewModel.updateUserProfileStatus(userId, newSetting) {
+            // Then
+            verify(pendingOperationDao).insert(any())
+        }
 
-        verify(pendingOperationDao).insert(any())
+
     }
+
 
     @Test
     fun `updateUserNotificationStatus should insert or update pending operation`() = runBlocking {

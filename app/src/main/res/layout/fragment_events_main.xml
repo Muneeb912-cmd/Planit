@@ -130,8 +130,6 @@
                 android:layout_height="wrap_content"
                 android:background="@color/md_theme_secondaryFixed"
                 android:elevation="8dp"
-
-                app:itemIconTint="@color/md_theme_secondaryFixedDim_mediumContrast"
                 app:itemTextColor="@color/md_theme_scrim"
                 app:labelVisibilityMode="selected"
                 app:layout_constraintBottom_toBottomOf="parent"

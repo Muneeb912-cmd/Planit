@@ -49,10 +49,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    86.1%
+    86.4%
   </span>
   <span class="absValue">
-    (68/79)
+    (76/88)
   </span>
 </td>
 </tr>
@@ -87,10 +87,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    40%
+    57.1%
   </span>
   <span class="absValue">
-    (2/5)
+    (4/7)
   </span>
 </td>
   </tr>
@@ -109,7 +109,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (7/7)
   </span>
 </td>
   </tr>
@@ -128,7 +128,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (8/8)
   </span>
 </td>
   </tr>
@@ -144,10 +144,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    58.3%
+    61.5%
   </span>
   <span class="absValue">
-    (7/12)
+    (8/13)
   </span>
 </td>
   </tr>
@@ -163,10 +163,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    66.7%
+    75%
   </span>
   <span class="absValue">
-    (4/6)
+    (6/8)
   </span>
 </td>
   </tr>
@@ -182,10 +182,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    79.5%
+    81.3%
   </span>
   <span class="absValue">
-    (93/117)
+    (109/134)
   </span>
 </td>
 </tr>
@@ -215,7 +215,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import javax.inject.Inject
 &nbsp;
 &nbsp;@HiltViewModel
-&nbsp;class SignUpViewModel @Inject constructor(
+<b class="fc">&nbsp;class SignUpViewModel @Inject constructor(</b>
 <b class="fc">&nbsp;    private val validators: Validators,</b>
 <b class="fc">&nbsp;    private val loginSignUpMethods: LoginSignUpMethods,</b>
 <b class="fc">&nbsp;    private val userDataMethods: UserDataMethods,</b>
@@ -262,7 +262,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        checkIfDataComplete()</b>
 <b class="fc">&nbsp;        _user.value = updatedUser</b>
 <b class="fc">&nbsp;        println(&quot;Updated User: $updatedUser&quot;)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun validateField(field: String, value: String) {
 <b class="fc">&nbsp;        val updatedErrors = _errors.value.toMutableMap()</b>
@@ -288,7 +288,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;        }
 <b class="fc">&nbsp;        _errors.value = updatedErrors</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    private fun checkIfDataComplete() {
 <b class="fc">&nbsp;        isDataComplete = !user.value.userName.isNullOrEmpty() &amp;&amp;</b>
@@ -297,7 +297,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;                !user.value.userDob.isNullOrEmpty() &amp;&amp;</b>
 <b class="fc">&nbsp;                (loginType == &quot;google&quot; || !user.value.userPassword.isNullOrEmpty()) &amp;&amp;</b>
 <b class="fc">&nbsp;                !user.value.userImg.isNullOrEmpty()</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun createUserAccount() {
 <b class="fc">&nbsp;        if (loginType == &quot;google&quot;) {</b>
@@ -327,13 +327,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                            _signUpResults.value = Response.Error(Exception(&quot;Sign-up failed&quot;))</b>
 <b class="nc">&nbsp;                            accountExist = true</b>
 &nbsp;                        }
-&nbsp;                    }
+<b class="fc">&nbsp;                    }</b>
 <b class="fc">&nbsp;                } catch (e: Exception) {</b>
 <b class="fc">&nbsp;                    _signUpResults.value = Response.Error(e)</b>
 &nbsp;                }
-&nbsp;            }
+<b class="fc">&nbsp;            }</b>
 &nbsp;        }
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;
 &nbsp;    fun checkVerificationEmail() {
@@ -349,13 +349,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;                            Response.Error(Exception(&quot;Email not verified&quot;))</b>
 <b class="fc">&nbsp;                        isEmailVerified = false</b>
 &nbsp;                    }
-&nbsp;                }
+<b class="fc">&nbsp;                }</b>
 <b class="nc">&nbsp;            } catch (e: Exception) {</b>
 <b class="nc">&nbsp;                _emailVerificationStatus.value = Response.Error(e)</b>
 <b class="nc">&nbsp;                isEmailVerified = false</b>
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;
 &nbsp;    fun sendVerificationEmail() {
@@ -367,8 +367,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            } catch (e: Exception) {</b>
 <b class="nc">&nbsp;                _signUpResults.value = Response.Error(e)</b>
 &nbsp;            }
-&nbsp;        }
-&nbsp;    }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;
 &nbsp;    private fun addUserDatatoFirestore(userId: String?) {
@@ -387,7 +387,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                }
 &nbsp;            }
 &nbsp;        }
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun getCurrentUser(): User.UserData? {
 <b class="fc">&nbsp;        return userDataMethods.getCurrentUser()</b>
@@ -403,7 +403,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        } catch (e: Exception) {</b>
 <b class="nc">&nbsp;            onResult(false)</b>
 &nbsp;        }
-&nbsp;    }
+<b class="nc">&nbsp;    }</b>
 &nbsp;
 &nbsp;}
 </code>
@@ -429,7 +429,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-09-09 23:10</div>
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
 </div>
 </body>
 </html>

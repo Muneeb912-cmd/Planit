@@ -5,7 +5,6 @@ import com.example.eventmanagement.models.EventData
 
 interface EventDataMethods {
     fun getAllEvents(): List<EventData>
-    fun getEventById(eventId: String, onResult: (EventData?) -> Unit)
     fun updateEventById(eventId: String,eventData:EventData,onResult: (Boolean) -> Unit)
     fun updateEventStatusById(eventId: String,eventStatus:String,onResult: (Boolean) -> Unit)
     fun deleteEventById(eventId: String, deleted:Boolean, onResult: (Boolean) -> Unit)

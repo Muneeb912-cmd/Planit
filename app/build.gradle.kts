@@ -1,3 +1,5 @@
+import java.util.Locale
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -7,6 +9,7 @@ plugins {
     id("com.google.gms.google-services")
     id ("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
+    jacoco
 }
 
 android {
@@ -30,6 +33,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
         }
     }
     compileOptions {
@@ -58,6 +65,7 @@ android {
 
 }
 
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
@@ -82,6 +90,9 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation("junit:junit:4.12")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
@@ -144,4 +155,55 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     implementation(kotlin("test"))
 
+    val exclusions = listOf(
+        "**/R.class",
+        "**/R\$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*"
+    )
+
+    tasks.withType(Test::class) {
+        configure<JacocoTaskExtension> {
+            isIncludeNoLocationClasses = true
+            excludes = listOf("jdk.internal.*")
+        }
+    }
+
+    android {
+        applicationVariants.all(closureOf<com.android.build.gradle.internal.api.BaseVariantImpl> {
+            val variant = this@closureOf.name.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+
+            val unitTests = "test${variant}UnitTest"
+            val androidTests = "connected${variant}AndroidTest"
+
+            tasks.register<JacocoReport>("Jacoco${variant}CodeCoverage") {
+                dependsOn(listOf(unitTests, androidTests))
+                group = "Reporting"
+                description =
+                    "Execute ui and unit tests, generate and combine Jacoco coverage report"
+                reports {
+                    xml.required.set(true)
+                    html.required.set(true)
+                }
+                sourceDirectories.setFrom(layout.projectDirectory.dir("src/main"))
+                classDirectories.setFrom(files(
+                    fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+                        exclude(exclusions)
+                    },
+                    fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+                        exclude(exclusions)
+                    }
+                ))
+                executionData.setFrom(files(
+                    fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+                ))
+            }
+        })
+
+    }
 }

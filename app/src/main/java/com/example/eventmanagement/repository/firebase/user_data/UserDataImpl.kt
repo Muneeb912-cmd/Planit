@@ -128,8 +128,7 @@ class UserDataImpl @Inject constructor(
             val updates = mutableMapOf<String, Any>(
                 "userName" to userName,
                 "userPhone" to userPhone,
-                "userDob" to userDob,
-                "userImg" to userImg
+                "userDob" to userDob
             )
 
             if (userImg.isNotEmpty()) {
@@ -139,6 +138,7 @@ class UserDataImpl @Inject constructor(
                 val downloadUrl = userImgRef.downloadUrl.await()
                 updates["userImg"] = downloadUrl.toString()
             }
+
             firestore.collection("UserData")
                 .document(userId)
                 .update(updates)

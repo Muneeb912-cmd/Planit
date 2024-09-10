@@ -49,10 +49,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    94.9%
+    95.5%
   </span>
   <span class="absValue">
-    (37/39)
+    (42/44)
   </span>
 </td>
 </tr>
@@ -71,7 +71,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (5/5)
+    (6/6)
   </span>
 </td>
   </tr>
@@ -87,10 +87,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    37.5%
+    50%
   </span>
   <span class="absValue">
-    (3/8)
+    (5/10)
   </span>
 </td>
   </tr>
@@ -106,10 +106,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    44.4%
+    54.5%
   </span>
   <span class="absValue">
-    (4/9)
+    (6/11)
   </span>
 </td>
   </tr>
@@ -125,10 +125,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    44.4%
+    54.5%
   </span>
   <span class="absValue">
-    (4/9)
+    (6/11)
   </span>
 </td>
   </tr>
@@ -144,10 +144,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    75.7%
+    79.3%
   </span>
   <span class="absValue">
-    (53/70)
+    (65/82)
   </span>
 </td>
 </tr>
@@ -180,7 +180,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import javax.inject.Inject
 &nbsp;
 &nbsp;@HiltViewModel
-&nbsp;class ProfileViewModel @Inject constructor(
+<b class="fc">&nbsp;class ProfileViewModel @Inject constructor(</b>
 <b class="fc">&nbsp;    private val loginSignUpMethods: LoginSignUpMethods,</b>
 <b class="fc">&nbsp;    private val preferencesUtil: PreferencesUtil,</b>
 <b class="fc">&nbsp;    private val userDataMethods: UserDataMethods,</b>
@@ -201,11 +201,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                } else {
 <b class="fc">&nbsp;                    _states.value = Response.Error(Exception(&quot;Failed to sign out&quot;))</b>
 &nbsp;                }
-&nbsp;            }
+<b class="fc">&nbsp;            }</b>
 <b class="nc">&nbsp;        } catch (e: Exception) {</b>
 <b class="nc">&nbsp;            _states.value = Response.Error(e)</b>
 &nbsp;        }
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun updateUserLocation(userId: String, newLocation: String, onResult: (Boolean) -&gt; Unit) {
 <b class="fc">&nbsp;        val pendingOperation = PendingOperations(</b>
@@ -228,9 +228,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            } else {
 <b class="fc">&nbsp;                pendingOperationDao.insert(pendingOperation)</b>
 &nbsp;            }
-&nbsp;        }
+<b class="fc">&nbsp;        }</b>
 <b class="fc">&nbsp;        onResult(true)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun updateUserProfileStatus(userId: String, newSetting: Boolean, onResult: (Boolean) -&gt; Unit) {
 <b class="fc">&nbsp;        val pendingOperation = PendingOperations(</b>
@@ -254,9 +254,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            } else {
 <b class="fc">&nbsp;                pendingOperationDao.insert(pendingOperation)</b>
 &nbsp;            }
-&nbsp;        }
+<b class="fc">&nbsp;        }</b>
 <b class="fc">&nbsp;        onResult(true)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;
 &nbsp;    fun updateUserNotificationStatus(
 &nbsp;        userId: String,
@@ -284,9 +284,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            } else {
 <b class="fc">&nbsp;                pendingOperationDao.insert(pendingOperation)</b>
 &nbsp;            }
-&nbsp;        }
+<b class="fc">&nbsp;        }</b>
 <b class="fc">&nbsp;        onResult(true)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    }</b>
 &nbsp;}
 </code>
 </pre>
@@ -311,7 +311,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-09-09 23:10</div>
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
 </div>
 </body>
 </html>

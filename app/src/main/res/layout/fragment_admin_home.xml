@@ -10,7 +10,7 @@
         android:id="@+id/userNameTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hi, Welcome Back Muneeb!"
+        android:text="Hi, Welcome Back!"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_centerVertical="true"
-        android:background="@color/md_theme_inverseSurface"
+        android:background="@color/md_theme_tertiaryFixedDim_highContrast"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userNameTv" />
@@ -64,7 +64,7 @@
         android:layout_centerVertical="true"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:background="@color/md_theme_inverseSurface"
+        android:background="@color/md_theme_tertiaryFixedDim_highContrast"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/calendarLayout" />

@@ -11,6 +11,7 @@ buildscript {
         classpath ("com.android.tools.build:gradle:8.0.2")
         classpath ("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.0-beta04")
         classpath("com.google.gms:google-services:4.4.2")
+        classpath ("org.jacoco:org.jacoco.core:0.8.10")
     }
     repositories {
         maven { url = uri("https://jitpack.io") }

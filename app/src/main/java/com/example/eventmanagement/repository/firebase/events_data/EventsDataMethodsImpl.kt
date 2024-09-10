@@ -31,26 +31,11 @@ class EventsDataMethodsImpl @Inject constructor(
         return eventsList
     }
 
-    override fun getEventById(eventId: String, onResult: (EventData?) -> Unit) {
-        firestore.collection("Events")
-            .whereEqualTo("eventDeleted", false)
-            .whereEqualTo("eventId", eventId)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val event = querySnapshot.documents[0].toObject(EventData::class.java)
-                    onResult(event)
-                } else {
-                    onResult(null)
-                }
-            }
-            .addOnFailureListener {
-                onResult(null)
-            }
-    }
-
-
-    override fun updateEventById(eventId: String, eventData: EventData, onResult: (Boolean) -> Unit) {
+    override fun updateEventById(
+        eventId: String,
+        eventData: EventData,
+        onResult: (Boolean) -> Unit
+    ) {
         val eventMap = mapOf(
             "eventId" to eventData.eventId,
             "eventTitle" to eventData.eventTitle,
@@ -262,7 +247,6 @@ class EventsDataMethodsImpl @Inject constructor(
     }
 
 
-
     override fun removeAttendeeUpdatePeopleGoingCount(
         eventId: String,
         userId: String,
@@ -288,10 +272,15 @@ class EventsDataMethodsImpl @Inject constructor(
                             throw Exception("User is not an attendee.")
                         }
 
-                        val currentPeopleAttending = eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
+                        val currentPeopleAttending =
+                            eventSnapshot.getLong("numberOfPeopleAttending") ?: 0
                         val updatedPeopleAttending = currentPeopleAttending - 1
 
-                        transaction.update(eventRef, "numberOfPeopleAttending", updatedPeopleAttending)
+                        transaction.update(
+                            eventRef,
+                            "numberOfPeopleAttending",
+                            updatedPeopleAttending
+                        )
                     }.addOnSuccessListener {
                         onResult(true)
                     }.addOnFailureListener { exception ->
@@ -310,7 +299,10 @@ class EventsDataMethodsImpl @Inject constructor(
 
 
     // Method to observe attendees by eventId
-    override fun observeAttendeesByEventId(eventId: String, onResult: (Boolean, List<String>) -> Unit) {
+    override fun observeAttendeesByEventId(
+        eventId: String,
+        onResult: (Boolean, List<String>) -> Unit
+    ) {
         val attendeesRef = firestore.collection("Attendees")
             .whereEqualTo("eventId", eventId)
 
@@ -356,8 +348,6 @@ class EventsDataMethodsImpl @Inject constructor(
             }
         }
     }
-
-
 
 
     fun removeEventAttendeeListener() {

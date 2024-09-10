@@ -118,8 +118,4 @@ class InviteMethodsImpl @Inject constructor(
                 onResult(false)
             }
     }
-
-    fun removeInvitesListener() {
-        invitesListener?.remove()
-    }
 }
