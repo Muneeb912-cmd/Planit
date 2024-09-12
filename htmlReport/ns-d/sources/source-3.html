@@ -1,0 +1,534 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LocalDB_Impl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.room_db</a>
+</div>
+
+<h1>Coverage Summary for Class: LocalDB_Impl (com.example.eventmanagement.repository.room_db)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LocalDB_Impl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/84)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">LocalDB_Impl$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/143)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/227)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.room_db;
+&nbsp;
+&nbsp;import androidx.annotation.NonNull;
+&nbsp;import androidx.room.DatabaseConfiguration;
+&nbsp;import androidx.room.InvalidationTracker;
+&nbsp;import androidx.room.RoomDatabase;
+&nbsp;import androidx.room.RoomOpenHelper;
+&nbsp;import androidx.room.migration.AutoMigrationSpec;
+&nbsp;import androidx.room.migration.Migration;
+&nbsp;import androidx.room.util.DBUtil;
+&nbsp;import androidx.room.util.TableInfo;
+&nbsp;import androidx.sqlite.db.SupportSQLiteDatabase;
+&nbsp;import androidx.sqlite.db.SupportSQLiteOpenHelper;
+&nbsp;import com.example.eventmanagement.repository.room_db.attendee_dao.AttendeeDao;
+&nbsp;import com.example.eventmanagement.repository.room_db.attendee_dao.AttendeeDao_Impl;
+&nbsp;import com.example.eventmanagement.repository.room_db.events_dao.EventDao;
+&nbsp;import com.example.eventmanagement.repository.room_db.events_dao.EventDao_Impl;
+&nbsp;import com.example.eventmanagement.repository.room_db.fav_events_dao.FavEventsDao;
+&nbsp;import com.example.eventmanagement.repository.room_db.fav_events_dao.FavEventsDao_Impl;
+&nbsp;import com.example.eventmanagement.repository.room_db.invites_dao.InvitesDao;
+&nbsp;import com.example.eventmanagement.repository.room_db.invites_dao.InvitesDao_Impl;
+&nbsp;import com.example.eventmanagement.repository.room_db.user_dao.UserDao;
+&nbsp;import com.example.eventmanagement.repository.room_db.user_dao.UserDao_Impl;
+&nbsp;import java.lang.Class;
+&nbsp;import java.lang.Override;
+&nbsp;import java.lang.String;
+&nbsp;import java.lang.SuppressWarnings;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Set;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;
+&nbsp;@Generated(&quot;androidx.room.RoomProcessor&quot;)
+&nbsp;@SuppressWarnings({&quot;unchecked&quot;, &quot;deprecation&quot;})
+<b class="nc">&nbsp;public final class LocalDB_Impl extends LocalDB {</b>
+&nbsp;  private volatile UserDao _userDao;
+&nbsp;
+&nbsp;  private volatile AttendeeDao _attendeeDao;
+&nbsp;
+&nbsp;  private volatile EventDao _eventDao;
+&nbsp;
+&nbsp;  private volatile FavEventsDao _favEventsDao;
+&nbsp;
+&nbsp;  private volatile InvitesDao _invitesDao;
+&nbsp;
+&nbsp;  private volatile PendingOperationDao _pendingOperationDao;
+&nbsp;
+&nbsp;  @Override
+&nbsp;  @NonNull
+&nbsp;  protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
+<b class="nc">&nbsp;    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(9) {</b>
+&nbsp;      @Override
+&nbsp;      public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` TEXT, `userName` TEXT, `userEmail` TEXT, `userPhone` TEXT, `userDob` TEXT, `userPassword` TEXT, `userRole` TEXT, `userImg` TEXT, `userLocation` TEXT, `userLoginType` TEXT, `notificationsAllowed` INTEGER, `profilePrivate` INTEGER, `userBanned` INTEGER)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE UNIQUE INDEX IF NOT EXISTS `index_users_userId` ON `users` (`userId`)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `events` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `eventId` TEXT, `eventTitle` TEXT, `eventOrganizer` TEXT, `eventTiming` TEXT, `eventCategory` TEXT, `eventDescription` TEXT, `eventLocation` TEXT, `eventLong` TEXT, `eventLat` TEXT, `eventDate` TEXT, `isEventFeatured` INTEGER, `isEventPopular` INTEGER, `numberOfPeopleAttending` INTEGER, `isEventPublic` INTEGER, `eventStatus` TEXT, `eventCreatedBy` TEXT, `isEventDeleted` INTEGER)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE UNIQUE INDEX IF NOT EXISTS `index_events_eventId` ON `events` (`eventId`)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `invites` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `inviteId` TEXT, `eventId` TEXT, `senderId` TEXT, `receiverId` TEXT, `inviteStatus` TEXT, `inviteTime` TEXT, FOREIGN KEY(`eventId`) REFERENCES `events`(`eventId`) ON UPDATE NO ACTION ON DELETE CASCADE )&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE UNIQUE INDEX IF NOT EXISTS `index_invites_inviteId_eventId` ON `invites` (`inviteId`, `eventId`)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `attendees` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `attendeeId` TEXT, `userId` TEXT, `eventId` TEXT)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `fav_events` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` TEXT, `eventId` TEXT, FOREIGN KEY(`userId`) REFERENCES `users`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`eventId`) REFERENCES `events`(`eventId`) ON UPDATE NO ACTION ON DELETE CASCADE )&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE UNIQUE INDEX IF NOT EXISTS `index_fav_events_userId_eventId` ON `fav_events` (`userId`, `eventId`)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `pending_operations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `operationType` TEXT NOT NULL, `documentId` TEXT NOT NULL, `data` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `userId` TEXT NOT NULL, `eventId` TEXT NOT NULL, `dataType` TEXT NOT NULL)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, &#39;9c36afd3a5d228ec3d8ce8c34b08452b&#39;)&quot;);</b>
+&nbsp;      }
+&nbsp;
+&nbsp;      @Override
+&nbsp;      public void dropAllTables(@NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;        db.execSQL(&quot;DROP TABLE IF EXISTS `users`&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;DROP TABLE IF EXISTS `events`&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;DROP TABLE IF EXISTS `invites`&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;DROP TABLE IF EXISTS `attendees`&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;DROP TABLE IF EXISTS `fav_events`&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;DROP TABLE IF EXISTS `pending_operations`&quot;);</b>
+<b class="nc">&nbsp;        final List&lt;? extends RoomDatabase.Callback&gt; _callbacks = mCallbacks;</b>
+<b class="nc">&nbsp;        if (_callbacks != null) {</b>
+<b class="nc">&nbsp;          for (RoomDatabase.Callback _callback : _callbacks) {</b>
+<b class="nc">&nbsp;            _callback.onDestructiveMigration(db);</b>
+<b class="nc">&nbsp;          }</b>
+&nbsp;        }
+&nbsp;      }
+&nbsp;
+&nbsp;      @Override
+&nbsp;      public void onCreate(@NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;        final List&lt;? extends RoomDatabase.Callback&gt; _callbacks = mCallbacks;</b>
+<b class="nc">&nbsp;        if (_callbacks != null) {</b>
+<b class="nc">&nbsp;          for (RoomDatabase.Callback _callback : _callbacks) {</b>
+<b class="nc">&nbsp;            _callback.onCreate(db);</b>
+<b class="nc">&nbsp;          }</b>
+&nbsp;        }
+&nbsp;      }
+&nbsp;
+&nbsp;      @Override
+&nbsp;      public void onOpen(@NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;        mDatabase = db;</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;PRAGMA foreign_keys = ON&quot;);</b>
+<b class="nc">&nbsp;        internalInitInvalidationTracker(db);</b>
+<b class="nc">&nbsp;        final List&lt;? extends RoomDatabase.Callback&gt; _callbacks = mCallbacks;</b>
+<b class="nc">&nbsp;        if (_callbacks != null) {</b>
+<b class="nc">&nbsp;          for (RoomDatabase.Callback _callback : _callbacks) {</b>
+<b class="nc">&nbsp;            _callback.onOpen(db);</b>
+<b class="nc">&nbsp;          }</b>
+&nbsp;        }
+&nbsp;      }
+&nbsp;
+&nbsp;      @Override
+&nbsp;      public void onPreMigrate(@NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;        DBUtil.dropFtsSyncTriggers(db);</b>
+&nbsp;      }
+&nbsp;
+&nbsp;      @Override
+&nbsp;      public void onPostMigrate(@NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;      }</b>
+&nbsp;
+&nbsp;      @Override
+&nbsp;      @NonNull
+&nbsp;      public RoomOpenHelper.ValidationResult onValidateSchema(
+&nbsp;          @NonNull final SupportSQLiteDatabase db) {
+<b class="nc">&nbsp;        final HashMap&lt;String, TableInfo.Column&gt; _columnsUsers = new HashMap&lt;String, TableInfo.Column&gt;(14);</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;INTEGER&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userId&quot;, new TableInfo.Column(&quot;userId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userName&quot;, new TableInfo.Column(&quot;userName&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userEmail&quot;, new TableInfo.Column(&quot;userEmail&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userPhone&quot;, new TableInfo.Column(&quot;userPhone&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userDob&quot;, new TableInfo.Column(&quot;userDob&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userPassword&quot;, new TableInfo.Column(&quot;userPassword&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userRole&quot;, new TableInfo.Column(&quot;userRole&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userImg&quot;, new TableInfo.Column(&quot;userImg&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userLocation&quot;, new TableInfo.Column(&quot;userLocation&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userLoginType&quot;, new TableInfo.Column(&quot;userLoginType&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;notificationsAllowed&quot;, new TableInfo.Column(&quot;notificationsAllowed&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;profilePrivate&quot;, new TableInfo.Column(&quot;profilePrivate&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsUsers.put(&quot;userBanned&quot;, new TableInfo.Column(&quot;userBanned&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysUsers = new HashSet&lt;TableInfo.ForeignKey&gt;(0);</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesUsers = new HashSet&lt;TableInfo.Index&gt;(1);</b>
+<b class="nc">&nbsp;        _indicesUsers.add(new TableInfo.Index(&quot;index_users_userId&quot;, true, Arrays.asList(&quot;userId&quot;), Arrays.asList(&quot;ASC&quot;)));</b>
+<b class="nc">&nbsp;        final TableInfo _infoUsers = new TableInfo(&quot;users&quot;, _columnsUsers, _foreignKeysUsers, _indicesUsers);</b>
+<b class="nc">&nbsp;        final TableInfo _existingUsers = TableInfo.read(db, &quot;users&quot;);</b>
+<b class="nc">&nbsp;        if (!_infoUsers.equals(_existingUsers)) {</b>
+<b class="nc">&nbsp;          return new RoomOpenHelper.ValidationResult(false, &quot;users(com.example.eventmanagement.models.User.UserData).\n&quot;</b>
+&nbsp;                  + &quot; Expected:\n&quot; + _infoUsers + &quot;\n&quot;
+&nbsp;                  + &quot; Found:\n&quot; + _existingUsers);
+&nbsp;        }
+<b class="nc">&nbsp;        final HashMap&lt;String, TableInfo.Column&gt; _columnsEvents = new HashMap&lt;String, TableInfo.Column&gt;(18);</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;INTEGER&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventId&quot;, new TableInfo.Column(&quot;eventId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventTitle&quot;, new TableInfo.Column(&quot;eventTitle&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventOrganizer&quot;, new TableInfo.Column(&quot;eventOrganizer&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventTiming&quot;, new TableInfo.Column(&quot;eventTiming&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventCategory&quot;, new TableInfo.Column(&quot;eventCategory&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventDescription&quot;, new TableInfo.Column(&quot;eventDescription&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventLocation&quot;, new TableInfo.Column(&quot;eventLocation&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventLong&quot;, new TableInfo.Column(&quot;eventLong&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventLat&quot;, new TableInfo.Column(&quot;eventLat&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventDate&quot;, new TableInfo.Column(&quot;eventDate&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;isEventFeatured&quot;, new TableInfo.Column(&quot;isEventFeatured&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;isEventPopular&quot;, new TableInfo.Column(&quot;isEventPopular&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;numberOfPeopleAttending&quot;, new TableInfo.Column(&quot;numberOfPeopleAttending&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;isEventPublic&quot;, new TableInfo.Column(&quot;isEventPublic&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventStatus&quot;, new TableInfo.Column(&quot;eventStatus&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;eventCreatedBy&quot;, new TableInfo.Column(&quot;eventCreatedBy&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsEvents.put(&quot;isEventDeleted&quot;, new TableInfo.Column(&quot;isEventDeleted&quot;, &quot;INTEGER&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysEvents = new HashSet&lt;TableInfo.ForeignKey&gt;(0);</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesEvents = new HashSet&lt;TableInfo.Index&gt;(1);</b>
+<b class="nc">&nbsp;        _indicesEvents.add(new TableInfo.Index(&quot;index_events_eventId&quot;, true, Arrays.asList(&quot;eventId&quot;), Arrays.asList(&quot;ASC&quot;)));</b>
+<b class="nc">&nbsp;        final TableInfo _infoEvents = new TableInfo(&quot;events&quot;, _columnsEvents, _foreignKeysEvents, _indicesEvents);</b>
+<b class="nc">&nbsp;        final TableInfo _existingEvents = TableInfo.read(db, &quot;events&quot;);</b>
+<b class="nc">&nbsp;        if (!_infoEvents.equals(_existingEvents)) {</b>
+<b class="nc">&nbsp;          return new RoomOpenHelper.ValidationResult(false, &quot;events(com.example.eventmanagement.models.EventData).\n&quot;</b>
+&nbsp;                  + &quot; Expected:\n&quot; + _infoEvents + &quot;\n&quot;
+&nbsp;                  + &quot; Found:\n&quot; + _existingEvents);
+&nbsp;        }
+<b class="nc">&nbsp;        final HashMap&lt;String, TableInfo.Column&gt; _columnsInvites = new HashMap&lt;String, TableInfo.Column&gt;(7);</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;INTEGER&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;inviteId&quot;, new TableInfo.Column(&quot;inviteId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;eventId&quot;, new TableInfo.Column(&quot;eventId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;senderId&quot;, new TableInfo.Column(&quot;senderId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;receiverId&quot;, new TableInfo.Column(&quot;receiverId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;inviteStatus&quot;, new TableInfo.Column(&quot;inviteStatus&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsInvites.put(&quot;inviteTime&quot;, new TableInfo.Column(&quot;inviteTime&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysInvites = new HashSet&lt;TableInfo.ForeignKey&gt;(1);</b>
+<b class="nc">&nbsp;        _foreignKeysInvites.add(new TableInfo.ForeignKey(&quot;events&quot;, &quot;CASCADE&quot;, &quot;NO ACTION&quot;, Arrays.asList(&quot;eventId&quot;), Arrays.asList(&quot;eventId&quot;)));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesInvites = new HashSet&lt;TableInfo.Index&gt;(1);</b>
+<b class="nc">&nbsp;        _indicesInvites.add(new TableInfo.Index(&quot;index_invites_inviteId_eventId&quot;, true, Arrays.asList(&quot;inviteId&quot;, &quot;eventId&quot;), Arrays.asList(&quot;ASC&quot;, &quot;ASC&quot;)));</b>
+<b class="nc">&nbsp;        final TableInfo _infoInvites = new TableInfo(&quot;invites&quot;, _columnsInvites, _foreignKeysInvites, _indicesInvites);</b>
+<b class="nc">&nbsp;        final TableInfo _existingInvites = TableInfo.read(db, &quot;invites&quot;);</b>
+<b class="nc">&nbsp;        if (!_infoInvites.equals(_existingInvites)) {</b>
+<b class="nc">&nbsp;          return new RoomOpenHelper.ValidationResult(false, &quot;invites(com.example.eventmanagement.models.Invites).\n&quot;</b>
+&nbsp;                  + &quot; Expected:\n&quot; + _infoInvites + &quot;\n&quot;
+&nbsp;                  + &quot; Found:\n&quot; + _existingInvites);
+&nbsp;        }
+<b class="nc">&nbsp;        final HashMap&lt;String, TableInfo.Column&gt; _columnsAttendees = new HashMap&lt;String, TableInfo.Column&gt;(4);</b>
+<b class="nc">&nbsp;        _columnsAttendees.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;INTEGER&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsAttendees.put(&quot;attendeeId&quot;, new TableInfo.Column(&quot;attendeeId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsAttendees.put(&quot;userId&quot;, new TableInfo.Column(&quot;userId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsAttendees.put(&quot;eventId&quot;, new TableInfo.Column(&quot;eventId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysAttendees = new HashSet&lt;TableInfo.ForeignKey&gt;(0);</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesAttendees = new HashSet&lt;TableInfo.Index&gt;(0);</b>
+<b class="nc">&nbsp;        final TableInfo _infoAttendees = new TableInfo(&quot;attendees&quot;, _columnsAttendees, _foreignKeysAttendees, _indicesAttendees);</b>
+<b class="nc">&nbsp;        final TableInfo _existingAttendees = TableInfo.read(db, &quot;attendees&quot;);</b>
+<b class="nc">&nbsp;        if (!_infoAttendees.equals(_existingAttendees)) {</b>
+<b class="nc">&nbsp;          return new RoomOpenHelper.ValidationResult(false, &quot;attendees(com.example.eventmanagement.models.Attendees).\n&quot;</b>
+&nbsp;                  + &quot; Expected:\n&quot; + _infoAttendees + &quot;\n&quot;
+&nbsp;                  + &quot; Found:\n&quot; + _existingAttendees);
+&nbsp;        }
+<b class="nc">&nbsp;        final HashMap&lt;String, TableInfo.Column&gt; _columnsFavEvents = new HashMap&lt;String, TableInfo.Column&gt;(3);</b>
+<b class="nc">&nbsp;        _columnsFavEvents.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;INTEGER&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsFavEvents.put(&quot;userId&quot;, new TableInfo.Column(&quot;userId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsFavEvents.put(&quot;eventId&quot;, new TableInfo.Column(&quot;eventId&quot;, &quot;TEXT&quot;, false, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysFavEvents = new HashSet&lt;TableInfo.ForeignKey&gt;(2);</b>
+<b class="nc">&nbsp;        _foreignKeysFavEvents.add(new TableInfo.ForeignKey(&quot;users&quot;, &quot;CASCADE&quot;, &quot;NO ACTION&quot;, Arrays.asList(&quot;userId&quot;), Arrays.asList(&quot;userId&quot;)));</b>
+<b class="nc">&nbsp;        _foreignKeysFavEvents.add(new TableInfo.ForeignKey(&quot;events&quot;, &quot;CASCADE&quot;, &quot;NO ACTION&quot;, Arrays.asList(&quot;eventId&quot;), Arrays.asList(&quot;eventId&quot;)));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesFavEvents = new HashSet&lt;TableInfo.Index&gt;(1);</b>
+<b class="nc">&nbsp;        _indicesFavEvents.add(new TableInfo.Index(&quot;index_fav_events_userId_eventId&quot;, true, Arrays.asList(&quot;userId&quot;, &quot;eventId&quot;), Arrays.asList(&quot;ASC&quot;, &quot;ASC&quot;)));</b>
+<b class="nc">&nbsp;        final TableInfo _infoFavEvents = new TableInfo(&quot;fav_events&quot;, _columnsFavEvents, _foreignKeysFavEvents, _indicesFavEvents);</b>
+<b class="nc">&nbsp;        final TableInfo _existingFavEvents = TableInfo.read(db, &quot;fav_events&quot;);</b>
+<b class="nc">&nbsp;        if (!_infoFavEvents.equals(_existingFavEvents)) {</b>
+<b class="nc">&nbsp;          return new RoomOpenHelper.ValidationResult(false, &quot;fav_events(com.example.eventmanagement.models.FavEvents).\n&quot;</b>
+&nbsp;                  + &quot; Expected:\n&quot; + _infoFavEvents + &quot;\n&quot;
+&nbsp;                  + &quot; Found:\n&quot; + _existingFavEvents);
+&nbsp;        }
+<b class="nc">&nbsp;        final HashMap&lt;String, TableInfo.Column&gt; _columnsPendingOperations = new HashMap&lt;String, TableInfo.Column&gt;(8);</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;INTEGER&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;operationType&quot;, new TableInfo.Column(&quot;operationType&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;documentId&quot;, new TableInfo.Column(&quot;documentId&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;data&quot;, new TableInfo.Column(&quot;data&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;timestamp&quot;, new TableInfo.Column(&quot;timestamp&quot;, &quot;INTEGER&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;userId&quot;, new TableInfo.Column(&quot;userId&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;eventId&quot;, new TableInfo.Column(&quot;eventId&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsPendingOperations.put(&quot;dataType&quot;, new TableInfo.Column(&quot;dataType&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysPendingOperations = new HashSet&lt;TableInfo.ForeignKey&gt;(0);</b>
+<b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesPendingOperations = new HashSet&lt;TableInfo.Index&gt;(0);</b>
+<b class="nc">&nbsp;        final TableInfo _infoPendingOperations = new TableInfo(&quot;pending_operations&quot;, _columnsPendingOperations, _foreignKeysPendingOperations, _indicesPendingOperations);</b>
+<b class="nc">&nbsp;        final TableInfo _existingPendingOperations = TableInfo.read(db, &quot;pending_operations&quot;);</b>
+<b class="nc">&nbsp;        if (!_infoPendingOperations.equals(_existingPendingOperations)) {</b>
+<b class="nc">&nbsp;          return new RoomOpenHelper.ValidationResult(false, &quot;pending_operations(com.example.eventmanagement.models.PendingOperations).\n&quot;</b>
+&nbsp;                  + &quot; Expected:\n&quot; + _infoPendingOperations + &quot;\n&quot;
+&nbsp;                  + &quot; Found:\n&quot; + _existingPendingOperations);
+&nbsp;        }
+<b class="nc">&nbsp;        return new RoomOpenHelper.ValidationResult(true, null);</b>
+&nbsp;      }
+&nbsp;    }, &quot;9c36afd3a5d228ec3d8ce8c34b08452b&quot;, &quot;073edbab81d38c56acc367b5beeff2c7&quot;);
+<b class="nc">&nbsp;    final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();</b>
+<b class="nc">&nbsp;    final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);</b>
+<b class="nc">&nbsp;    return _helper;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  @NonNull
+&nbsp;  protected InvalidationTracker createInvalidationTracker() {
+<b class="nc">&nbsp;    final HashMap&lt;String, String&gt; _shadowTablesMap = new HashMap&lt;String, String&gt;(0);</b>
+<b class="nc">&nbsp;    final HashMap&lt;String, Set&lt;String&gt;&gt; _viewTables = new HashMap&lt;String, Set&lt;String&gt;&gt;(0);</b>
+<b class="nc">&nbsp;    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, &quot;users&quot;,&quot;events&quot;,&quot;invites&quot;,&quot;attendees&quot;,&quot;fav_events&quot;,&quot;pending_operations&quot;);</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public void clearAllTables() {
+<b class="nc">&nbsp;    super.assertNotMainThread();</b>
+<b class="nc">&nbsp;    final SupportSQLiteDatabase _db = super.getOpenHelper().getWritableDatabase();</b>
+<b class="nc">&nbsp;    final boolean _supportsDeferForeignKeys = android.os.Build.VERSION.SDK_INT &gt;= android.os.Build.VERSION_CODES.LOLLIPOP;</b>
+&nbsp;    try {
+<b class="nc">&nbsp;      if (!_supportsDeferForeignKeys) {</b>
+<b class="nc">&nbsp;        _db.execSQL(&quot;PRAGMA foreign_keys = FALSE&quot;);</b>
+&nbsp;      }
+<b class="nc">&nbsp;      super.beginTransaction();</b>
+<b class="nc">&nbsp;      if (_supportsDeferForeignKeys) {</b>
+<b class="nc">&nbsp;        _db.execSQL(&quot;PRAGMA defer_foreign_keys = TRUE&quot;);</b>
+&nbsp;      }
+<b class="nc">&nbsp;      _db.execSQL(&quot;DELETE FROM `users`&quot;);</b>
+<b class="nc">&nbsp;      _db.execSQL(&quot;DELETE FROM `events`&quot;);</b>
+<b class="nc">&nbsp;      _db.execSQL(&quot;DELETE FROM `invites`&quot;);</b>
+<b class="nc">&nbsp;      _db.execSQL(&quot;DELETE FROM `attendees`&quot;);</b>
+<b class="nc">&nbsp;      _db.execSQL(&quot;DELETE FROM `fav_events`&quot;);</b>
+<b class="nc">&nbsp;      _db.execSQL(&quot;DELETE FROM `pending_operations`&quot;);</b>
+<b class="nc">&nbsp;      super.setTransactionSuccessful();</b>
+&nbsp;    } finally {
+<b class="nc">&nbsp;      super.endTransaction();</b>
+<b class="nc">&nbsp;      if (!_supportsDeferForeignKeys) {</b>
+<b class="nc">&nbsp;        _db.execSQL(&quot;PRAGMA foreign_keys = TRUE&quot;);</b>
+&nbsp;      }
+<b class="nc">&nbsp;      _db.query(&quot;PRAGMA wal_checkpoint(FULL)&quot;).close();</b>
+<b class="nc">&nbsp;      if (!_db.inTransaction()) {</b>
+<b class="nc">&nbsp;        _db.execSQL(&quot;VACUUM&quot;);</b>
+&nbsp;      }
+<b class="nc">&nbsp;    }</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  @NonNull
+&nbsp;  protected Map&lt;Class&lt;?&gt;, List&lt;Class&lt;?&gt;&gt;&gt; getRequiredTypeConverters() {
+<b class="nc">&nbsp;    final HashMap&lt;Class&lt;?&gt;, List&lt;Class&lt;?&gt;&gt;&gt; _typeConvertersMap = new HashMap&lt;Class&lt;?&gt;, List&lt;Class&lt;?&gt;&gt;&gt;();</b>
+<b class="nc">&nbsp;    _typeConvertersMap.put(UserDao.class, UserDao_Impl.getRequiredConverters());</b>
+<b class="nc">&nbsp;    _typeConvertersMap.put(AttendeeDao.class, AttendeeDao_Impl.getRequiredConverters());</b>
+<b class="nc">&nbsp;    _typeConvertersMap.put(EventDao.class, EventDao_Impl.getRequiredConverters());</b>
+<b class="nc">&nbsp;    _typeConvertersMap.put(FavEventsDao.class, FavEventsDao_Impl.getRequiredConverters());</b>
+<b class="nc">&nbsp;    _typeConvertersMap.put(InvitesDao.class, InvitesDao_Impl.getRequiredConverters());</b>
+<b class="nc">&nbsp;    _typeConvertersMap.put(PendingOperationDao.class, PendingOperationDao_Impl.getRequiredConverters());</b>
+<b class="nc">&nbsp;    return _typeConvertersMap;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  @NonNull
+&nbsp;  public Set&lt;Class&lt;? extends AutoMigrationSpec&gt;&gt; getRequiredAutoMigrationSpecs() {
+<b class="nc">&nbsp;    final HashSet&lt;Class&lt;? extends AutoMigrationSpec&gt;&gt; _autoMigrationSpecsSet = new HashSet&lt;Class&lt;? extends AutoMigrationSpec&gt;&gt;();</b>
+<b class="nc">&nbsp;    return _autoMigrationSpecsSet;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  @NonNull
+&nbsp;  public List&lt;Migration&gt; getAutoMigrations(
+&nbsp;      @NonNull final Map&lt;Class&lt;? extends AutoMigrationSpec&gt;, AutoMigrationSpec&gt; autoMigrationSpecs) {
+<b class="nc">&nbsp;    final List&lt;Migration&gt; _autoMigrations = new ArrayList&lt;Migration&gt;();</b>
+<b class="nc">&nbsp;    return _autoMigrations;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public UserDao userDao() {
+<b class="nc">&nbsp;    if (_userDao != null) {</b>
+<b class="nc">&nbsp;      return _userDao;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      synchronized(this) {</b>
+<b class="nc">&nbsp;        if(_userDao == null) {</b>
+<b class="nc">&nbsp;          _userDao = new UserDao_Impl(this);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return _userDao;</b>
+<b class="nc">&nbsp;      }</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public AttendeeDao attendeeDao() {
+<b class="nc">&nbsp;    if (_attendeeDao != null) {</b>
+<b class="nc">&nbsp;      return _attendeeDao;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      synchronized(this) {</b>
+<b class="nc">&nbsp;        if(_attendeeDao == null) {</b>
+<b class="nc">&nbsp;          _attendeeDao = new AttendeeDao_Impl(this);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return _attendeeDao;</b>
+<b class="nc">&nbsp;      }</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public EventDao eventsDao() {
+<b class="nc">&nbsp;    if (_eventDao != null) {</b>
+<b class="nc">&nbsp;      return _eventDao;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      synchronized(this) {</b>
+<b class="nc">&nbsp;        if(_eventDao == null) {</b>
+<b class="nc">&nbsp;          _eventDao = new EventDao_Impl(this);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return _eventDao;</b>
+<b class="nc">&nbsp;      }</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public FavEventsDao favEventsDao() {
+<b class="nc">&nbsp;    if (_favEventsDao != null) {</b>
+<b class="nc">&nbsp;      return _favEventsDao;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      synchronized(this) {</b>
+<b class="nc">&nbsp;        if(_favEventsDao == null) {</b>
+<b class="nc">&nbsp;          _favEventsDao = new FavEventsDao_Impl(this);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return _favEventsDao;</b>
+<b class="nc">&nbsp;      }</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public InvitesDao invitesDao() {
+<b class="nc">&nbsp;    if (_invitesDao != null) {</b>
+<b class="nc">&nbsp;      return _invitesDao;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      synchronized(this) {</b>
+<b class="nc">&nbsp;        if(_invitesDao == null) {</b>
+<b class="nc">&nbsp;          _invitesDao = new InvitesDao_Impl(this);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return _invitesDao;</b>
+<b class="nc">&nbsp;      }</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  @Override
+&nbsp;  public PendingOperationDao pendingOperationsDao() {
+<b class="nc">&nbsp;    if (_pendingOperationDao != null) {</b>
+<b class="nc">&nbsp;      return _pendingOperationDao;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      synchronized(this) {</b>
+<b class="nc">&nbsp;        if(_pendingOperationDao == null) {</b>
+<b class="nc">&nbsp;          _pendingOperationDao = new PendingOperationDao_Impl(this);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return _pendingOperationDao;</b>
+<b class="nc">&nbsp;      }</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
+</div>
+</body>
+</html>

@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/md_theme_secondaryFixedDim_mediumContrast">
+    android:background="@color/md_theme_primaryFixedDim">
 
     <include layout="@layout/calendar_day_title_text" />
 

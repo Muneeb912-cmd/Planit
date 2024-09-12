@@ -20,7 +20,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/eventTitle"
+                    android:id="@+id/editUserTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
@@ -60,7 +60,6 @@
                     android:padding="8dp"
                     android:src="@drawable/ic_avatar_male"
                     app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeColor="@color/md_theme_tertiaryContainer_mediumContrast"
                     app:strokeWidth="5dp" />
 
                 <!-- Overlay Button -->
@@ -79,17 +78,34 @@
                         android:id="@+id/overlayButton"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:background="@drawable/ic_add" />
+                        android:background="@drawable/ic_edit" />
                 </RelativeLayout>
             </RelativeLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="@string/your_personal_information"
-                android:textSize="15sp" />
+           <androidx.constraintlayout.widget.ConstraintLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+               <TextView
+                   android:id="@+id/editUserTv"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:paddingTop="10dp"
+                   android:paddingBottom="10dp"
+                   android:text="@string/your_personal_information"
+                   android:textSize="15sp"
+                   app:layout_constraintTop_toTopOf="parent"
+                   app:layout_constraintStart_toStartOf="parent"/>
+               <com.google.android.material.button.MaterialButton
+                   android:id="@+id/banUserBtn"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:padding="1dp"
+                   android:text="@string/ban_user"
+                   app:layout_constraintEnd_toEndOf="parent"
+                   app:layout_constraintTop_toTopOf="parent"
+                   app:cornerRadius="6dp"
+                   android:visibility="gone"/>
+           </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/fullNameLayout"
@@ -98,8 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/full_name"
-                app:startIconDrawable="@drawable/ic_person"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                app:startIconDrawable="@drawable/ic_person">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fullName"
@@ -113,27 +128,6 @@
                     />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/emailLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/email"
-                app:startIconDrawable="@drawable/ic_email"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/userEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:padding="10dp"
-                    android:textSize="18sp"
-                    tools:ignore="RtlSymmetry"
-                    android:paddingStart="50dp"
-                    />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/phoneLayout"
@@ -142,8 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/phone_number"
-                app:startIconDrawable="@drawable/ic_phone"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                app:startIconDrawable="@drawable/ic_phone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/userPhone"
@@ -164,8 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:hint="@string/birth_date"
-                app:startIconDrawable="@drawable/ic_calender"
-                app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+                app:startIconDrawable="@drawable/ic_calender">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/userDob"

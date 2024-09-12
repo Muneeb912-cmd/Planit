@@ -21,6 +21,7 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.SignUpPagerAdapter
 import com.example.eventmanagement.databinding.FragmentSignUpBinding
 import com.example.eventmanagement.utils.Response
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,6 +50,10 @@ class SignUpFragment : Fragment() {
         setupViewPager()
         setupNavigationButtons()
         setupIndicators()
+
+        binding.toolBar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun setupViewPager() {
@@ -105,7 +110,8 @@ class SignUpFragment : Fragment() {
             }
 
             2 -> finishRegistration()
-            else -> null
+
+
         }
     }
 
@@ -177,7 +183,7 @@ class SignUpFragment : Fragment() {
         }
 
         if (title != null && message != null) {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setIcon(R.drawable.ic_attention)
                 .setTitle(title)
                 .setMessage(message)
@@ -190,7 +196,11 @@ class SignUpFragment : Fragment() {
         if (viewModel.isEmailVerified) {
             Toast.makeText(requireContext(), "User Registration Successful", Toast.LENGTH_SHORT)
                 .show()
-            findNavController().navigate(R.id.action_signUpFragment_to_eventsMainFragment)
+            if(viewModel.user.value.userRole=="Attendee"){
+                findNavController().navigate(R.id.action_signUpFragment_to_eventsMainFragment)
+            }else{
+                findNavController().navigate(R.id.action_signUpFragment_to_adminMainFragment)
+            }
         } else {
             Toast.makeText(requireContext(), "Email not verified", Toast.LENGTH_SHORT).show()
         }

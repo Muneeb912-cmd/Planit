@@ -1,0 +1,277 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SignUpStep1</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.ui.fragments.signup</a>
+</div>
+
+<h1>Coverage Summary for Class: SignUpStep1 (com.example.eventmanagement.ui.fragments.signup)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SignUpStep1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/29)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SignUpStep1$observeUser$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep1$observeUser$1$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep1$special$$inlined$activityViewModels$default$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep1$special$$inlined$activityViewModels$default$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep1$special$$inlined$activityViewModels$default$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/34)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.ui.fragments.signup
+&nbsp;
+&nbsp;import android.os.Bundle
+&nbsp;import android.util.Log
+&nbsp;import androidx.fragment.app.Fragment
+&nbsp;import android.view.LayoutInflater
+&nbsp;import android.view.View
+&nbsp;import android.view.ViewGroup
+&nbsp;import androidx.constraintlayout.widget.ConstraintLayout
+&nbsp;import androidx.core.content.ContextCompat
+&nbsp;import androidx.fragment.app.activityViewModels
+&nbsp;import androidx.fragment.app.viewModels
+&nbsp;import androidx.lifecycle.lifecycleScope
+&nbsp;import com.example.eventmanagement.R
+&nbsp;import com.example.eventmanagement.databinding.FragmentSignUpStep1Binding
+&nbsp;import dagger.hilt.android.AndroidEntryPoint
+&nbsp;import kotlinx.coroutines.launch
+&nbsp;import kotlin.math.sign
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;class SignUpStep1 : Fragment() {</b>
+&nbsp;    private lateinit var binding:FragmentSignUpStep1Binding
+<b class="nc">&nbsp;    private val signUpViewModel:SignUpViewModel by activityViewModels()</b>
+&nbsp;    override fun onCreateView(
+&nbsp;        inflater: LayoutInflater, container: ViewGroup?,
+&nbsp;        savedInstanceState: Bundle?
+&nbsp;    ): View {
+<b class="nc">&nbsp;        binding= FragmentSignUpStep1Binding.inflate(inflater,container,false)</b>
+<b class="nc">&nbsp;        return binding.root</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+<b class="nc">&nbsp;        super.onViewCreated(view, savedInstanceState)</b>
+&nbsp;
+<b class="nc">&nbsp;        binding.adminCv.setOnClickListener{</b>
+<b class="nc">&nbsp;            selectCard(binding.adminCv)</b>
+<b class="nc">&nbsp;            signUpViewModel.updateUserInfo(&quot;role&quot;,&quot;Admin&quot;)</b>
+<b class="nc">&nbsp;            signUpViewModel.isRoleSelected=true</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        binding.attendeeCv.setOnClickListener{</b>
+<b class="nc">&nbsp;            selectCard(binding.attendeeCv)</b>
+<b class="nc">&nbsp;            signUpViewModel.updateUserInfo(&quot;role&quot;,&quot;Attendee&quot;)</b>
+<b class="nc">&nbsp;            signUpViewModel.isRoleSelected=true</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //for testing purpose
+<b class="nc">&nbsp;        observeUser()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun observeUser() {
+<b class="nc">&nbsp;        lifecycleScope.launch {</b>
+<b class="nc">&nbsp;            signUpViewModel.user.collect { user -&gt;</b>
+<b class="nc">&nbsp;                Log.d(&quot;UserData&quot;,&quot;$user&quot;)</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun selectCard(selectedCard: ConstraintLayout) {
+<b class="nc">&nbsp;        val selectedColor =</b>
+<b class="nc">&nbsp;            ContextCompat.getColor(requireContext(), R.color.md_theme_primaryFixedDim)</b>
+<b class="nc">&nbsp;        val unselectedColor =</b>
+<b class="nc">&nbsp;            ContextCompat.getColor(requireContext(), R.color.md_theme_surfaceContainer)</b>
+&nbsp;
+<b class="nc">&nbsp;        binding.adminCv</b>
+<b class="nc">&nbsp;            .setBackgroundColor(if (binding.adminCv == selectedCard) selectedColor else unselectedColor)</b>
+<b class="nc">&nbsp;        binding.attendeeCv</b>
+<b class="nc">&nbsp;            .setBackgroundColor(if (binding.attendeeCv == selectedCard) selectedColor else unselectedColor)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
+</div>
+</body>
+</html>

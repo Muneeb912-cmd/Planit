@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="25dp">
 
@@ -14,8 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:hint="@string/search_event"
-        app:startIconDrawable="@drawable/ic_search"
-        app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast">
+        app:startIconDrawable="@drawable/ic_search">
+
+
+
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/searchEvent"
@@ -23,52 +25,82 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:padding="10dp"
+            android:paddingStart="40dp"
             android:textSize="18sp"
-            tools:ignore="RtlSymmetry"
-            android:paddingStart="40dp"/>
+            tools:ignore="RtlSymmetry" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <HorizontalScrollView
         android:id="@+id/chipsContainerContainer"
-        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/chipsContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
     </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchItemRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/titlePopularEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Popular Events"
-        android:textStyle="bold"
-        android:textSize="25sp"
-        app:drawableLeftCompat="@drawable/ic_popular"
-        android:drawablePadding="5dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="5dp"
+        android:drawablePadding="5dp"
+        android:text="Popular Events"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:drawableLeftCompat="@drawable/ic_popular" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEventCards"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:visibility="visible"/>
+
+    <LinearLayout
+        android:id="@+id/expandLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/md_theme_inverseSurface"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"/>
+        <ImageButton
+            android:id="@+id/expandUi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_down"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:layout_weight="0"/>
+    </LinearLayout>
 
     <TextView
+        android:id="@+id/featuredEventTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Featured Events"
-        android:textStyle="bold"
-        android:textSize="25sp"
-        app:drawableLeftCompat="@drawable/ic_featured"
-        android:drawablePadding="5dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="5dp"
+        android:drawablePadding="5dp"
+        android:text="Featured Events"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:drawableLeftCompat="@drawable/ic_featured" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPromotionCards"

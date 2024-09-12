@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserDao</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.room_db.user_dao</a>
+</div>
+
+<h1>Coverage Summary for Class: UserDao (com.example.eventmanagement.repository.room_db.user_dao)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$zFGrIVhX</td>
+  </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$zFGrIVhX$auxiliary$2BRgUH61</td>
+  </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$zFGrIVhX$auxiliary$kwWc2Ps4</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.room_db.user_dao
+&nbsp;
+&nbsp;import androidx.room.Dao
+&nbsp;import androidx.room.Insert
+&nbsp;import androidx.room.OnConflictStrategy
+&nbsp;import androidx.room.Query
+&nbsp;import com.example.eventmanagement.models.User
+&nbsp;import kotlinx.coroutines.flow.Flow
+&nbsp;
+&nbsp;@Dao
+&nbsp;interface UserDao {
+&nbsp;    @Query(&quot;SELECT * FROM users&quot;)
+&nbsp;    suspend fun getAllUserData(): List&lt;User.UserData&gt;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM users WHERE userId = :userId LIMIT 1&quot;)
+&nbsp;    fun getCurrentUser(userId: String): User.UserData?
+&nbsp;
+&nbsp;    @Insert(onConflict = OnConflictStrategy.REPLACE)
+&nbsp;    suspend fun saveUserData(userData: User.UserData)
+&nbsp;
+&nbsp;    @Query(
+&nbsp;        &quot;&quot;&quot;
+&nbsp;    UPDATE users 
+&nbsp;    SET 
+&nbsp;        userName = :userName,
+&nbsp;        userPhone = :userPhone, 
+&nbsp;        userDob = :userDob, 
+&nbsp;        userImg = :userImg 
+&nbsp;    WHERE userId = :userId
+&nbsp;    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    suspend fun updateUserProfile(
+&nbsp;        userId: String,
+&nbsp;        userName: String,
+&nbsp;        userPhone: String,
+&nbsp;        userDob: String,
+&nbsp;        userImg: String
+&nbsp;    ): Int
+&nbsp;
+&nbsp;    @Query(&quot;UPDATE users SET userLocation = :newLocation WHERE userId = :userId&quot;)
+&nbsp;    suspend fun updateUserLocation(userId: String, newLocation: String): Int
+&nbsp;
+&nbsp;    @Query(&quot;UPDATE users SET notificationsAllowed = :newSettings WHERE userId = :userId&quot;)
+&nbsp;    suspend fun updateUserNotificationSettings(userId: String, newSettings: Boolean): Int
+&nbsp;
+&nbsp;    @Query(&quot;UPDATE users SET profilePrivate = :newSettings WHERE userId = :userId&quot;)
+&nbsp;    suspend fun updateUserProfileStatus(userId: String, newSettings: Boolean): Int
+&nbsp;
+&nbsp;    @Query(&quot;UPDATE users SET userBanned = :banStatus WHERE userId = :userId&quot;)
+&nbsp;    suspend fun updateUserBanStatus(userId: String, banStatus: Boolean): Int
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM users WHERE userId = :userId LIMIT 1&quot;)
+&nbsp;    fun observeCurrentUser(userId: String): Flow&lt;User.UserData?&gt;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM users&quot;)
+&nbsp;    fun observeUsers(): Flow&lt;List&lt;User.UserData&gt;?&gt;
+&nbsp;
+&nbsp;    @Query(&quot;DELETE FROM users WHERE userId= :userId&quot;)
+&nbsp;    suspend fun deleteUser(userId: String)
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
+</div>
+</body>
+</html>

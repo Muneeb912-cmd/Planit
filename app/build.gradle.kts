@@ -1,3 +1,5 @@
+import java.util.Locale
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -7,6 +9,7 @@ plugins {
     id("com.google.gms.google-services")
     id ("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
+    jacoco
 }
 
 android {
@@ -30,6 +33,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
         }
     }
     compileOptions {
@@ -55,6 +62,12 @@ android {
     packagingOptions {
         exclude ("META-INF/gradle/incremental.annotation.processors")
     }
+
+}
+
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 dependencies {
@@ -67,7 +80,36 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.core.i18n)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
+    testImplementation("junit:junit:4.12")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
@@ -95,6 +137,71 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
     implementation("com.google.firebase:firebase-storage-ktx:21.0.0")
+    implementation("com.google.android.libraries.places:places:3.5.0")
+    implementation("com.google.android.gms:play-services-places:17.1.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    runtimeOnly("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    runtimeOnly("androidx.room:room-runtime:2.6.1")
+    implementation ("com.squareup.moshi:moshi:1.15.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
+
+    testImplementation("org.mockito:mockito-core:5.13.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    implementation(kotlin("test"))
+
+    val exclusions = listOf(
+        "**/!(viewmodel|repository)/**",
+        "**/!(viewmodel|repository).kt"
+    )
 
 
+    tasks.withType(Test::class) {
+        configure<JacocoTaskExtension> {
+            isIncludeNoLocationClasses = true
+            excludes = listOf("jdk.internal.*")
+        }
+    }
+
+    android {
+        applicationVariants.all(closureOf<com.android.build.gradle.internal.api.BaseVariantImpl> {
+            val variant = this@closureOf.name.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+
+            val unitTests = "test${variant}UnitTest"
+            val androidTests = "connected${variant}AndroidTest"
+
+            tasks.register<JacocoReport>("Jacoco${variant}CodeCoverage") {
+                dependsOn(listOf(unitTests, androidTests))
+                group = "Reporting"
+                description =
+                    "Execute ui and unit tests, generate and combine Jacoco coverage report"
+                reports {
+                    xml.required.set(true)
+                    html.required.set(true)
+                }
+                sourceDirectories.setFrom(layout.projectDirectory.dir("src/main"))
+                classDirectories.setFrom(files(
+                    fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+                        exclude(exclusions)
+                    },
+                    fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+                        exclude(exclusions)
+                    }
+                ))
+                executionData.setFrom(files(
+                    fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+                ))
+            }
+        })
+
+    }
 }

@@ -1,13 +1,16 @@
 package com.example.eventmanagement.ui.fragments.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -19,12 +22,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentProfileBinding
 import com.example.eventmanagement.di.CitiesCountries
+import com.example.eventmanagement.service.EventNotificationService
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.ediit_profile.EditProfileFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.reset_password.ResetPasswordFragment
-import com.example.eventmanagement.ui.shared_view_model.UserDataViewModel
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,7 +37,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
-    private val userDataViewModel: UserDataViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var isEditProfileBottomSheetShown = false
 
     @Inject
     @CitiesCountries
@@ -43,7 +49,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.viewModel = userDataViewModel
+        binding.viewModel = sharedViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -53,13 +59,22 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeListeners()
         Glide.with(requireContext())
-            .load(userDataViewModel.currentUser.value?.userImg)
+            .load(sharedViewModel.currentUser.value?.userImg)
             .apply(
                 RequestOptions()
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
             )
             .into(binding.userProfileImg)
+
+        binding.notificationToggle.isChecked =
+            sharedViewModel.currentUser.value?.notificationsAllowed == true
+        binding.profileToggle.isChecked =
+            sharedViewModel.currentUser.value?.profilePrivate == true
+
+        if (sharedViewModel.currentUser.value?.userLoginType == "google") binding.passwordRestLayout.visibility =
+            View.GONE
+
     }
 
     private fun initializeListeners() {
@@ -99,15 +114,32 @@ class ProfileFragment : Fragment() {
                     }
 
                     is Response.Success -> {
-                        findNavController().navigate(
-                            R.id.action_eventsMainFragment_to_loginFragment,
-                            null,
-                            NavOptions.Builder()
-                                .setPopUpTo(R.id.nav_graph_xml, true)
-                                .setLaunchSingleTop(true)
-                                .build()
-                        )
-                        showLoader(false)
+                        lifecycleScope.launch {
+                            if (sharedViewModel.currentUser.value?.userRole == "Attendee") {
+                                findNavController().navigate(
+                                    R.id.action_eventsMainFragment_to_loginFragment,
+                                    null,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.nav_graph_xml, true)
+                                        .setLaunchSingleTop(true)
+                                        .build()
+                                )
+                                sharedViewModel.resetViewModel()
+                                showLoader(false)
+                            } else {
+                                findNavController().navigate(
+                                    R.id.action_adminMainFragment_to_loginFragment,
+                                    null,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.nav_graph_xml, true)
+                                        .setLaunchSingleTop(true)
+                                        .build()
+                                )
+                                sharedViewModel.resetViewModel()
+                                showLoader(false)
+                            }
+
+                        }
                     }
 
                     is Response.Error -> {
@@ -121,13 +153,27 @@ class ProfileFragment : Fragment() {
 
 
     private fun openEditProfile() {
-        val bottomSheetFragment = EditProfileFragment()
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEditProfileBottomSheetShown) {
+            isEditProfileBottomSheetShown = true
+
+            val bottomSheetFragment = EditProfileFragment("Update", sharedViewModel.currentUser.value)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEditProfileBottomSheetShown = false
+            }
+        }
     }
 
     private fun openPasswordReset() {
-        val bottomSheetFragment = ResetPasswordFragment()
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEditProfileBottomSheetShown) {
+            isEditProfileBottomSheetShown = true
+            val bottomSheetFragment = ResetPasswordFragment()
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEditProfileBottomSheetShown = false
+            }
+        }
+
     }
 
 
@@ -138,7 +184,7 @@ class ProfileFragment : Fragment() {
             .setItems(citiesCountries.toTypedArray()) { _, which ->
                 val selectedLocation = citiesCountries[which]
                 viewModel.updateUserLocation(
-                    userDataViewModel.currentUser.value?.userId.toString(),
+                    sharedViewModel.currentUser.value?.userId.toString(),
                     selectedLocation
                 ) { result ->
                     if (result) {
@@ -165,16 +211,18 @@ class ProfileFragment : Fragment() {
 
     private fun handleNotificationToggle(isChecked: Boolean) {
         viewModel.updateUserNotificationStatus(
-            userDataViewModel.currentUser.value?.userId.toString(),
+            sharedViewModel.currentUser.value?.userId.toString(),
             isChecked
         ) { result ->
             if (result) {
                 if (isChecked) {
                     Toast.makeText(requireContext(), "Notification Turned On", Toast.LENGTH_SHORT)
                         .show()
+                    startNotificationService()
                 } else {
                     Toast.makeText(requireContext(), "Notification Turned Off", Toast.LENGTH_SHORT)
                         .show()
+                    stopNotificationService()
                 }
             } else {
                 Toast.makeText(
@@ -186,10 +234,21 @@ class ProfileFragment : Fragment() {
         }
     }
 
+
+    private fun startNotificationService() {
+        val intent = Intent(requireContext(), EventNotificationService::class.java)
+        ContextCompat.startForegroundService(requireContext(), intent)
+    }
+
+    private fun stopNotificationService() {
+        val intent = Intent(requireContext(), EventNotificationService::class.java)
+        requireContext().stopService(intent)
+    }
+
     @SuppressLint("SetTextI18n")
     private fun handleProfileToggle(isChecked: Boolean) {
         viewModel.updateUserProfileStatus(
-            userDataViewModel.currentUser.value?.userId.toString(),
+            sharedViewModel.currentUser.value?.userId.toString(),
             isChecked
         ) { result ->
             if (result) {
@@ -220,6 +279,10 @@ class ProfileFragment : Fragment() {
             .setIcon(R.drawable.ic_log_out)
             .setCancelable(false)
             .setPositiveButton("Confirm") { _, _ ->
+                Log.d(
+                    "userRole",
+                    "showLogOutDialog: ${sharedViewModel.currentUser.value?.userRole}"
+                )
                 userLogOut()
             }
             .setNegativeButton("Cancel") { dialog, _ ->

@@ -19,7 +19,6 @@ import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentSignUpStep2Binding
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import kotlin.math.sign
 
 class SignUpStep2 : Fragment() {
 

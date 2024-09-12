@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.eventmanagement.databinding.FragmentSignUpStep3Binding
 import com.example.eventmanagement.utils.Response
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +38,7 @@ class SignUpStep3 : Fragment() {
         initializeUI()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initializeUI() {
         binding.msgTitle.text = "User Email Not Verified"
         binding.msg.text = "Click the above button to get verification email."
@@ -62,6 +62,7 @@ class SignUpStep3 : Fragment() {
         showLoadingState()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun startVerificationDelay() {
         binding.timerTextView.visibility = View.VISIBLE
         lifecycleScope.launch {
@@ -97,6 +98,7 @@ class SignUpStep3 : Fragment() {
             }
         }
     }
+    @SuppressLint("SetTextI18n")
     private fun showLoadingState() {
         binding.progressBar.visibility = View.VISIBLE
         binding.msgTitle.text = "Checking Verification Status..."
@@ -104,6 +106,7 @@ class SignUpStep3 : Fragment() {
         binding.retryButton.visibility = View.GONE
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showSuccessState() {
         binding.progressBar.visibility = View.GONE
         binding.msgTitle.text = "User Email Verified"

@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.eventmanagement.ui.shared_view_model.UserDataViewModel" />
+            type="com.example.eventmanagement.ui.shared_view_model.SharedViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -155,7 +155,6 @@
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/notificationToggle"
-                    android:checked="@{viewModel.currentUser.isNotificationsAllowed()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -212,7 +211,6 @@
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/profileToggle"
-                        android:checked="@{viewModel.currentUser.isProfilePrivate()}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -220,6 +218,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/passwordRestLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

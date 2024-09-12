@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Converters</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.repository.room_db</a>
+</div>
+
+<h1>Coverage Summary for Class: Converters (com.example.eventmanagement.repository.room_db)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Converters</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.repository.room_db
+&nbsp;
+&nbsp;import androidx.room.TypeConverter
+&nbsp;import com.example.eventmanagement.models.Attendees
+&nbsp;import com.example.eventmanagement.models.EventData
+&nbsp;import com.example.eventmanagement.models.FavEvents
+&nbsp;import com.example.eventmanagement.models.Invites
+&nbsp;import com.example.eventmanagement.models.User
+&nbsp;import com.example.eventmanagement.models.UserUpdate
+&nbsp;import com.google.firebase.Timestamp
+&nbsp;import com.squareup.moshi.KotlinJsonAdapterFactory
+&nbsp;import com.squareup.moshi.Moshi
+&nbsp;import java.util.Date
+&nbsp;
+<b class="nc">&nbsp;class Converters {</b>
+&nbsp;    private val moshi =
+<b class="nc">&nbsp;        Moshi.Builder().add(KotlinJsonAdapterFactory()).build()</b>
+<b class="nc">&nbsp;    private val userAdapter = moshi.adapter(User.UserData::class.java)</b>
+<b class="nc">&nbsp;    private val eventAdapter = moshi.adapter(EventData::class.java)</b>
+<b class="nc">&nbsp;    private val inviteAdapter = moshi.adapter(Invites::class.java)</b>
+<b class="nc">&nbsp;    private val attendeeAdapter = moshi.adapter(Attendees::class.java)</b>
+<b class="nc">&nbsp;    private val updateUserAdapter = moshi.adapter(UserUpdate::class.java)</b>
+<b class="nc">&nbsp;    private val favEventAdapter = moshi.adapter(FavEvents ::class.java)</b>
+&nbsp;
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun fromUser(user: User.UserData): String {
+<b class="nc">&nbsp;        return userAdapter.toJson(user)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun toUser(userJson: String): User.UserData {
+<b class="nc">&nbsp;        return userAdapter.fromJson(userJson) ?: throw IllegalArgumentException(&quot;Invalid User data&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun fromFavEvent(favEvent: FavEvents): String {
+<b class="nc">&nbsp;        return favEventAdapter.toJson(favEvent)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun toFavEvent(favEvent: String):FavEvents {
+<b class="nc">&nbsp;        return favEventAdapter.fromJson(favEvent) ?: throw IllegalArgumentException(&quot;Invalid User data&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun fromEvent(event: EventData): String {
+<b class="nc">&nbsp;        return eventAdapter.toJson(event)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun toEvent(eventJson: String): EventData {
+<b class="nc">&nbsp;        return eventAdapter.fromJson(eventJson)</b>
+<b class="nc">&nbsp;            ?: throw IllegalArgumentException(&quot;Invalid Event data&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun fromInvite(invite: Invites): String {
+<b class="nc">&nbsp;        return inviteAdapter.toJson(invite)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun toInvite(inviteJson: String): Invites {
+<b class="nc">&nbsp;        return inviteAdapter.fromJson(inviteJson)</b>
+<b class="nc">&nbsp;            ?: throw IllegalArgumentException(&quot;Invalid Invite data&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun fromAttendee(attendee: Attendees): String {
+<b class="nc">&nbsp;        return attendeeAdapter.toJson(attendee)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun toAttendee(attendeeJson: String): Attendees {
+<b class="nc">&nbsp;        return attendeeAdapter.fromJson(attendeeJson)</b>
+<b class="nc">&nbsp;            ?: throw IllegalArgumentException(&quot;Invalid Attendee data&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun fromUpdateUser(userUpdate: UserUpdate): String {
+<b class="nc">&nbsp;        return updateUserAdapter.toJson(userUpdate)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @TypeConverter
+&nbsp;    fun toUpdateUser(userUpdateJson: String): UserUpdate {
+<b class="nc">&nbsp;        return updateUserAdapter.fromJson(userUpdateJson)</b>
+<b class="nc">&nbsp;            ?: throw IllegalArgumentException(&quot;Invalid Attendee data&quot;)</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
+</div>
+</body>
+</html>

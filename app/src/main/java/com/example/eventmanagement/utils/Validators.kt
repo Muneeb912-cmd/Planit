@@ -5,4 +5,7 @@ interface Validators {
     fun validateEmail(email:String):Boolean
     fun validatePhone(phone:String):Boolean
     fun validatePassword(password:String):Boolean
+    fun validateEventEndTimings(eventStartTime:String,eventEndTime:String):Boolean
+    fun validateEventStartTime(eventStartTime:String,eventEndTime:String):Boolean
+
 }

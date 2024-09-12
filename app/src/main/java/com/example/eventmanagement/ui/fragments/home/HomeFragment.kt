@@ -7,15 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.HomeEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentHomeBinding
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -23,134 +28,32 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.util.Locale
 
-class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
+@AndroidEntryPoint
+class HomeFragment : Fragment(), HomeEventCardAdapter.OnItemClickListener {
 
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private var selectedDate: LocalDate? = null
-    private val eventCardList = listOf(
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-10",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "On-Going"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-14",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "On-Going"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-20",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-21",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-20",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-15",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Missed"
-        ),
-        EventData(
-            eventTitle = "Popular Event 1",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-01",
-            isEventFeatured = false,
-            isEventPopular = true,
-            isEventPublic = true,
-            numberOfPeopleAttending = 28,
-            eventStatus = "Missed"
-        ),
-        EventData(
-            eventTitle = "Popular Event 2",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-14",
-            isEventFeatured = false,
-            isEventPopular = true,
-            isEventPublic = true,
-            numberOfPeopleAttending = 14,
-            eventStatus = "Missed"
-        ),
-    )
+    private var isEventDetailsBottomSheetShown = false
+    private val homeViewModel: HomeViewModel by viewModels()
+
     private val eventDates: Set<LocalDate>
         @RequiresApi(Build.VERSION_CODES.O)
-        get() = eventCardList.mapNotNull {
-            LocalDate.parse(it.eventDate)
-        }.toSet()
+        get() = sharedViewModel.allEvents.value
+            .mapNotNull { it.eventDate }
+            .flatMap { parseEventDates(it) }
+            .toSet()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -160,42 +63,107 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
         return binding.root
     }
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupCalendarView()
         setInitialSelection()
-        binding.monthsContainer.prevMonthButton.setOnClickListener {
-            navigateToPreviousMonth()
-        }
-
-        binding.monthsContainer.nextMonthButton.setOnClickListener {
-            navigateToNextMonth()
-        }
-
-        setupEventsList()
+        setUpAdapter()
+        observeEvents()
+        binding.monthsContainer.prevMonthButton.setOnClickListener { navigateToPreviousMonth() }
+        binding.monthsContainer.nextMonthButton.setOnClickListener { navigateToNextMonth() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun observeEvents() {
+        lifecycleScope.launch {
+            launch {
+                sharedViewModel.allEvents.collect {
+                    setupEventsList()
+                    setupCalendarView()
+                }
+            }
+        }
+        lifecycleScope.launch {
+            sharedViewModel.allFavEvents.collect { favEvents ->
+                (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFavEvents(
+                    favEvents
+                )
+            }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupEventsList() {
-        val selectedDateString = selectedDate?.toString()
+        val selectedDateString =
+            selectedDate?.toString()
         Log.d("HomeFragment", "Selected Date: $selectedDateString")
 
-        val filteredEvents = eventCardList.filter {
-            it.isEventPublic == true && it.eventDate == selectedDateString
+        val filteredEvents = sharedViewModel.allEvents.value.filter { event ->
+            event.isEventPublic == true && (
+                    event.eventDate == selectedDateString ||
+                            isDateWithinEventDateRange(selectedDateString, event.eventDate)
+                    )
         }
 
         if (filteredEvents.isNotEmpty()) {
             binding.eventsList.visibility = View.VISIBLE
             binding.noEventsFoundText.visibility = View.GONE
-            val adapter = HomeEventCardAdapter(filteredEvents, this)
-            binding.eventsList.layoutManager = LinearLayoutManager(context)
-            binding.eventsList.adapter = adapter
-            adapter.notifyDataSetChanged()
+            (binding.eventsList.adapter as? HomeEventCardAdapter)?.updatedFilteredEvents(
+                filteredEvents
+            )
+
 
         } else {
             binding.eventsList.visibility = View.GONE
             binding.noEventsFoundText.visibility = View.VISIBLE
         }
+    }
+
+    private fun setUpAdapter() {
+        val adapter =
+            HomeEventCardAdapter(emptyList(), emptyList(), this)
+        binding.eventsList.layoutManager = LinearLayoutManager(context)
+        binding.eventsList.adapter = adapter
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun isDateWithinEventDateRange(selectedDate: String?, eventDate: String?): Boolean {
+        if (selectedDate == null || eventDate == null) {
+            return false
+        }
+        return if (eventDate.contains(" - ")) {
+            val dates = eventDate.split(" - ")
+            if (dates.size == 2) {
+                val startDate = dates[0]
+                val endDate = dates[1]
+                isDateWithinRange(selectedDate, startDate, endDate)
+            } else {
+                false
+            }
+        } else {
+            eventDate == selectedDate
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun isDateWithinRange(
+        selectedDate: String?,
+        startDate: String?,
+        endDate: String?
+    ): Boolean {
+        if (selectedDate == null || startDate == null || endDate == null) {
+            return false
+        }
+        val selectedLocalDate = LocalDate.parse(selectedDate)
+        val startLocalDate = LocalDate.parse(startDate)
+        val endLocalDate = LocalDate.parse(endDate)
+
+        return !selectedLocalDate.isBefore(startLocalDate) && !selectedLocalDate.isAfter(
+            endLocalDate
+        )
     }
 
 
@@ -208,9 +176,9 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
         binding.calendarView.setup(startMonth, endMonth, daysOfWeek.first())
         binding.calendarView.scrollToMonth(currentMonth)
 
-        // Set up day binder
         binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
+
             @RequiresApi(Build.VERSION_CODES.O)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.dayTextView.text = data.date.dayOfMonth.toString()
@@ -239,33 +207,41 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
             }
         }
 
-        binding.calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
-                if (container.titlesContainer.tag == null) {
-                    container.titlesContainer.tag = data.yearMonth
-                    container.titlesContainer.children.map { it as TextView }
-                        .forEachIndexed { index, textView ->
-                            val dayOfWeek = daysOfWeek[index]
-                            val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            textView.text = title
-                            textView.setTextColor(requireContext().getColor(android.R.color.white))
-                        }
-                    val monthYearText = "${data.yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${data.yearMonth.year}"
-                    binding.monthsContainer.monthYearTextView.text = monthYearText
+        binding.calendarView.monthHeaderBinder =
+            object : MonthHeaderFooterBinder<MonthViewContainer> {
+                override fun create(view: View) = MonthViewContainer(view)
+                override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                    if (container.titlesContainer.tag == null) {
+                        container.titlesContainer.tag = data.yearMonth
+                        container.titlesContainer.children.map { it as TextView }
+                            .forEachIndexed { index, textView ->
+                                val dayOfWeek = daysOfWeek[index]
+                                val title =
+                                    dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                textView.text = title
+                                textView.setTextColor(requireContext().getColor(android.R.color.white))
+                            }
+                        val monthYearText = "${
+                            data.yearMonth.month.getDisplayName(
+                                TextStyle.FULL,
+                                Locale.getDefault()
+                            )
+                        } ${data.yearMonth.year}"
+                        binding.monthsContainer.monthYearTextView.text = monthYearText
+                    }
                 }
             }
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setInitialSelection() {
-        selectedDate = LocalDate.now() // Set initial selection to today's date
+        selectedDate = LocalDate.now()
         selectedDate?.let {
             binding.calendarView.notifyDateChanged(it)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleDayClick(day: CalendarDay) {
         if (day.position == DayPosition.MonthDate) {
             val currentSelection = selectedDate
@@ -284,6 +260,7 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
         }
         setupEventsList()
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun navigateToPreviousMonth() {
         val currentMonth = binding.calendarView.findFirstVisibleMonth()?.yearMonth ?: return
@@ -302,8 +279,75 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateMonthYearText(yearMonth: YearMonth) {
-        val monthYearText = "${yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${yearMonth.year}"
+        val monthYearText = "${
+            yearMonth.month.getDisplayName(
+                TextStyle.FULL,
+                Locale.getDefault()
+            )
+        } ${yearMonth.year}"
         binding.monthsContainer.monthYearTextView.text = monthYearText
+    }
+
+    override fun onItemClick(cardData: EventData) {
+        if (!isEventDetailsBottomSheetShown) {
+            isEventDetailsBottomSheetShown = true
+
+            val bottomSheetFragment = EventDetailsFragment(cardData)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+
+            bottomSheetFragment.setOnDismissListener {
+                isEventDetailsBottomSheetShown = false
+            }
+        }
+    }
+
+    override fun onFavIconClick(cardData: EventData) {
+        val userId = sharedViewModel.currentUser.value?.userId.toString()
+        if (sharedViewModel.allFavEvents.value.any { it == cardData.eventId }) {
+            removeEventFromFavorites(userId, cardData)
+        } else {
+            addEventToFavorites(userId, cardData)
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun parseEventDates(eventDate: String): List<LocalDate> {
+        val dateRange = eventDate.split(" - ")
+
+        return if (dateRange.size == 2) {
+            try {
+                val startDate = LocalDate.parse(dateRange[0], dateFormatter)
+                val endDate = LocalDate.parse(dateRange[1], dateFormatter)
+                generateDateRange(startDate, endDate)
+            } catch (e: DateTimeParseException) {
+                Log.e("HomeFragment", "Date parsing error: ${e.message}")
+                emptyList()
+            }
+        } else {
+            try {
+                listOf(LocalDate.parse(eventDate, dateFormatter))
+            } catch (e: DateTimeParseException) {
+                Log.e("HomeFragment", "Date parsing error: ${e.message}")
+                emptyList()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun generateDateRange(startDate: LocalDate, endDate: LocalDate): List<LocalDate> {
+        val dates = mutableListOf<LocalDate>()
+        var currentDate = startDate
+
+        while (!currentDate.isAfter(endDate)) {
+            dates.add(currentDate)
+            currentDate = currentDate.plusDays(1)
+        }
+
+        return dates
     }
 
     class DayViewContainer(view: View) : ViewContainer(view) {
@@ -315,9 +359,25 @@ class HomeFragment : Fragment(),HomeEventCardAdapter.OnItemClickListener {
         val titlesContainer = view as ViewGroup
     }
 
-    override fun onItemClick(cardData: EventData) {
-        val bottomSheetFragment = EventDetailsFragment(cardData)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+    private fun removeEventFromFavorites(userId: String, cardData: EventData) {
+        homeViewModel.removeEventFromUserFav(userId, cardData) { result, msg ->
+            if (result) {
+                Toast.makeText(requireContext(), "Event deleted from favorites", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Error: $msg", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
+    private fun addEventToFavorites(userId: String, cardData: EventData) {
+        homeViewModel.addEventToUserFav(userId, cardData) { result, msg ->
+            if (result) {
+                Toast.makeText(requireContext(), "Event added to favorites", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Error: $msg", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }

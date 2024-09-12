@@ -28,12 +28,10 @@ class PreferencesImpl(context: Context): PreferencesUtil {
         return user
     }
 
-    override fun updateUser(updater: (User.UserData) -> User.UserData) {
-        val currentUser = getUser()
-        if (currentUser != null) {
-            val updatedUser = updater(currentUser)
-            saveUser(updatedUser)
-        }
+    override fun updateUser(user: User.UserData) {
+        val gson = Gson()
+        val json = gson.toJson(user)
+        sharedPreferences.edit().putString("user", json).apply()
     }
     override fun deleteUser() {
         sharedPreferences.edit().remove("user").apply()

@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.eventmanagement.ui.shared_view_model.UserDataViewModel" />
+            type="com.example.eventmanagement.ui.shared_view_model.SharedViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -69,6 +69,38 @@
                         app:layout_constraintStart_toEndOf="@id/locationIcon"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/favEvents"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:background="@android:color/transparent"
+                        android:layout_marginEnd="10dp">
+                        <ImageView
+                            android:id="@+id/eventInvitesNotifier"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="center_vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginTop="2dp"
+                            android:background="@drawable/indicator_active"
+                            android:translationZ="20dp" />
+                        <ImageView
+                            android:id="@+id/eventInvites"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="15dp"
+                            android:layout_alignParentEnd="true"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:background="@drawable/ic_invites"
+                            />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <ImageView
                         android:id="@+id/favEvents"
                         android:layout_width="30dp"
@@ -98,8 +130,6 @@
                 android:layout_height="wrap_content"
                 android:background="@color/md_theme_secondaryFixed"
                 android:elevation="8dp"
-
-                app:itemIconTint="@color/md_theme_secondaryFixedDim_mediumContrast"
                 app:itemTextColor="@color/md_theme_scrim"
                 app:labelVisibilityMode="selected"
                 app:layout_constraintBottom_toBottomOf="parent"

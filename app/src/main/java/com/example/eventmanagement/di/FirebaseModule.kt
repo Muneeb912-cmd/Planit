@@ -1,8 +1,8 @@
 package com.example.eventmanagement.di
 
 import android.content.Context
-import com.example.eventmanagement.repository.firebase.envents_data.EventDataMethods
-import com.example.eventmanagement.repository.firebase.envents_data.EventsDataMethodsImpl
+import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
+import com.example.eventmanagement.repository.firebase.events_data.EventsDataMethodsImpl
 import com.example.eventmanagement.repository.firebase.invites_data.InviteMethods
 import com.example.eventmanagement.repository.firebase.invites_data.InviteMethodsImpl
 import com.example.eventmanagement.repository.firebase.login_signup.LoginSignUpMethods
@@ -62,9 +62,9 @@ class FirebaseModule {
     fun provideUserDataMethods(
         auth: FirebaseAuth,
         firestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage,
         preferencesUtil: PreferencesUtil,
-        firebaseStorage: FirebaseStorage
-    ): UserDataMethods = UserDataImpl(auth, firestore, preferencesUtil,firebaseStorage)
+    ): UserDataMethods = UserDataImpl(auth, firestore,firebaseStorage,preferencesUtil)
 
     @Provides
     @Singleton

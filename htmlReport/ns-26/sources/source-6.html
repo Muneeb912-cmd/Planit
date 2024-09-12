@@ -1,0 +1,354 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SignUpStep3</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.eventmanagement.ui.fragments.signup</a>
+</div>
+
+<h1>Coverage Summary for Class: SignUpStep3 (com.example.eventmanagement.ui.fragments.signup)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SignUpStep3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/48)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SignUpStep3$observeEmailVerificationStatus$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep3$observeEmailVerificationStatus$1$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep3$special$$inlined$activityViewModels$default$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep3$special$$inlined$activityViewModels$default$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep3$special$$inlined$activityViewModels$default$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SignUpStep3$startVerificationDelay$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/69)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.eventmanagement.ui.fragments.signup
+&nbsp;
+&nbsp;import android.annotation.SuppressLint
+&nbsp;import android.os.Bundle
+&nbsp;import android.view.LayoutInflater
+&nbsp;import android.view.View
+&nbsp;import android.view.ViewGroup
+&nbsp;import androidx.fragment.app.Fragment
+&nbsp;import androidx.fragment.app.activityViewModels
+&nbsp;import androidx.lifecycle.lifecycleScope
+&nbsp;import androidx.lifecycle.viewmodel.compose.viewModel
+&nbsp;import com.example.eventmanagement.databinding.FragmentSignUpStep3Binding
+&nbsp;import com.example.eventmanagement.utils.Response
+&nbsp;import dagger.hilt.android.AndroidEntryPoint
+&nbsp;import kotlinx.coroutines.Job
+&nbsp;import kotlinx.coroutines.delay
+&nbsp;import kotlinx.coroutines.launch
+&nbsp;
+&nbsp;@AndroidEntryPoint
+<b class="nc">&nbsp;class SignUpStep3 : Fragment() {</b>
+&nbsp;
+&nbsp;    private lateinit var binding: FragmentSignUpStep3Binding
+<b class="nc">&nbsp;    private val signUpViewModel: SignUpViewModel by activityViewModels()</b>
+&nbsp;    private var emailVerificationJob: Job? = null
+&nbsp;
+&nbsp;    override fun onCreateView(
+&nbsp;        inflater: LayoutInflater, container: ViewGroup?,
+&nbsp;        savedInstanceState: Bundle?
+&nbsp;    ): View {
+<b class="nc">&nbsp;        binding = FragmentSignUpStep3Binding.inflate(inflater, container, false)</b>
+<b class="nc">&nbsp;        binding.viewModel = signUpViewModel</b>
+<b class="nc">&nbsp;        binding.lifecycleOwner = viewLifecycleOwner</b>
+<b class="nc">&nbsp;        return binding.root</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressLint(&quot;SetTextI18n&quot;)
+&nbsp;    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+<b class="nc">&nbsp;        super.onViewCreated(view, savedInstanceState)</b>
+<b class="nc">&nbsp;        initializeUI()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun initializeUI() {
+<b class="nc">&nbsp;        binding.msgTitle.text = &quot;User Email Not Verified&quot;</b>
+<b class="nc">&nbsp;        binding.msg.text = &quot;Click the above button to get verification email.&quot;</b>
+<b class="nc">&nbsp;        binding.retryButton.visibility = View.VISIBLE</b>
+<b class="nc">&nbsp;        binding.timerTextView.visibility = View.GONE</b>
+<b class="nc">&nbsp;        binding.progressBar.visibility = View.GONE</b>
+&nbsp;
+<b class="nc">&nbsp;        binding.retryButton.setOnClickListener {</b>
+<b class="nc">&nbsp;            if (binding.retryButton.isEnabled) {</b>
+<b class="nc">&nbsp;                sendVerificationEmail()</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun sendVerificationEmail() {
+<b class="nc">&nbsp;        binding.retryButton.isEnabled = false</b>
+<b class="nc">&nbsp;        signUpViewModel.sendVerificationEmail()</b>
+<b class="nc">&nbsp;        signUpViewModel.checkVerificationEmail()</b>
+<b class="nc">&nbsp;        observeEmailVerificationStatus()</b>
+<b class="nc">&nbsp;        startVerificationDelay()</b>
+<b class="nc">&nbsp;        showLoadingState()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun startVerificationDelay() {
+<b class="nc">&nbsp;        binding.timerTextView.visibility = View.VISIBLE</b>
+<b class="nc">&nbsp;        lifecycleScope.launch {</b>
+<b class="nc">&nbsp;            var timeLeft = 60</b>
+<b class="nc">&nbsp;            while (timeLeft &gt; 0) {</b>
+<b class="nc">&nbsp;                binding.timerTextView.text = &quot;Retry available in $timeLeft seconds&quot;</b>
+<b class="nc">&nbsp;                delay(1000)</b>
+<b class="nc">&nbsp;                timeLeft--</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (!signUpViewModel.isEmailVerified) {</b>
+<b class="nc">&nbsp;                showErrorState()</b>
+<b class="nc">&nbsp;                binding.timerTextView.visibility=View.GONE</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun observeEmailVerificationStatus() {
+<b class="nc">&nbsp;        emailVerificationJob = lifecycleScope.launch {</b>
+<b class="nc">&nbsp;            while (!signUpViewModel.isEmailVerified) {</b>
+<b class="nc">&nbsp;                signUpViewModel.checkVerificationEmail()</b>
+<b class="nc">&nbsp;                delay(2000)</b>
+&nbsp;            }
+<b class="nc">&nbsp;            signUpViewModel.emailVerificationStatus.collect { result -&gt;</b>
+<b class="nc">&nbsp;                when (result) {</b>
+<b class="nc">&nbsp;                    is Response.Loading -&gt; {}</b>
+<b class="nc">&nbsp;                    is Response.Success -&gt; {</b>
+<b class="nc">&nbsp;                        if (signUpViewModel.isEmailVerified) {</b>
+<b class="nc">&nbsp;                            showSuccessState()</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="nc">&nbsp;                    is Response.Error -&gt; {}</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    private fun showLoadingState() {
+<b class="nc">&nbsp;        binding.progressBar.visibility = View.VISIBLE</b>
+<b class="nc">&nbsp;        binding.msgTitle.text = &quot;Checking Verification Status...&quot;</b>
+<b class="nc">&nbsp;        binding.msg.text = &quot;Please wait while we check if your email is verified.&quot;</b>
+<b class="nc">&nbsp;        binding.retryButton.visibility = View.GONE</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private fun showSuccessState() {
+<b class="nc">&nbsp;        binding.progressBar.visibility = View.GONE</b>
+<b class="nc">&nbsp;        binding.msgTitle.text = &quot;User Email Verified&quot;</b>
+<b class="nc">&nbsp;        binding.msg.text = &quot;Your email is verified. You can now proceed.&quot;</b>
+<b class="nc">&nbsp;        binding.retryButton.visibility = View.GONE</b>
+<b class="nc">&nbsp;        binding.timerTextView.visibility = View.GONE</b>
+<b class="nc">&nbsp;        signUpViewModel.isEmailVerified=true</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @SuppressLint(&quot;SetTextI18n&quot;)
+&nbsp;    private fun showErrorState() {
+<b class="nc">&nbsp;        binding.progressBar.visibility = View.GONE</b>
+<b class="nc">&nbsp;        binding.msgTitle.text = &quot;Verify Your Email&quot;</b>
+<b class="nc">&nbsp;        binding.msg.text = &quot;Failed to verify email. Please try again.&quot;</b>
+<b class="nc">&nbsp;        binding.retryButton.visibility = View.VISIBLE</b>
+<b class="nc">&nbsp;        binding.retryButton.isEnabled = true</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    override fun onDestroyView() {
+<b class="nc">&nbsp;        super.onDestroyView()</b>
+<b class="nc">&nbsp;        emailVerificationJob?.cancel()</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-09-10 18:49</div>
+</div>
+</body>
+</html>

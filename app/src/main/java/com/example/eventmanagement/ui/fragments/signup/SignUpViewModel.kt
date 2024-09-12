@@ -1,6 +1,5 @@
 package com.example.eventmanagement.ui.fragments.signup
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eventmanagement.models.User
@@ -55,9 +54,10 @@ class SignUpViewModel @Inject constructor(
             userImg = if (key == "img") value else currentUser.userImg,
             userLocation = if (key == "location") value else currentUser.userLocation,
             userLoginType = if (key == "loginType") value else currentUser.userLoginType,
-            isProfilePrivate = if (key == "profile") value == "Yes" else currentUser.isProfilePrivate,
-            isNotificationsAllowed = if (key == "notification") value == "Yes" else currentUser.isNotificationsAllowed,
-            userId = if (key == "userId") value else currentUser.userId
+            profilePrivate = if (key == "profile") value == "Yes" else currentUser.profilePrivate,
+            notificationsAllowed = if (key == "notification") value == "Yes" else currentUser.notificationsAllowed,
+            userId = if (key == "userId") value else currentUser.userId,
+            userBanned = if (key == "userBanned") value == "Yes" else currentUser.userBanned
         )
         validateField(key, value)
         checkIfDataComplete()
@@ -102,7 +102,7 @@ class SignUpViewModel @Inject constructor(
 
     fun createUserAccount() {
         if (loginType == "google") {
-            addUserDatatoFirestore(null)
+            addUserDataToFirestore(null)
         } else {
             _signUpResults.value = Response.Loading
             viewModelScope.launch {
@@ -115,18 +115,18 @@ class SignUpViewModel @Inject constructor(
                             val userId = result.getOrNull()
                             if (userId != null) {
                                 checkVerificationEmail()
-                                addUserDatatoFirestore(userId)
+                                addUserDataToFirestore(userId)
                                 _signUpResults.value = Response.Success(Unit)
-                                accountExist=false
+                                accountExist = false
 
                             } else {
                                 _signUpResults.value =
                                     Response.Error(Exception("Failed to retrieve user ID or User already exist"))
-                                accountExist=true
+                                accountExist = true
                             }
                         } else {
                             _signUpResults.value = Response.Error(Exception("Sign-up failed"))
-                            accountExist=true
+                            accountExist = true
                         }
                     }
                 } catch (e: Exception) {
@@ -172,11 +172,12 @@ class SignUpViewModel @Inject constructor(
     }
 
 
-    private fun addUserDatatoFirestore(userId: String?) {
+    private fun addUserDataToFirestore(userId: String?) {
         updateUserInfo("location", "Lahore, PK")
         updateUserInfo("loginType", loginType)
         updateUserInfo("profile", "No")
         updateUserInfo("notification", "Yes")
+        updateUserInfo("userBanned", "No")
         if (userId.isNullOrEmpty()) updateUserInfo("userId", userId.toString())
         if (isDataComplete) {
             loginSignUpMethods.createUser(user.value) { userCreated ->
@@ -199,10 +200,8 @@ class SignUpViewModel @Inject constructor(
         updateUserInfo("userId", user1?.userId.toString())
         try {
             preferencesUtil.saveUser(user.value)
-            Log.d("UserData", "saveDataToPreferences: ${preferencesUtil.getUser()}")
             onResult(true)
         } catch (e: Exception) {
-            Log.d("UserDataPrefs", "getUserDataFromFireStore: $e")
             onResult(false)
         }
     }

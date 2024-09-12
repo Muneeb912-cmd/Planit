@@ -1,8 +1,15 @@
 package com.example.eventmanagement.utils.implementations
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.eventmanagement.utils.Validators
 import java.util.regex.Pattern
 import javax.inject.Inject
+import java.time.LocalTime
+import java.time.Duration
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.Locale
 
 class ValidatorsImpl @Inject constructor(): Validators {
 
@@ -32,4 +39,37 @@ class ValidatorsImpl @Inject constructor(): Validators {
 
         return password.length >= minLength && hasSpecialChar && hasUppercase && hasNumber
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun validateEventEndTimings(eventStartTime: String, eventEndTime: String): Boolean {
+        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
+
+
+        return try {
+            val startTime = LocalTime.parse(eventStartTime, timeFormatter)
+            val endTime = LocalTime.parse(eventEndTime, timeFormatter)
+            val isAfter = endTime.isAfter(startTime)
+            val duration = Duration.between(startTime, endTime).toMinutes()
+            isAfter && duration >= 15
+        } catch (e: DateTimeParseException) {
+            false
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun validateEventStartTime(eventStartTime: String, eventEndTime: String): Boolean {
+        val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
+
+        return try {
+            val startTime = LocalTime.parse(eventStartTime, timeFormatter)
+            val endTime = LocalTime.parse(eventEndTime, timeFormatter)
+            val isBefore = startTime.isBefore(endTime)
+            val duration = Duration.between(startTime, endTime).toMinutes()
+            isBefore && duration >= 15
+        } catch (e: DateTimeParseException) {
+            false
+        }
+    }
+
+
 }

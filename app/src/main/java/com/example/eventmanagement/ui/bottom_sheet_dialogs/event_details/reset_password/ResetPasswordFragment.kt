@@ -1,6 +1,7 @@
 package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.reset_password
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class ResetPasswordFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentResetPasswordBinding
     private val viewModel: ResetPasswordViewModel by viewModels()
+    private var onDismissListener: (() -> Unit)? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +52,14 @@ class ResetPasswordFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
         }
+    }
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
     }
 
 }

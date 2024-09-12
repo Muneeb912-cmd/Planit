@@ -49,4 +49,26 @@
     <string name="no_events_found">No Events Found</string>
     <string name="login_with_google">Login with Google</string>
     <string name="client_server_key">711227771945-hh6kfdkstur1lps7s7nrlds1ndtot2of.apps.googleusercontent.com</string>
+    <string name="api_key_">AIzaSyB7EIFMRQe-9Ijp2e-Bjwy6PnZ6ksByABg</string>
+    <string name="add_event">add event</string>
+    <string name="event_title">Event Title</string>
+    <string name="event_date">Event Date</string>
+    <string name="category">Category</string>
+    <string name="start_time">Start time</string>
+    <string name="end_time">End Time</string>
+    <string name="event_location">Event Location</string>
+    <string name="event_description">Event Description</string>
+
+    <string name="api_key">AIzaSyAF0XYFjRnYUMwoi4VRLuhDYM0OF7MWq7M</string>
+    <string name="date_range">Date Range?</string>
+    <string name="users">Users</string>
+    <string name="accepted">Accepted</string>
+    <string name="rejected">Rejected</string>
+    <string name="new_">New</string>
+    <string name="expired">Expired</string>
+    <string name="banned_users">Banned Users</string>
+    <string name="user_management">User Management</string>
+    <string name="ban_user">Ban User?</string>
+    <string name="send_invites">Send Invites</string>
+    <string name="sent_invites">Sent Invites</string>
 </resources>

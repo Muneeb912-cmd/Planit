@@ -1,6 +1,9 @@
 package com.example.eventmanagement.di
 
 import android.content.Context
+import androidx.work.WorkManager
+import com.example.eventmanagement.repository.worker.SyncRepository
+import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.utils.PreferencesUtil
 import com.example.eventmanagement.utils.Validators
 import com.example.eventmanagement.utils.implementations.PreferencesImpl
@@ -24,6 +27,24 @@ object AppModule {
     @Singleton
     fun providePreferencesUtil(@ApplicationContext context: Context): PreferencesUtil {
         return PreferencesImpl(context)
+    }
+    @Provides
+    @Singleton
+    fun provideConnectivityObserver(@ApplicationContext context: Context): ConnectivityObserver {
+        return ConnectivityObserver(context)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSyncRepository(workManager: WorkManager): SyncRepository {
+        return SyncRepository(workManager)
     }
 
 }

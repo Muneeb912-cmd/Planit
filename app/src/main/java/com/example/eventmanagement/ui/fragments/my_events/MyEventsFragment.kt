@@ -7,132 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.adapters.MyEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentMyEventsBinding
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
+import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.launch
 
 
 class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
     private lateinit var binding: FragmentMyEventsBinding
-    private val eventCardList = listOf(
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-10",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "On-Going"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-14",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "On-Going"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-20",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-21",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-20",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Up-Coming"
-        ),
-        EventData(
-            eventTitle = "Featured Event",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-15",
-            isEventFeatured = true,
-            isEventPopular = false,
-            isEventPublic = true,
-            numberOfPeopleAttending = 100,
-            eventStatus = "Missed"
-        ),
-        EventData(
-            eventTitle = "Popular Event 1",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-01",
-            isEventFeatured = false,
-            isEventPopular = true,
-            isEventPublic = true,
-            numberOfPeopleAttending = 28,
-            eventStatus = "Missed"
-        ),
-        EventData(
-            eventTitle = "Popular Event 2",
-            eventOrganizer = "Devsinc",
-            eventTiming = "2:00 PM - 3:00 PM",
-            eventCategory = "Conferences",
-            eventDescription = "Today we will celebrate Shaheer's Birthday",
-            eventLocation = "37.7749,-122.4194",
-            eventDate = "2024-08-14",
-            isEventFeatured = false,
-            isEventPopular = true,
-            isEventPublic = true,
-            numberOfPeopleAttending = 14,
-            eventStatus = "Missed"
-        ),
-    )
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private var filteredEvents = listOf<EventData>()
     private var currentTabPosition = 0
+    private var isEventDetailsBottomSheetShown = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -147,8 +39,13 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
         setupTabLayout()
         setUpMyEventsCardView()
         binding.tabLayout.getTabAt(0)?.select()
-        filterEvents(0)
         setupSearchListener()
+        lifecycleScope.launch {
+            sharedViewModel.allEvents.collect {
+                filterEvents(currentTabPosition)
+            }
+        }
+        filterEvents(0)
     }
 
     private fun setupSearchListener() {
@@ -169,7 +66,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
 
     private fun setUpMyEventsCardView() {
         val adapter = MyEventCardAdapter(
-            eventCardList,
+            sharedViewModel.allEvents.value,
             this
         )
         binding.eventsList.layoutManager =
@@ -178,8 +75,14 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
     }
 
     override fun OnMyEventCardClickListener(cardData: EventData) {
-        val bottomSheetFragment = EventDetailsFragment(cardData)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        if (!isEventDetailsBottomSheetShown) {
+            isEventDetailsBottomSheetShown = true
+            val bottomSheetFragment = EventDetailsFragment(cardData)
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            bottomSheetFragment.setOnDismissListener {
+                isEventDetailsBottomSheetShown = false
+            }
+        }
     }
 
     private fun setupTabLayout() {
@@ -188,6 +91,7 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
                 tab?.let {
                     currentTabPosition = it.position
                     filterEvents(it.position)
+                    binding.searchEvent.text?.clear()
                 }
             }
 
@@ -200,20 +104,33 @@ class MyEventsFragment : Fragment(), MyEventCardAdapter.OnMyEventClickListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 tab?.let {
                     filterEvents(it.position)
+                    binding.searchEvent.text?.clear()
                 }
             }
         })
     }
 
     private fun filterEvents(selectedTabPosition: Int) {
+        val currentUserAttendeeEvents = sharedViewModel.observeCurrentUserFromAttendees.value.map { it.eventId }
+
         filteredEvents = when (selectedTabPosition) {
-            0 -> eventCardList.filter { it.eventStatus == "On-Going" }
-            1 -> eventCardList.filter { it.eventStatus == "Up-Coming" }
-            2 -> eventCardList.filter { it.eventStatus == "Missed" }
-            else -> eventCardList
+            0 -> sharedViewModel.allEvents.value.filter {
+                it.eventStatus == "On-Going" && currentUserAttendeeEvents.contains(it.eventId)
+            }
+            1 -> sharedViewModel.allEvents.value.filter {
+                it.eventStatus == "Up-Coming" && currentUserAttendeeEvents.contains(it.eventId)
+            }
+            2 -> sharedViewModel.allEvents.value.filter {
+                it.eventStatus == "Missed" && currentUserAttendeeEvents.contains(it.eventId)
+            }
+            else -> sharedViewModel.allEvents.value.filter {
+                currentUserAttendeeEvents.contains(it.eventId)
+            }
         }
         updateRecyclerView(filteredEvents)
     }
+
+
 
     private fun updateRecyclerView(events: List<EventData>) {
         val adapter = MyEventCardAdapter(events, this)
