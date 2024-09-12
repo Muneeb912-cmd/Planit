@@ -80,7 +80,7 @@
                    android:textSize="18sp"
                    android:drawablePadding="5dp"
                    app:drawableLeftCompat="@drawable/ic_calender"
-                   android:layout_weight="1"
+                   android:layout_weight="0"
                    />
            </LinearLayout>
 

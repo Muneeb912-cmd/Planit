@@ -125,20 +125,31 @@ class UserDataImpl @Inject constructor(
         onResult: (Boolean) -> Unit
     ) {
         try {
+            // Fetch current user data
+            val userDoc = firestore.collection("UserData").document(userId).get().await()
+            val currentUserData = userDoc.data ?: emptyMap<String, Any>()
+            val currentUserImg = currentUserData["userImg"] as? String
+
+            // Prepare updates
             val updates = mutableMapOf<String, Any>(
                 "userName" to userName,
                 "userPhone" to userPhone,
                 "userDob" to userDob
             )
 
-            if (userImg.isNotEmpty()) {
+            // Check if the image needs to be updated
+            if (userImg.isNotEmpty() && userImg != currentUserImg) {
                 val storageRef = firebaseStorage.reference
                 val userImgRef = storageRef.child("ProfileImages/$userId")
                 userImgRef.putFile(Uri.parse(userImg)).await()
                 val downloadUrl = userImgRef.downloadUrl.await()
                 updates["userImg"] = downloadUrl.toString()
+            } else if (userImg.isEmpty() && currentUserImg != null) {
+                // Remove userImg field if userImg is empty and it exists in the current data
+                updates.remove("userImg")
             }
 
+            // Update Firestore
             firestore.collection("UserData")
                 .document(userId)
                 .update(updates)
@@ -149,6 +160,7 @@ class UserDataImpl @Inject constructor(
             onResult(false)
         }
     }
+
 
     private var currentUserListener: ListenerRegistration? = null
     private var usersListener: ListenerRegistration? = null

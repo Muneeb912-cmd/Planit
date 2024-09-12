@@ -58,13 +58,15 @@ class EventsFragment : Fragment(),
         observeViewModel()
 
         binding.expandUi.setImageResource(R.drawable.ic_up)
-
+        binding.chipsContainer.visibility=View.GONE
         binding.expandUi.setOnClickListener {
             if (isUiHidden) {
                 binding.expandUi.setImageResource(R.drawable.ic_up)
+                binding.chipsContainer.visibility=View.GONE
                 showUiElements("expandUiBtn")
             } else {
                 binding.expandUi.setImageResource(R.drawable.ic_down)
+                binding.chipsContainer.visibility=View.VISIBLE
                 hideUiElements("expandUiBtn")
             }
         }
@@ -174,9 +176,11 @@ class EventsFragment : Fragment(),
     private fun handleSearch(query: String) {
         if (query.isEmpty()) {
             showUiElements("search")
+            binding.chipsContainer.visibility=View.GONE
             filterFeaturedEvents()
         } else {
             hideUiElements("search")
+            binding.chipsContainer.visibility=View.VISIBLE
             handleQuery(query)
         }
     }

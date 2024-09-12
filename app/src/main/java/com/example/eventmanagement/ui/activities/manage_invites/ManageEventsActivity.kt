@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -93,6 +92,10 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
 
         adapter.updatedUsersList(filteredUsers)
         adapter.updatedCurrentEventInvites(currentEventInvites)
+        val filteredInvites =
+            sharedViewModel.allInvites.value.filter { allInvites.any { invite -> invite.eventId == eventId } }
+        adapter.updatedInvites(filteredInvites)
+
     }
 
     private fun updateTabTitles() {
@@ -123,7 +126,7 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
     }
 
     private fun setUpAdapter() {
-        adapter = ManageInviteAdapter(emptyList(), emptyList(), this)
+        adapter = ManageInviteAdapter(emptyList(), emptyList(), emptyList(), this)
         binding.usersList.layoutManager = LinearLayoutManager(this)
         binding.usersList.adapter = adapter
     }
@@ -137,6 +140,11 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
             }
             launch {
                 sharedViewModel.allInvites.collect {
+                    filterUsersByInvite(currentTabPosition)
+                }
+            }
+            launch {
+                sharedViewModel.currentUserInvites.collect {
                     filterUsersByInvite(currentTabPosition)
                 }
             }
@@ -165,16 +173,15 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
                 sharedViewModel.currentUser.value?.userId.toString(),
                 userData
             ) { result ->
-                if (result) {
-                    Toast.makeText(this, "Invite Sent To ${userData.userName}!", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Couldn't Send Invite To${userData.userName}!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                Log.d("Result", "onSendInviteButtonClick: $result")
+            }
+        } else if (key == "re-send") {
+            viewModel.updateInvite(
+                eventId.toString(),
+                sharedViewModel.currentUser.value?.userId.toString(),
+                userData
+            ) { result ->
+                Log.d("Result", "onSendInviteButtonClick: $result")
             }
         } else {
             viewModel.deleteInvite(
@@ -182,19 +189,10 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
                 sharedViewModel.currentUser.value?.userId.toString(),
                 userData
             ) { result ->
-                if (result) {
-                    Toast.makeText(this, "Invite UnSent!", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Couldn't Un-Send Invite!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                Log.d("Result", "onSendInviteButtonClick: $result")
             }
         }
-
+//update invite functionality
     }
 
     companion object {

@@ -1,11 +1,9 @@
 package com.example.eventmanagement.ui.fragments.manage_events
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +21,6 @@ import com.example.eventmanagement.di.Categories
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.activities.manage_invites.ManageEventsActivity
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event.AddEditEventFragment
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
@@ -178,7 +175,7 @@ class EventManagementFragment : Fragment(), ManageEventAdapter.OnItemClickListen
     }
 
     override fun onDeleteInviteClick(cardData: EventData) {
-        viewModel.deleteEventById(cardData,true){result->
+        viewModel.deleteEventById(cardData){ result->
             if(result){
                 Toast.makeText(requireContext(),"Event Deleted!",Toast.LENGTH_SHORT).show()
             }else{

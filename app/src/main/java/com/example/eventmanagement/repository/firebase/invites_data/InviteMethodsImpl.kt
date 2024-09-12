@@ -118,4 +118,37 @@ class InviteMethodsImpl @Inject constructor(
                 onResult(false)
             }
     }
+
+    override fun updateInviteStatusByUserId(
+        userId: String,
+        eventId: String,
+        newStatus: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        firestore.collection("Invites")
+            .whereEqualTo("receiverId", userId)
+            .whereEqualTo("eventId", eventId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    // Assuming there's only one matching document
+                    val document = querySnapshot.documents[0]
+                    firestore.collection("Invites")
+                        .document(document.id)
+                        .update("inviteStatus", newStatus)
+                        .addOnSuccessListener {
+                            onResult(true)
+                        }
+                        .addOnFailureListener {
+                            onResult(false)
+                        }
+                } else {
+                    onResult(false) // No matching document found
+                }
+            }
+            .addOnFailureListener {
+                onResult(false) // Query failed
+            }
+    }
+
 }

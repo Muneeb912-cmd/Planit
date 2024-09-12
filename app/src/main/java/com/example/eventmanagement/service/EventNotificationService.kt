@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.fragment.app.activityViewModels
 import com.example.eventmanagement.R
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.OperationType
@@ -19,7 +18,6 @@ import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
 import com.example.eventmanagement.repository.room_db.PendingOperationDao
 import com.example.eventmanagement.repository.room_db.events_dao.EventDao
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +25,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
@@ -72,7 +72,6 @@ class EventNotificationService : Service() {
         return null // No binding necessary
     }
 
-    // In your service class
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_STICKY
     }
@@ -81,11 +80,28 @@ class EventNotificationService : Service() {
     private suspend fun observeEventsAndUpdateQueue() {
         try {
             eventDao.observeAllEvents().collect { events ->
+
                 Log.d("EventNotificationService", "observeEventsAndUpdateQueue: $events")
+
+                val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val today = LocalDate.now()
                 eventQueue.clear()
                 for (event in events) {
-                    addEventToQueue(event)
+                    val eventStartDateStr = event.eventDate?.split(" - ")?.firstOrNull()
+                    val eventStartDate = eventStartDateStr?.let {
+                        LocalDate.parse(it, dateFormatter)
+                    }
+                    if (eventStartDate != null) {
+                        if (eventStartDate.isAfter(today) || eventStartDate.isEqual(
+                                today
+                            )
+                        ) {
+                            addEventToQueue(event)
+                        }
+                    }
                 }
+
+                // Sort and process events
                 eventQueue.sortBy { it.triggerTime }
                 processNextEvent()
             }
@@ -124,7 +140,17 @@ class EventNotificationService : Service() {
     }
 
 
-    private suspend fun updateEventStatus(event: EventData, notificationType: NotificationType) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateEventStatus(event: EventData, notificationType: NotificationType) {
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val eventDates = event.eventDate?.split(" - ")
+        val eventEndDate = try {
+            LocalDate.parse(eventDates?.get(1) ?: event.eventDate, dateFormatter)
+        } catch (e: Exception) {
+            null // Handle parsing error
+        }
+        val today = LocalDate.now()
+
         when (notificationType) {
             NotificationType.START_EVENT -> {
                 val pendingOperation = PendingOperations(
@@ -139,11 +165,18 @@ class EventNotificationService : Service() {
             }
 
             NotificationType.ENDING_20_MIN -> {}
+
             NotificationType.END_EVENT -> {
+                val status = if (eventEndDate != null && today.isBefore(eventEndDate)) {
+                    "Up-Coming"
+                } else {
+                    "Missed"
+                }
+
                 val pendingOperation = PendingOperations(
                     operationType = OperationType.UPDATE,
                     documentId = event.eventId.toString(),
-                    data = "Missed",
+                    data = status,
                     userId = "",
                     eventId = event.eventId.toString(),
                     dataType = "event_status"
@@ -154,6 +187,8 @@ class EventNotificationService : Service() {
             NotificationType.REMINDER_15_MIN -> {}
         }
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun parseTime(timeString: String): LocalTime {
@@ -166,7 +201,6 @@ class EventNotificationService : Service() {
             throw IllegalArgumentException("Invalid time format: $timeStringTrimmed")
         }
     }
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)

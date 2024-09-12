@@ -49,6 +49,7 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
     private var key: String? = null
     private var eventData: EventData? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -402,7 +403,7 @@ class AddEditEventFragment : BottomSheetDialogFragment() {
 
                     is Response.Success -> {
                         binding.loaderOverlay.loaderOverlay.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Event Added!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
                         dismiss()
                     }
                 }

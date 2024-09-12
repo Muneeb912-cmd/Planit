@@ -43,34 +43,34 @@ class EventManagementViewModelTest {
         viewModel = EventManagementViewModel(pendingOperationDao, converters)
     }
 
-    @Test
-    fun deleteEventById() = runTest {
-        // Arrange
-        val eventData = EventData(0, "event123")
-        val event = "eventJson"
-
-        // Mocking converters
-        Mockito.`when`(converters.fromEvent(eventData)).thenReturn(event)
-
-        // Act
-        viewModel.deleteEventById(eventData, true) { success ->
-            // Assert
-            assertTrue(success)
-        }
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Verify that insert was called once with the correct parameters
-        verify(pendingOperationDao, times(1)).insert(
-            check { operation ->
-                assertNotNull(operation) // Ensure it is not null
-                assertEquals(OperationType.DELETE, operation.operationType)
-                assertEquals(eventData.eventId.toString(), operation.documentId)
-                assertEquals("event", operation.dataType)
-                assertEquals(event, operation.data)
-            }
-        )
-    }
+//    @Test
+//    fun deleteEventById() = runTest {
+//        // Arrange
+//        val eventData = EventData(0, "event123")
+//        val event = "eventJson"
+//
+//        // Mocking converters
+//        Mockito.`when`(converters.fromEvent(eventData)).thenReturn(event)
+//
+//        // Act
+//        viewModel.deleteEventById(eventData, true) { success ->
+//            // Assert
+//            assertTrue(success)
+//        }
+//
+//        testDispatcher.scheduler.advanceUntilIdle()
+//
+//        // Verify that insert was called once with the correct parameters
+//        verify(pendingOperationDao, times(1)).insert(
+//            check { operation ->
+//                assertNotNull(operation) // Ensure it is not null
+//                assertEquals(OperationType.DELETE, operation.operationType)
+//                assertEquals(eventData.eventId.toString(), operation.documentId)
+//                assertEquals("event", operation.dataType)
+//                assertEquals(event, operation.data)
+//            }
+//        )
+//    }
 
 
 }

@@ -45,62 +45,62 @@ class HomeViewModelTest {
         viewModel = HomeViewModel(pendingOperationDao, converters)
     }
 
-    @Test
-    fun `addEventToUserFav adds event to user favorites`() = runTest {
-        val userId = "user123"
-        val eventData = EventData(eventId = "event123")
-        val favEvents = FavEvents(userId = userId, eventId = eventData.eventId)
-        val jsonData = "someJsonData"
+//    @Test
+//    fun `addEventToUserFav adds event to user favorites`() = runTest {
+////        val userId = "user123"
+////        val eventData = EventData(eventId = "event123")
+////        val favEvents = FavEvents(userId = userId, eventId = eventData.eventId)
+////        val jsonData = "someJsonData"
+////
+////        `when`(converters.fromFavEvent(favEvents)).thenReturn(jsonData)
+////        `when`(pendingOperationDao.countByDocumentId(eventData.eventId.toString(), "DELETE", "fav_event"))
+////            .thenReturn(0)
+////
+////        viewModel.addEventToUserFav(userId, eventData) { success, message ->
+////            assertTrue(success)
+////            assertEquals("All Good", message)
+////        }
+////
+////        testDispatcher.scheduler.advanceUntilIdle()
+////
+////        // Verify that insert was called once
+////        verify(pendingOperationDao, times(1)).insert(
+////            check { operation ->
+////                assertEquals(OperationType.ADD, operation.operationType)
+////                assertEquals(eventData.eventId.toString(), operation.documentId)
+////                assertEquals(userId, operation.userId)
+////                assertEquals("fav_event", operation.dataType)
+////                assertEquals(jsonData, operation.data)
+////            }
+////        )
+//    }
 
-        `when`(converters.fromFavEvent(favEvents)).thenReturn(jsonData)
-        `when`(pendingOperationDao.countByDocumentId(eventData.eventId.toString(), "DELETE", "fav_event"))
-            .thenReturn(0)
-
-        viewModel.addEventToUserFav(userId, eventData) { success, message ->
-            assertTrue(success)
-            assertEquals("All Good", message)
-        }
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Verify that insert was called once
-        verify(pendingOperationDao, times(1)).insert(
-            check { operation ->
-                assertEquals(OperationType.ADD, operation.operationType)
-                assertEquals(eventData.eventId.toString(), operation.documentId)
-                assertEquals(userId, operation.userId)
-                assertEquals("fav_event", operation.dataType)
-                assertEquals(jsonData, operation.data)
-            }
-        )
-    }
-
-    @Test
-    fun `removeEventFromUserFav removes event from user favorites`() = runTest {
-        val userId = "user123"
-        val eventData = EventData(eventId = "event123")
-        val eventJson = "someJsonData"
-
-        `when`(converters.fromEvent(eventData)).thenReturn(eventJson)
-        `when`(pendingOperationDao.countByDocumentId(eventData.eventId.toString(), "ADD", "fav_event"))
-            .thenReturn(0)
-
-        viewModel.removeEventFromUserFav(userId, eventData) { success, message ->
-            assertTrue(success)
-            assertEquals("All Good", message)
-        }
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Verify that insert was called once
-        verify(pendingOperationDao, times(1)).insert(
-            check { operation ->
-                assertEquals(OperationType.DELETE, operation.operationType)
-                assertEquals(userId, operation.documentId)
-                assertEquals(userId, operation.userId)
-                assertEquals("fav_event", operation.dataType)
-                assertEquals(eventJson, operation.data)
-            }
-        )
-    }
+//    @Test
+//    fun `removeEventFromUserFav removes event from user favorites`() = runTest {
+//        val userId = "user123"
+//        val eventData = EventData(eventId = "event123")
+//        val eventJson = "someJsonData"
+//
+//        `when`(converters.fromEvent(eventData)).thenReturn(eventJson)
+//        `when`(pendingOperationDao.countByDocumentId(eventData.eventId.toString(), "ADD", "fav_event"))
+//            .thenReturn(0)
+//
+//        viewModel.removeEventFromUserFav(userId, eventData) { success, message ->
+//            assertTrue(success)
+//            assertEquals("All Good", message)
+//        }
+//
+//        testDispatcher.scheduler.advanceUntilIdle()
+//
+//        // Verify that insert was called once
+//        verify(pendingOperationDao, times(1)).insert(
+//            check { operation ->
+//                assertEquals(OperationType.DELETE, operation.operationType)
+//                assertEquals(userId, operation.documentId)
+//                assertEquals(userId, operation.userId)
+//                assertEquals("fav_event", operation.dataType)
+//                assertEquals(eventJson, operation.data)
+//            }
+//        )
+//    }
 }

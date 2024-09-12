@@ -1,6 +1,7 @@
 package com.example.eventmanagement.ui.fragments.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -20,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentProfileBinding
 import com.example.eventmanagement.di.CitiesCountries
+import com.example.eventmanagement.service.EventNotificationService
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.ediit_profile.EditProfileFragment
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.reset_password.ResetPasswordFragment
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
@@ -153,7 +156,7 @@ class ProfileFragment : Fragment() {
         if (!isEditProfileBottomSheetShown) {
             isEditProfileBottomSheetShown = true
 
-            val bottomSheetFragment = EditProfileFragment("Update", null)
+            val bottomSheetFragment = EditProfileFragment("Update", sharedViewModel.currentUser.value)
             bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
             bottomSheetFragment.setOnDismissListener {
                 isEditProfileBottomSheetShown = false
@@ -215,9 +218,11 @@ class ProfileFragment : Fragment() {
                 if (isChecked) {
                     Toast.makeText(requireContext(), "Notification Turned On", Toast.LENGTH_SHORT)
                         .show()
+                    startNotificationService()
                 } else {
                     Toast.makeText(requireContext(), "Notification Turned Off", Toast.LENGTH_SHORT)
                         .show()
+                    stopNotificationService()
                 }
             } else {
                 Toast.makeText(
@@ -227,6 +232,17 @@ class ProfileFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+
+    private fun startNotificationService() {
+        val intent = Intent(requireContext(), EventNotificationService::class.java)
+        ContextCompat.startForegroundService(requireContext(), intent)
+    }
+
+    private fun stopNotificationService() {
+        val intent = Intent(requireContext(), EventNotificationService::class.java)
+        requireContext().stopService(intent)
     }
 
     @SuppressLint("SetTextI18n")

@@ -147,13 +147,13 @@ class EventInviteActivity : AppCompatActivity(), EventInviteAdapter.EventCardCli
     }
 
     override fun onAcceptIconClick(invite: EventInvites) {
-        viewModel.updateInviteStatus(invite.inviteId.toString(), "accepted") { result, msg ->
+        viewModel.updateInviteStatus(invite, sharedViewModel.currentUser.value?.userId.toString(),"accepted") { result, msg ->
             showToast(if (result) "Invite Accepted!" else msg)
         }
     }
 
     override fun onRejectIconClick(invite: EventInvites) {
-        viewModel.updateInviteStatus(invite.inviteId.toString(), "rejected") { result, msg ->
+        viewModel.updateInviteStatus(invite, sharedViewModel.currentUser.value?.userId.toString(),"rejected") { result, msg ->
             showToast(if (result) "Invite Rejected" else msg)
         }
     }

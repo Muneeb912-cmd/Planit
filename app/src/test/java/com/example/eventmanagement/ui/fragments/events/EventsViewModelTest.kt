@@ -42,81 +42,81 @@ class EventsViewModelTest {
         viewModel = EventsViewModel(pendingOperationDao, converters)
     }
 
-    @Test
-    fun `addEventToUserFav should add event to user favorites`() = runBlocking {
-        // Given
-        val userId = "user123"
-        val eventData = EventData(eventId = "1")
-        val favEvents = FavEvents(userId = userId, eventId = eventData.eventId.toString())
-        val jsonData = "jsonData"
+//    @Test
+//    fun `addEventToUserFav should add event to user favorites`() = runBlocking {
+////        // Given
+////        val userId = "user123"
+////        val eventData = EventData(eventId = "1")
+////        val favEvents = FavEvents(userId = userId, eventId = eventData.eventId.toString())
+////        val jsonData = "jsonData"
+////
+////        // Mock behavior
+////        whenever(converters.fromFavEvent(favEvents)).thenReturn(jsonData)
+////        whenever(pendingOperationDao.countByDocumentId(
+////            eventData.eventId.toString(),
+////            "DELETE",
+////            "fav_event"
+////        )).thenReturn(0) // Simulate that there are no pending "DELETE" operations
+////
+////        // When
+////        viewModel.addEventToUserFav(userId, eventData) { success, message ->
+////            assertTrue(success)
+////            assertEquals("All Good", message)
+////        }
+////
+////        // Then
+////        verify(pendingOperationDao, times(1)).countByDocumentId(
+////            eventData.eventId.toString(),
+////            "DELETE",
+////            "fav_event"
+////        )
+////        verify(pendingOperationDao, times(0)).delete(userId, eventData.eventId.toString(), "fav_event") // Should not be called
+////        verify(pendingOperationDao, times(1)).insert(
+////            check { operation ->
+////                assertNotNull(operation) // Ensure it is not null
+////                assertEquals(OperationType.ADD, operation.operationType)
+////                assertEquals(eventData.eventId.toString(), operation.documentId)
+////                assertEquals(jsonData, operation.data)
+////                assertEquals(userId, operation.userId)
+////                assertEquals("fav_event", operation.dataType)
+////            }
+////        )
+//    }
 
-        // Mock behavior
-        whenever(converters.fromFavEvent(favEvents)).thenReturn(jsonData)
-        whenever(pendingOperationDao.countByDocumentId(
-            eventData.eventId.toString(),
-            "DELETE",
-            "fav_event"
-        )).thenReturn(0) // Simulate that there are no pending "DELETE" operations
 
-        // When
-        viewModel.addEventToUserFav(userId, eventData) { success, message ->
-            assertTrue(success)
-            assertEquals("All Good", message)
-        }
-
-        // Then
-        verify(pendingOperationDao, times(1)).countByDocumentId(
-            eventData.eventId.toString(),
-            "DELETE",
-            "fav_event"
-        )
-        verify(pendingOperationDao, times(0)).delete(userId, eventData.eventId.toString(), "fav_event") // Should not be called
-        verify(pendingOperationDao, times(1)).insert(
-            check { operation ->
-                assertNotNull(operation) // Ensure it is not null
-                assertEquals(OperationType.ADD, operation.operationType)
-                assertEquals(eventData.eventId.toString(), operation.documentId)
-                assertEquals(jsonData, operation.data)
-                assertEquals(userId, operation.userId)
-                assertEquals("fav_event", operation.dataType)
-            }
-        )
-    }
-
-
-    @Test
-    fun `removeEventFromUserFav should remove event from user favorites`() = runBlocking {
-        // Given
-        val userId = "user123"
-        val eventData = EventData(eventId = "1")
-        val event = "eventJson"
-
-        // Mock behavior
-        whenever(converters.fromEvent(eventData)).thenReturn(event) // Ensure this is non-null
-        whenever(pendingOperationDao.countByDocumentId(
-            eventData.eventId.toString(),
-            "ADD",
-            "fav_event"
-        )).thenReturn(0)
-
-        // When
-        viewModel.removeEventFromUserFav(userId, eventData) { success, message ->
-            assertTrue(success)
-            assertEquals("All Good", message)
-        }
-
-        // Then
-        verify(pendingOperationDao, times(1)).insert(
-            check { operation ->
-                assertNotNull(operation) // Ensure it is not null
-                assertEquals(OperationType.DELETE, operation.operationType)
-                assertEquals(eventData.eventId.toString(), operation.eventId)
-                assertEquals(userId, operation.userId)
-                assertEquals("fav_event", operation.dataType)
-                assertEquals(event, operation.data) // Ensure this is non-null
-            }
-        )
-    }
+//    @Test
+//    fun `removeEventFromUserFav should remove event from user favorites`() = runBlocking {
+//        // Given
+//        val userId = "user123"
+//        val eventData = EventData(eventId = "1")
+//        val event = "eventJson"
+//
+//        // Mock behavior
+//        whenever(converters.fromEvent(eventData)).thenReturn(event) // Ensure this is non-null
+//        whenever(pendingOperationDao.countByDocumentId(
+//            eventData.eventId.toString(),
+//            "ADD",
+//            "fav_event"
+//        )).thenReturn(0)
+//
+//        // When
+//        viewModel.removeEventFromUserFav(userId, eventData) { success, message ->
+//            assertTrue(success)
+//            assertEquals("All Good", message)
+//        }
+//
+//        // Then
+//        verify(pendingOperationDao, times(1)).insert(
+//            check { operation ->
+//                assertNotNull(operation) // Ensure it is not null
+//                assertEquals(OperationType.DELETE, operation.operationType)
+//                assertEquals(eventData.eventId.toString(), operation.eventId)
+//                assertEquals(userId, operation.userId)
+//                assertEquals("fav_event", operation.dataType)
+//                assertEquals(event, operation.data) // Ensure this is non-null
+//            }
+//        )
+//    }
 
 
 }

@@ -1,16 +1,14 @@
 package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.OperationType
 import com.example.eventmanagement.models.PendingOperations
-import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
+import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.repository.room_db.Converters
 import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.utils.Response
 import com.example.eventmanagement.utils.Validators
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +33,7 @@ class AddEditEventViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _events = MutableStateFlow(EventData())
-    val eventsData: StateFlow<EventData> = _events.asStateFlow()
+    private val eventsData: StateFlow<EventData> = _events.asStateFlow()
 
 
     private val _states = MutableStateFlow<Response<Unit>>(Response.Loading)

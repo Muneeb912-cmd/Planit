@@ -143,7 +143,7 @@ class LoginFragment : Fragment() {
                        showLoader(false)
                        showToast("User don't exist or email not verified")
                    }
-                   Response.Loading -> TODO()
+                   Response.Loading -> {}
                    is Response.Success -> {
                        showLoader(false)
                        handleUserVerificationSuccess(loginType)

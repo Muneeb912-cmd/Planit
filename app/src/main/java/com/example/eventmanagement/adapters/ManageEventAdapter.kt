@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
 import com.example.eventmanagement.models.EventData
 
-class ManageEventAdapter (
+class ManageEventAdapter(
     private var events: List<EventData>,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<ManageEventAdapter.EventViewHolder>() {
@@ -41,17 +41,40 @@ class ManageEventAdapter (
         fun bind(event: EventData) {
             currentEvent = event
             itemView.findViewById<TextView>(R.id.eventTitleTv).text = event.eventTitle
-            itemView.findViewById<TextView>(R.id.eventCategoryTv).text = "Category: ${event.eventCategory}"
+            itemView.findViewById<TextView>(R.id.eventCategoryTv).text =
+                "Category: ${event.eventCategory}"
             itemView.findViewById<TextView>(R.id.eventTimeTv).text = event.eventTiming
             itemView.findViewById<TextView>(R.id.eventDateTv).text = event.eventDate
-            itemView.findViewById<TextView>(R.id.peopleAttendingTv).text = " : ${event.numberOfPeopleAttending.toString()}"
+            itemView.findViewById<TextView>(R.id.peopleAttendingTv).text =
+                " : ${event.numberOfPeopleAttending.toString()}"
+            val btn = itemView.findViewById<TextView>(R.id.createInviteBtn)
+            if (event.eventStatus == "On-Going" || event.eventStatus == "Up-Coming") {
+                btn.text = "Create Invite"
+                btn.isEnabled = true
+                btn.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_invites,
+                    0,
+                    0,
+                    0
+                )
+            } else {
+                btn.text = "Event Closed"
+                btn.isEnabled = false
+                btn.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    0,
+                    0
+                )
+            }
         }
     }
 
-    fun updatedFilteredEvents(filteredEvents:List<EventData>){
-        events=filteredEvents
+    fun updatedFilteredEvents(filteredEvents: List<EventData>) {
+        events = filteredEvents
         notifyDataSetChanged()
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.manage_event_card, parent, false)

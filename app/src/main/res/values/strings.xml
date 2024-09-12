@@ -49,6 +49,7 @@
     <string name="no_events_found">No Events Found</string>
     <string name="login_with_google">Login with Google</string>
     <string name="client_server_key">711227771945-hh6kfdkstur1lps7s7nrlds1ndtot2of.apps.googleusercontent.com</string>
+    <string name="api_key_">AIzaSyB7EIFMRQe-9Ijp2e-Bjwy6PnZ6ksByABg</string>
     <string name="add_event">add event</string>
     <string name="event_title">Event Title</string>
     <string name="event_date">Event Date</string>

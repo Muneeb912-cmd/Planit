@@ -1,6 +1,5 @@
 package com.example.eventmanagement.ui.fragments.signup
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eventmanagement.models.User
@@ -103,7 +102,7 @@ class SignUpViewModel @Inject constructor(
 
     fun createUserAccount() {
         if (loginType == "google") {
-            addUserDatatoFirestore(null)
+            addUserDataToFirestore(null)
         } else {
             _signUpResults.value = Response.Loading
             viewModelScope.launch {
@@ -116,7 +115,7 @@ class SignUpViewModel @Inject constructor(
                             val userId = result.getOrNull()
                             if (userId != null) {
                                 checkVerificationEmail()
-                                addUserDatatoFirestore(userId)
+                                addUserDataToFirestore(userId)
                                 _signUpResults.value = Response.Success(Unit)
                                 accountExist = false
 
@@ -173,7 +172,7 @@ class SignUpViewModel @Inject constructor(
     }
 
 
-    private fun addUserDatatoFirestore(userId: String?) {
+    private fun addUserDataToFirestore(userId: String?) {
         updateUserInfo("location", "Lahore, PK")
         updateUserInfo("loginType", loginType)
         updateUserInfo("profile", "No")

@@ -26,7 +26,24 @@ class EventDetailsViewModel @Inject constructor(
 
     fun removeUserAsAttendee(eventId: String, userId: String, onResult: (Boolean) -> Unit) {
         addRemoveUserAsEventAttendee(eventId, userId, "del")
+        rejectInvite(eventId, userId)
         onResult(true)
+    }
+
+
+    private fun rejectInvite(eventId: String, userId: String,) {
+        val pendingOperation = PendingOperations(
+            operationType = OperationType.UPDATE,
+            documentId = eventId,
+            data = "reject",
+            userId = userId,
+            eventId = eventId,
+            dataType = "reject_event_invite"
+        )
+        CoroutineScope(Dispatchers.IO).launch {
+            pendingOperationDao.insert(pendingOperation)
+
+        }
     }
 
     private fun addRemoveUserAsEventAttendee(eventId: String, userId: String, key: String) {

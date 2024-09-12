@@ -156,12 +156,10 @@ dependencies {
     implementation(kotlin("test"))
 
     val exclusions = listOf(
-        "**/R.class",
-        "**/R\$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*"
+        "**/!(viewmodel|repository)/**",
+        "**/!(viewmodel|repository).kt"
     )
+
 
     tasks.withType(Test::class) {
         configure<JacocoTaskExtension> {

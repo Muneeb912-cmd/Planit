@@ -1,7 +1,9 @@
 package com.example.eventmanagement.ui.shared_view_model
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import com.example.eventmanagement.models.Invites
+import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.models.User
 import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
@@ -18,6 +20,7 @@ import com.example.eventmanagement.utils.PreferencesUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -69,8 +72,30 @@ class SharedViewModelTest {
             preferencesUtil,
             syncRepository
         )
-
+        whenever(userDao.observeCurrentUser(any())).thenReturn(flowOf(mock(User.UserData::class.java)))
     }
+
+    @Test
+    fun `observeCurrentUser should fetch user data and observe events when disconnected`() = runTest {
+        // Arrange
+        whenever(connectivityObserver.isConnected).thenReturn(false)
+        val mockUser = User.UserData(0, "123", "Attendee")
+        whenever(userDao.observeCurrentUser(any())).thenReturn(flowOf(mockUser))
+
+        // Mock observeUsers to return a valid Flow
+        val mockUsers = listOf(User.UserData(1, "124", "Admin"))
+        whenever(userDao.observeUsers()).thenReturn(flowOf(mockUsers))
+
+        // Act
+        viewModel.observeCurrentUser()
+        advanceUntilIdle()
+
+        // Assert
+        assertEquals(mockUser, User.UserData(0, "123", "Attendee"))
+        assertEquals(mockUsers, listOf(User.UserData(1, "124", "Admin")))
+    }
+
+
 
     @Test
     fun `observeCurrentUser should update currentUser when connected`() {

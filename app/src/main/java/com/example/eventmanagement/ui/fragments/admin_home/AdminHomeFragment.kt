@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.AdminHomeAdapter
-import com.example.eventmanagement.adapters.HomeEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentAdminHomeBinding
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event.AddEditEventFragment

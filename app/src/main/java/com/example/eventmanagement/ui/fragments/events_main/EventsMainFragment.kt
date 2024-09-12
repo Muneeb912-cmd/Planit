@@ -54,7 +54,6 @@ class EventsMainFragment : Fragment() {
                 R.id.events -> binding.viewPager.currentItem = 1
                 R.id.myEvents -> binding.viewPager.currentItem = 2
                 R.id.profile -> binding.viewPager.currentItem = 3
-                else -> false
             }
             true
         }

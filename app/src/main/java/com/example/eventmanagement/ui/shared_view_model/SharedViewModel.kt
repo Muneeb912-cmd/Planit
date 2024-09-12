@@ -46,16 +46,13 @@ class SharedViewModel @Inject constructor(
     private val syncRepository: SyncRepository
 ) : ViewModel(), ConnectivityObserver.ConnectivityListener {
 
-    val _currentUser = MutableStateFlow<User.UserData?>(null)
+    private val _currentUser = MutableStateFlow<User.UserData?>(null)
     val currentUser: StateFlow<User.UserData?> get() = _currentUser.asStateFlow()
-
-    private val _userInvites = MutableStateFlow<List<Invites>>(emptyList())
-    val userInvites: StateFlow<List<Invites>> get() = _userInvites.asStateFlow()
 
     private val _allUsers = MutableStateFlow<List<User.UserData>>(emptyList())
     val allUsers: StateFlow<List<User.UserData>> get() = _allUsers.asStateFlow()
 
-    val _allEvents = MutableStateFlow<List<EventData>>(emptyList())
+    private val _allEvents = MutableStateFlow<List<EventData>>(emptyList())
     val allEvents: StateFlow<List<EventData>> get() = _allEvents.asStateFlow()
 
     private val _allFavEvents = MutableStateFlow<List<String>>(emptyList())
@@ -94,7 +91,7 @@ class SharedViewModel @Inject constructor(
 
 
     @OptIn(FlowPreview::class)
-    private fun observePendingOperations() {
+    fun observePendingOperations() {
         viewModelScope.launch {
             pendingOperationDao.observePendingOperations()
                 .debounce(500)
@@ -119,7 +116,6 @@ class SharedViewModel @Inject constructor(
                 }
             } else {
                 userDao.observeCurrentUser(preferencesUtil.getUser()?.userId.toString()).collect {
-                    Log.d("UserData", "observeCurrentUser: $it")
                     _currentUser.value = it
                     observeAllFavEvents(it?.userId.toString())
                     observeCurrentUserFromAttendees(it?.userId.toString())
@@ -144,7 +140,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun observeCurrentUserFromAttendees(userId: String) {
+    private fun observeCurrentUserFromAttendees(userId: String) {
         viewModelScope.launch {
             if (connectivityObserver.isConnected) {
                 eventDataMethods.observeCurrentUserFromAttendees(userId) { data ->
@@ -158,7 +154,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun observeUserInvites() {
+    private fun observeUserInvites() {
         viewModelScope.launch {
             if (connectivityObserver.isConnected) {
                 inviteMethods.observeCurrentUserInvites { invites ->
@@ -173,7 +169,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun updateUserInvitesAndEvents(invites: List<Invites>) {
+    private fun updateUserInvitesAndEvents(invites: List<Invites>) {
         val invitedEventsList = _allEvents.value.filter { event ->
             invites.any { invite -> invite.eventId == event.eventId }
         }
@@ -230,7 +226,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun observeAllFavEvents(userId: String) {
+    private fun observeAllFavEvents(userId: String) {
         if (connectivityObserver.isConnected) {
             viewModelScope.launch {
                 eventDataMethods.observeCurrentUserFavEvents(userId) { events ->
@@ -254,7 +250,6 @@ class SharedViewModel @Inject constructor(
 
     fun resetViewModel() {
         _currentUser.value = null
-        _userInvites.value = emptyList()
         _allUsers.value = emptyList()
         _allEvents.value = emptyList()
     }

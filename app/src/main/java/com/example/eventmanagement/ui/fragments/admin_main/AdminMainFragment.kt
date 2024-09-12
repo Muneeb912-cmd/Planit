@@ -1,15 +1,14 @@
 package com.example.eventmanagement.ui.fragments.admin_main
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
 import com.example.eventmanagement.adapters.AdminBottomNavAdapter
-import com.example.eventmanagement.adapters.BottomNavAdapter
 import com.example.eventmanagement.databinding.FragmentAdminMainBinding
 import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +40,6 @@ class AdminMainFragment : Fragment() {
                 R.id.events -> binding.viewPager.currentItem = 1
                 R.id.myEvents -> binding.viewPager.currentItem = 2
                 R.id.profile -> binding.viewPager.currentItem = 3
-                else -> false
             }
             true
         }

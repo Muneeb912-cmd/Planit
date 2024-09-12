@@ -16,7 +16,7 @@ class EventManagementViewModel @Inject constructor(
     private val pendingOperationDao: PendingOperationDao,
     private val converters: Converters
 ): ViewModel() {
-    fun deleteEventById(eventData: EventData,deleteStatus:Boolean, onResult: (Boolean)->Unit){
+    fun deleteEventById(eventData: EventData, onResult: (Boolean) -> Unit){
         saveEventAsPendingOperation(eventData)
         onResult(true)
     }

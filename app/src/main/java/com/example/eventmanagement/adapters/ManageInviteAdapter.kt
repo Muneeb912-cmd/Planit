@@ -6,27 +6,28 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventmanagement.R
-import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.Invites
 import com.example.eventmanagement.models.User
 
 class ManageInviteAdapter(
     private var users: List<User.UserData>,
-    private var currentEventInvitedUsers:List<User.UserData>,
+    private var currentEventInvitedUsers: List<User.UserData>,
+    private var invites: List<Invites>,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<ManageInviteAdapter.EventViewHolder>() {
 
     interface OnItemClickListener {
-        fun onSendInviteButtonClick(userData: User.UserData,key:String)
+        fun onSendInviteButtonClick(userData: User.UserData, key: String)
     }
 
     inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private lateinit var currentUser: User.UserData
         private val sendInviteBtn = itemView.findViewById<TextView>(R.id.sendInviteBtn)
-        private lateinit var key:String
+        private lateinit var key: String
+
         init {
             sendInviteBtn.setOnClickListener {
-                listener.onSendInviteButtonClick(currentUser,key)
+                listener.onSendInviteButtonClick(currentUser, key)
             }
         }
 
@@ -36,22 +37,64 @@ class ManageInviteAdapter(
             itemView.findViewById<TextView>(R.id.userEmail).text = user.userEmail
             itemView.findViewById<TextView>(R.id.userPhone).text = user.userPhone
 
-            val isInvited = currentEventInvitedUsers.any { it.userId == user.userId }
-            key=if (isInvited){
-                "un-send"
-            }else{
-                "send"
-            }
-            sendInviteBtn.text = if (isInvited) "Un-send Invite" else "Send Invite"
-            if (isInvited) {
-                sendInviteBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete, 0, 0, 0)
-                sendInviteBtn.textDirection=View.TEXT_DIRECTION_LTR
-            }else{
-                sendInviteBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_send, 0, 0, 0)
-                sendInviteBtn.textDirection=View.TEXT_DIRECTION_LTR
+            // Assuming invites is a list of Invite objects, filter for the current user's invite
+            val currentUserInvite = invites.find { invite -> invite.receiverId == user.userId }
+            val inviteStatus = currentUserInvite?.inviteStatus
 
+            when (inviteStatus) {
+                "pending" -> {
+                    key = "un-send"
+                    sendInviteBtn.text = "Un-send Invite"
+                    sendInviteBtn.isEnabled = true
+                    sendInviteBtn.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_delete,
+                        0,
+                        0,
+                        0
+                    )
+                    sendInviteBtn.textDirection = View.TEXT_DIRECTION_LTR
+                }
+
+                "accepted" -> {
+                    sendInviteBtn.text = "Invite Accepted"
+                    sendInviteBtn.isEnabled = false
+                    sendInviteBtn.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        0,
+                        0
+                    ) // No icon for accepted
+                }
+
+                "rejected" -> {
+                    key = "re-send"
+                    sendInviteBtn.text = "Re-send Invite"
+                    sendInviteBtn.isEnabled = true
+                    sendInviteBtn.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_send,
+                        0,
+                        0,
+                        0
+                    )
+                    sendInviteBtn.textDirection = View.TEXT_DIRECTION_LTR
+                }
+
+                else -> {
+                    // If there's no invite or it's a new invite, default behavior
+                    key = "send"
+                    sendInviteBtn.text = "Send Invite"
+                    sendInviteBtn.isEnabled = true
+                    sendInviteBtn.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_send,
+                        0,
+                        0,
+                        0
+                    )
+                    sendInviteBtn.textDirection = View.TEXT_DIRECTION_LTR
+                }
             }
         }
+
     }
 
 
@@ -62,6 +105,11 @@ class ManageInviteAdapter(
 
     fun updatedCurrentEventInvites(newCurrentEventInvitedUsers: List<User.UserData>) {
         currentEventInvitedUsers = newCurrentEventInvitedUsers
+        notifyDataSetChanged()
+    }
+
+    fun updatedInvites(newInvited: List<Invites>) {
+        invites = newInvited
         notifyDataSetChanged()
     }
 

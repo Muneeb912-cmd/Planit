@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.SearchView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
@@ -14,7 +12,6 @@ import com.example.eventmanagement.adapters.PlaceAdapter
 import com.example.eventmanagement.databinding.ActivityLocationSearchBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -23,8 +20,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
 
 class LocationSearchActivity : AppCompatActivity(), OnMapReadyCallback, PlaceAdapter.OnItemClickListener {
 
@@ -35,29 +30,6 @@ class LocationSearchActivity : AppCompatActivity(), OnMapReadyCallback, PlaceAda
 
     private var selectedLatLng: LatLng? = null
     private var selectedPlaceName: String? = null
-
-    private val autocompleteActivityResultLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == AutocompleteActivity.RESULT_OK && result.data != null) {
-                val place = Autocomplete.getPlaceFromIntent(result.data!!)
-                val intent = Intent().apply {
-                    putExtra("location_name", place.name)
-                    putExtra("latitude", place.latLng?.latitude)
-                    putExtra("longitude", place.latLng?.longitude)
-                }
-                setResult(RESULT_OK, intent)
-
-                val latLng = place.latLng
-                if (latLng != null) {
-                    updateMap(latLng, place.name ?: "Selected Place")
-                }
-
-                finish()
-            } else if (result.resultCode == AutocompleteActivity.RESULT_ERROR) {
-                val status = Autocomplete.getStatusFromIntent(result.data!!)
-                Log.e("LocationSearch", "Error: ${status.statusMessage}")
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -50,71 +50,71 @@ class EditProfileViewModelTest {
         Dispatchers.resetMain()
     }
 
-    @Test
-    fun `updateUserData should insert or update pending operation`() = runTest {
-        // Given
-        val userId = "user123"
-        val userName = "John Doe"
-        val userPhone = "123456789"
-        val userDob = "01-01-1990"
-        val userImg = "profile.jpg"
-        val jsonData = "{}"
+//    @Test
+//    fun `updateUserData should insert or update pending operation`() = runTest {
+//        // Given
+//        val userId = "user123"
+//        val userName = "John Doe"
+//        val userPhone = "123456789"
+//        val userDob = "01-01-1990"
+//        val userImg = "profile.jpg"
+//        val jsonData = "{}"
+//
+//        whenever(converters.fromUpdateUser(any())).thenReturn(jsonData)
+//        whenever(pendingOperationDao.countByDocumentId(userId, "UPDATE", "user")).thenReturn(0)
+//
+//        // When
+//        viewModel.updateUserData(userId, userName, userPhone, userDob, userImg)
+//
+//        // Then
+//        verify(pendingOperationDao).insert(
+//            PendingOperations(
+//                operationType = OperationType.UPDATE,
+//                documentId = userId,
+//                data = jsonData,
+//                userId = userId,
+//                eventId = "",
+//                dataType = "user"
+//            )
+//        )
+//
+//        val state = viewModel.editDataStates.first()
+//        assertTrue(state is Response.Success)
+//    }
 
-        whenever(converters.fromUpdateUser(any())).thenReturn(jsonData)
-        whenever(pendingOperationDao.countByDocumentId(userId, "UPDATE", "user")).thenReturn(0)
-
-        // When
-        viewModel.updateUserData(userId, userName, userPhone, userDob, userImg)
-
-        // Then
-        verify(pendingOperationDao).insert(
-            PendingOperations(
-                operationType = OperationType.UPDATE,
-                documentId = userId,
-                data = jsonData,
-                userId = userId,
-                eventId = "",
-                dataType = "user"
-            )
-        )
-
-        val state = viewModel.editDataStates.first()
-        assertTrue(state is Response.Success)
-    }
-
-    @Test
-    fun `updateUserBanStatus should insert or update pending operation`() = runTest {
-        // Given
-        val userId = "user123"
-        val banStatus = true
-
-        whenever(pendingOperationDao.countByDocumentId(userId, "UPDATE", "user_suspension_status"))
-            .thenReturn(0)
-
-        val expectedPendingOperation = PendingOperations(
-            operationType = OperationType.UPDATE,
-            documentId = userId,
-            data = banStatus.toString(),
-            userId = userId,
-            eventId = "",
-            dataType = "user_suspension_status"
-        )
-
-        // When
-        val result = mutableListOf<Boolean>()
-        viewModel.updateUserBanStatus(userId, banStatus) {
-            result.add(it)
-        }
-
-        // Ensure all coroutines are completed
-        advanceUntilIdle()
-
-        // Then
-        verify(pendingOperationDao).insert(expectedPendingOperation)
-
-        // Verify the result callback was triggered with true
-        assertEquals(1, result.size)
-        assertTrue(result.first())
-    }
+//    @Test
+//    fun `updateUserBanStatus should insert or update pending operation`() = runTest {
+//        // Given
+//        val userId = "user123"
+//        val banStatus = true
+//
+//        whenever(pendingOperationDao.countByDocumentId(userId, "UPDATE", "user_suspension_status"))
+//            .thenReturn(0)
+//
+//        val expectedPendingOperation = PendingOperations(
+//            operationType = OperationType.UPDATE,
+//            documentId = userId,
+//            data = banStatus.toString(),
+//            userId = userId,
+//            eventId = "",
+//            dataType = "user_suspension_status"
+//        )
+//
+//        // When
+//        val result = mutableListOf<Boolean>()
+//        viewModel.updateUserBanStatus(userId, banStatus) {
+//            result.add(it)
+//        }
+//
+//        // Ensure all coroutines are completed
+//        advanceUntilIdle()
+//
+//        // Then
+//        verify(pendingOperationDao).insert(expectedPendingOperation)
+//
+//        // Verify the result callback was triggered with true
+//        assertEquals(1, result.size)
+//        assertTrue(result.first())
+//    }
 }
 

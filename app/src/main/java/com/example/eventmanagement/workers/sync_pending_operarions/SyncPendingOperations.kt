@@ -236,6 +236,32 @@ class SyncPendingOperationsWorker @AssistedInject constructor(
                 }
             }
 
+            "reject_event_invite" -> {
+                inviteMethods.updateInviteStatusByUserId(
+                    operation.userId,
+                    operation.eventId,
+                    operation.data
+                ) { result ->
+                    if (result) {
+                        enqueueWorker<SyncInvitesDataWorker>("SyncInvitesDataWorker")
+                        deleteOperation(operation)
+                    }
+                }
+            }
+
+            "resend_invite" -> {
+                inviteMethods.updateInviteStatusByUserId(
+                    operation.userId,
+                    operation.eventId,
+                    operation.data
+                ) { result ->
+                    if (result) {
+                        enqueueWorker<SyncInvitesDataWorker>("SyncInvitesDataWorker")
+                        deleteOperation(operation)
+                    }
+                }
+            }
+
             "event_status" -> {
                 eventDataMethods.updateEventStatusById(
                     operation.documentId,

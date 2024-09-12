@@ -110,7 +110,8 @@ class SignUpFragment : Fragment() {
             }
 
             2 -> finishRegistration()
-            else -> null
+
+
         }
     }
 
@@ -195,7 +196,11 @@ class SignUpFragment : Fragment() {
         if (viewModel.isEmailVerified) {
             Toast.makeText(requireContext(), "User Registration Successful", Toast.LENGTH_SHORT)
                 .show()
-            findNavController().navigate(R.id.action_signUpFragment_to_eventsMainFragment)
+            if(viewModel.user.value.userRole=="Attendee"){
+                findNavController().navigate(R.id.action_signUpFragment_to_eventsMainFragment)
+            }else{
+                findNavController().navigate(R.id.action_signUpFragment_to_adminMainFragment)
+            }
         } else {
             Toast.makeText(requireContext(), "Email not verified", Toast.LENGTH_SHORT).show()
         }

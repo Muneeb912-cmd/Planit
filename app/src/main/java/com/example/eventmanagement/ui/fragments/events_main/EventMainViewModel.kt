@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.example.eventmanagement.repository.firebase.login_signup.LoginSignUpMethods
 import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
 import com.example.eventmanagement.utils.PreferencesUtil
-import com.example.eventmanagement.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -44,7 +44,28 @@ class ManageEventsViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentFormattedTimestamp(): String {
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateInvite(
+        eventId: String,
+        currentUserId: String,
+        userData: User.UserData,
+        onResult: (Boolean) -> Unit
+    ) {
+        val invite = Invites(
+            eventId = eventId,
+            inviteStatus = "pending",
+            senderId = currentUserId,
+            receiverId = userData.userId,
+            inviteTime = getCurrentFormattedTimestamp()
+        )
+        updateInvitePendingOperation(invite) { result ->
+            if (result)
+                onResult(true)
+        }
+    }
+
+    private fun getCurrentFormattedTimestamp(): String {
         val dateFormat = SimpleDateFormat("MMMM dd, yyyy 'at' h:mm:ss a z", Locale.getDefault())
         dateFormat.timeZone = TimeZone.getDefault()
         return dateFormat.format(Date())
@@ -61,7 +82,7 @@ class ManageEventsViewModel @Inject constructor(
             inviteStatus = "pending",
             senderId = currentUserId,
             receiverId = userData.userId,
-            inviteTime =getCurrentFormattedTimestamp()
+            inviteTime = getCurrentFormattedTimestamp()
         )
         addRemoveInviteFromPendingOperations(invite, "del") { result ->
             if (result)
@@ -95,6 +116,29 @@ class ManageEventsViewModel @Inject constructor(
                 onResult(true) // Notify success
             } else {
                 onResult(false) // Invalid operation type
+            }
+        }
+    }
+
+    private fun updateInvitePendingOperation(
+        inviteData: Invites,
+        onResult: (Boolean) -> Unit
+    ) {
+        val pendingOperation = PendingOperations(
+            operationType = OperationType.UPDATE,
+            documentId = inviteData.inviteId.toString(),
+            data = "pending",
+            userId = inviteData.receiverId.toString(),
+            eventId = inviteData.eventId.toString(),
+            dataType = "resend_invite"
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                pendingOperationDao.insert(pendingOperation)
+                onResult(true) // Notify success
+            }catch (e:Exception){
+                onResult(false)
             }
         }
     }
