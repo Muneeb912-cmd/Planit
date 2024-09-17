@@ -2,19 +2,11 @@ package com.example.eventmanagement.ui.activities.fav_events
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.argumentCaptor
-import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.models.OperationType
-import com.example.eventmanagement.models.PendingOperations
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import org.junit.jupiter.api.Assertions.assertEquals
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FavEventsViewModelTest {

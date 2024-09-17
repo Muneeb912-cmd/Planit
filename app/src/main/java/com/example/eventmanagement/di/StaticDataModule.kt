@@ -8,15 +8,11 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object StaticDataModule {
 
-    @Provides
-    @Categories
-    @Singleton
+object StaticDataModule {
     fun provideCategories(): ArrayList<String> {
         return arrayListOf(
+            "All",
             "Concerts",
             "Sports",
             "Conferences",
@@ -29,9 +25,6 @@ object StaticDataModule {
             "Exhibitions"
         )
     }
-    @Provides
-    @CitiesCountries
-    @Singleton
     fun provideCitiesCountries(): ArrayList<String> {
         return arrayListOf(
             "Lahore, PK",

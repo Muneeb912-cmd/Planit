@@ -33,7 +33,7 @@
             android:name=".ui.activities.fav_events.FavEventActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.bottom_sheet_dialogs.event_details.add_edit_event.LocationSearchActivity"
+            android:name=".ui.bottomsheets.addeditevent.LocationSearchActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"

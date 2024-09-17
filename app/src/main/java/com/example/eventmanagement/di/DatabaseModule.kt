@@ -2,14 +2,14 @@ package com.example.eventmanagement.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.LocalDB
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import com.example.eventmanagement.repository.room_db.attendee_dao.AttendeeDao
-import com.example.eventmanagement.repository.room_db.events_dao.EventDao
-import com.example.eventmanagement.repository.room_db.fav_events_dao.FavEventsDao
-import com.example.eventmanagement.repository.room_db.invites_dao.InvitesDao
-import com.example.eventmanagement.repository.room_db.user_dao.UserDao
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.LocalDB
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
+import com.example.eventmanagement.repository.roomDb.attendee_dao.AttendeeDao
+import com.example.eventmanagement.repository.roomDb.events_dao.EventDao
+import com.example.eventmanagement.repository.roomDb.fav_events_dao.FavEventsDao
+import com.example.eventmanagement.repository.roomDb.invites_dao.InvitesDao
+import com.example.eventmanagement.repository.roomDb.user_dao.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

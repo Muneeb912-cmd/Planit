@@ -1,29 +1,18 @@
 package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.ediit_profile
 
-import com.example.eventmanagement.models.OperationType
-import com.example.eventmanagement.models.PendingOperations
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import com.example.eventmanagement.utils.Response
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
+import com.example.eventmanagement.ui.bottomsheets.ediitprofile.EditProfileViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.mockito.Mock
-import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.any
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditProfileViewModelTest {

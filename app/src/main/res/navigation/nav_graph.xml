@@ -39,12 +39,12 @@
     </fragment>
     <fragment
         android:id="@+id/forgetPasswordFragment"
-        android:name="com.example.eventmanagement.ui.fragments.forget_pass.ForgetPasswordFragment"
+        android:name="com.example.eventmanagement.ui.fragments.forgetpass.ForgetPasswordFragment"
         android:label="fragment_forget_password"
         tools:layout="@layout/fragment_forget_password" />
     <fragment
         android:id="@+id/eventsMainFragment"
-        android:name="com.example.eventmanagement.ui.fragments.events_main.EventsMainFragment"
+        android:name="com.example.eventmanagement.ui.fragments.eventsmain.EventsMainFragment"
         android:label="fragment_events_main"
         tools:layout="@layout/fragment_events_main" >
         <action
@@ -53,7 +53,7 @@
     </fragment>
     <fragment
         android:id="@+id/adminMainFragment"
-        android:name="com.example.eventmanagement.ui.fragments.admin_main.AdminMainFragment"
+        android:name="com.example.eventmanagement.ui.fragments.adminmain.AdminMainFragment"
         android:label="fragment_admin_main"
         tools:layout="@layout/fragment_admin_main" >
         <action

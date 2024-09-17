@@ -10,8 +10,8 @@
         android:id="@+id/userNameTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hi, Welcome Back Muneeb!"
-        android:textSize="25sp"
+        android:text="Hi, Welcome Back!"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +83,7 @@
             android:id="@+id/eventsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="16dp"
+            android:layout_marginTop="10dp"
             tools:listitem="@layout/event_view_card"
             android:visibility="gone" />
 

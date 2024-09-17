@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -12,10 +11,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
+        android:elevation="20dp"
         app:cardCornerRadius="16dp"
         app:strokeColor="@color/md_theme_secondary_highContrast"
-        app:strokeWidth="1dp"
-        android:elevation="20dp">
+        app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,24 +22,36 @@
             android:background="@color/md_theme_onError"
             android:padding="20dp">
 
-            <TextView
-                android:id="@+id/eventTitleTv"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/title_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ali's Promotion"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/favIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="TODO"
-                android:src="@drawable/ic_fav_outlined"
+                app:layout_constraintBottom_toTopOf="@id/view"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/eventTitleTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ali's Promotion"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/favIcon"/>
+
+                <ImageView
+                    android:id="@+id/favIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/ic_fav_outlined"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <View
@@ -48,12 +59,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_centerVertical="true"
+                android:layout_marginTop="5dp"
                 android:background="@color/md_theme_tertiaryFixedDim_highContrast"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/eventTitleTv"
-                tools:layout_editor_absoluteX="20dp"
-                tools:layout_editor_absoluteY="20dp" />
+                app:layout_constraintTop_toBottomOf="@id/title_container"
+
+                />
 
             <TextView
                 android:id="@+id/eventTimeTv"

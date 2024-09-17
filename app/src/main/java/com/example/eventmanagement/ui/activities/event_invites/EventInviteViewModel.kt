@@ -5,8 +5,8 @@ import com.example.eventmanagement.models.Attendees
 import com.example.eventmanagement.models.EventInvites
 import com.example.eventmanagement.models.OperationType
 import com.example.eventmanagement.models.PendingOperations
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,28 +1,18 @@
 package com.example.eventmanagement.ui.fragments.home
 
-import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.models.FavEvents
-import com.example.eventmanagement.models.OperationType
 import com.example.eventmanagement.models.PendingOperations
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 
-import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.check
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)

@@ -16,11 +16,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
-import com.example.eventmanagement.adapters.HomeEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentHomeBinding
 import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.ui.bottomsheets.eventdetails.EventDetailsFragment
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition

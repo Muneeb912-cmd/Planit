@@ -16,8 +16,8 @@ import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.OperationType
 import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.repository.firebase.events_data.EventDataMethods
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import com.example.eventmanagement.repository.room_db.events_dao.EventDao
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
+import com.example.eventmanagement.repository.roomDb.events_dao.EventDao
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

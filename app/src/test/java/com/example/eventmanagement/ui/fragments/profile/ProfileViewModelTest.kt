@@ -2,19 +2,15 @@ package com.example.eventmanagement.ui.fragments.profile
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.eventmanagement.models.OperationType
-import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.repository.firebase.login_signup.LoginSignUpMethods
 import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import com.example.eventmanagement.ui.fragments.events.EventsViewModel
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
 import com.example.eventmanagement.utils.PreferencesUtil
 import com.example.eventmanagement.utils.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.*

@@ -1,24 +1,13 @@
 package com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.add_edit_event
 
-import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.models.OperationType
 import com.example.eventmanagement.receivers.ConnectivityObserver
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
+import com.example.eventmanagement.ui.bottomsheets.addeditevent.AddEditEventViewModel
 import com.example.eventmanagement.utils.Validators
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class AddEditEventViewModelTest {

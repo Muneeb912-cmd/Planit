@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.bottom_sheet_dialogs.event_details.add_edit_event.AddEditEventFragment">
+    tools:context=".ui.bottomsheets.addeditevent.AddEditEventFragment">
 
     <ScrollView
         android:layout_width="match_parent"

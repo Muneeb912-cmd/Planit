@@ -5,9 +5,7 @@ import com.example.eventmanagement.models.OperationType
 import com.example.eventmanagement.models.PendingOperations
 import com.example.eventmanagement.repository.firebase.login_signup.LoginSignUpMethods
 import com.example.eventmanagement.repository.firebase.user_data.UserDataMethods
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
-import com.example.eventmanagement.receivers.ConnectivityObserver
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
 import com.example.eventmanagement.utils.PreferencesUtil
 import com.example.eventmanagement.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel

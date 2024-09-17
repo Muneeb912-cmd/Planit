@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -16,8 +17,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentLoginBinding
 import com.example.eventmanagement.models.User
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
 import com.example.eventmanagement.receivers.ConnectivityObserver
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -34,6 +35,7 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val viewModel: LoginViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+
     @Inject
     lateinit var connectivityObserver: ConnectivityObserver
 
@@ -62,13 +64,28 @@ class LoginFragment : Fragment() {
 
     private fun setupListeners() {
         with(binding) {
+            email.addTextChangedListener {
+                emailLayout.error=null
+            }
+            password.addTextChangedListener {
+                passwordLayout.error=null
+            }
             signupBtn.setOnClickListener { navigateToSignUp("email_pass") }
             forgotPassTv.setOnClickListener { navigateToForgotPassword() }
             googleLoginBtn.setOnClickListener { signInWithGoogle() }
             loginBtn.setOnClickListener {
                 val email = email.text.toString()
                 val password = password.text.toString()
-                handleLoginWithEmailPassword(email, password)
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    handleLoginWithEmailPassword(email, password)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Login Credentials Missing!",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             }
         }
     }
@@ -130,25 +147,47 @@ class LoginFragment : Fragment() {
             is Response.Success -> handleLoginSuccess(loginType)
             is Response.Error -> {
                 showLoader(false)
-                showToast("Error Occurred: ${response.exception.message}")
+                val exceptionMessage = response.exception.message
+
+                when {
+                    exceptionMessage?.contains("password is invalid") == true -> {
+                        binding.passwordLayout.error = "Invalid password. Please try again."
+                    }
+                    exceptionMessage?.contains("supplied auth credential") == true -> {
+                        binding.emailLayout.error = "Provided email not correct, please try again!"
+                        binding.passwordLayout.error = "Provided password not correct, please try again!"
+                    }
+                    exceptionMessage?.contains("no user record corresponding") == true -> {
+                        binding.emailLayout.error = "No account found with this email."
+                    }
+                    exceptionMessage?.contains("badly formatted") == true -> {
+                        binding.emailLayout.error = "Invalid email format."
+                    }
+                    exceptionMessage?.contains("blocked all requests") == true -> {
+                        showToast("Too many login attempts. Try again later.")
+                    }
+                    else -> {
+                        showToast("Error Occurred: $exceptionMessage")
+                    }
+                }
             }
         }
     }
 
     private fun handleLoginSuccess(loginType: String) {
         lifecycleScope.launch {
-            viewModel.loginResult.collect { response->
-               when(response){
-                   is Response.Error -> {
-                       showLoader(false)
-                       showToast("User don't exist or email not verified")
-                   }
-                   Response.Loading -> {}
-                   is Response.Success -> {
-                       showLoader(false)
-                       handleUserVerificationSuccess(loginType)
-                   }
-               }
+            viewModel.loginResult.collect { response ->
+                when (response) {
+                    is Response.Error -> {
+                        showLoader(false)
+                        showToast("Email not verified, Verification email sent")
+                    }
+                    Response.Loading -> {}
+                    is Response.Success -> {
+                        showLoader(false)
+                        handleUserVerificationSuccess(loginType)
+                    }
+                }
             }
         }
     }
@@ -234,7 +273,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
 
     private fun showAlertDialog(title: String, message: String, icon: Int) {

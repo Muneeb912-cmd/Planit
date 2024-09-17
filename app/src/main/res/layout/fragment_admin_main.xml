@@ -8,14 +8,14 @@
 
         <variable
             name="viewModel"
-            type="com.example.eventmanagement.ui.shared_view_model.SharedViewModel" />
+            type="com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        tools:context=".ui.fragments.events_main.EventsMainFragment">
+        tools:context=".ui.fragments.eventsmain.EventsMainFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -58,13 +58,16 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/userLocationTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
                         android:text="@{viewModel.currentUser.userLocation}"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/locationIcon"
                         app:layout_constraintTop_toTopOf="parent" />

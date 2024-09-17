@@ -21,16 +21,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.FragmentProfileBinding
-import com.example.eventmanagement.di.CitiesCountries
+import com.example.eventmanagement.di.StaticDataModule
 import com.example.eventmanagement.service.EventNotificationService
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.ediit_profile.EditProfileFragment
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.reset_password.ResetPasswordFragment
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.ui.bottomsheets.ediitprofile.EditProfileFragment
+import com.example.eventmanagement.ui.bottomsheets.resetpassword.ResetPasswordFragment
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -40,9 +39,7 @@ class ProfileFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var isEditProfileBottomSheetShown = false
 
-    @Inject
-    @CitiesCountries
-    lateinit var citiesCountries: ArrayList<String>
+    private val citiesCountries = StaticDataModule.provideCitiesCountries()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -176,9 +173,8 @@ class ProfileFragment : Fragment() {
 
     }
 
-
     private fun setUserLocation() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Select Your Location")
             .setIcon(R.drawable.ic_location)
             .setItems(citiesCountries.toTypedArray()) { _, which ->
@@ -202,8 +198,6 @@ class ProfileFragment : Fragment() {
                         ).show()
                     }
                 }
-
-
             }
             .setNegativeButton("Cancel", null)
             .show()

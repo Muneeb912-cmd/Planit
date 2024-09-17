@@ -23,14 +23,15 @@
 
             <TextView
                 android:id="@+id/eventTitleTv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Ali's Promotion"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/createInviteBtn"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/createInviteBtn" />
+                app:layout_constraintTop_toTopOf="@+id/createInviteBtn"
+                app:layout_constraintEnd_toStartOf="@id/createInviteBtn"/>
 
             <TextView
                 android:id="@+id/createInviteBtn"
@@ -42,7 +43,7 @@
                 android:text="Create Invite"
                 android:textColor="@android:color/black"
                 android:textDirection="rtl"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:drawableEndCompat="@drawable/ic_invites"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -66,7 +67,6 @@
                 android:text="Category : Hello"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                android:textSize="18sp"
                 app:layout_constraintTop_toBottomOf="@id/view" />
 
             <TextView
@@ -78,7 +78,7 @@
                 app:drawableLeftCompat="@drawable/ic_calender"
                 app:layout_constraintStart_toStartOf="parent"
                 android:drawablePadding="10dp"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/eventCategoryTv" />
 
             <TextView
@@ -90,7 +90,7 @@
                 app:drawableLeftCompat="@drawable/ic_time"
                 app:layout_constraintStart_toStartOf="parent"
                 android:drawablePadding="10dp"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/eventDateTv" />
 
             <View
@@ -111,7 +111,7 @@
                 android:layout_marginTop="10dp"
                 android:drawablePadding="10dp"
                 android:text=": 10"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:drawableLeftCompat="@drawable/ic_person"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
