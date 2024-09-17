@@ -8,14 +8,14 @@
 
         <variable
             name="viewModel"
-            type="com.example.eventmanagement.ui.shared_view_model.SharedViewModel" />
+            type="com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        tools:context=".ui.fragments.events_main.EventsMainFragment">
+        tools:context=".ui.fragments.eventsmain.EventsMainFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -49,8 +49,8 @@
 
                     <ImageView
                         android:id="@+id/locationIcon"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/ic_location"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,12 +58,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/userLocationTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
                         android:text="@{viewModel.currentUser.userLocation}"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/locationIcon"
@@ -73,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/favEvents"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         android:background="@android:color/transparent"
                         android:layout_marginEnd="10dp">
@@ -89,8 +90,8 @@
                             android:translationZ="20dp" />
                         <ImageView
                             android:id="@+id/eventInvites"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="15dp"
                             android:layout_alignParentEnd="true"
@@ -101,16 +102,7 @@
                             />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <ImageView
-                        android:id="@+id/favEvents"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="15dp"
-                        android:background="@drawable/ic_fav"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.appcompat.widget.Toolbar>

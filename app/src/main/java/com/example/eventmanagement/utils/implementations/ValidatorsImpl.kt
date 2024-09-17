@@ -14,7 +14,8 @@ import java.util.Locale
 class ValidatorsImpl @Inject constructor(): Validators {
 
     override fun validateName(name: String): Boolean {
-        return name.isNotBlank() && name.matches(Regex("^[a-zA-Z\\s]+$"))
+        val trimmedName = name.trim()
+        return trimmedName.isNotBlank() && trimmedName.matches(Regex("^[A-Z][a-z]*(?:\\s+[A-Z][a-z]*)*$"))
     }
 
     override fun validateEmail(email: String): Boolean {
@@ -26,10 +27,11 @@ class ValidatorsImpl @Inject constructor(): Validators {
 
     override fun validatePhone(phone: String): Boolean {
         val phonePattern = Pattern.compile(
-            "^\\+?[0-9]{10,15}$"
+            "^\\+92[0-9]{10}$"
         )
         return phonePattern.matcher(phone).matches()
     }
+
 
     override fun validatePassword(password: String): Boolean {
         val hasSpecialChar = Pattern.compile("[!@#\$%^&*(),.?\":{}|<>]").matcher(password).find()
@@ -40,11 +42,8 @@ class ValidatorsImpl @Inject constructor(): Validators {
         return password.length >= minLength && hasSpecialChar && hasUppercase && hasNumber
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun validateEventEndTimings(eventStartTime: String, eventEndTime: String): Boolean {
         val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
-
-
         return try {
             val startTime = LocalTime.parse(eventStartTime, timeFormatter)
             val endTime = LocalTime.parse(eventEndTime, timeFormatter)
@@ -56,10 +55,8 @@ class ValidatorsImpl @Inject constructor(): Validators {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun validateEventStartTime(eventStartTime: String, eventEndTime: String): Boolean {
         val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
-
         return try {
             val startTime = LocalTime.parse(eventStartTime, timeFormatter)
             val endTime = LocalTime.parse(eventEndTime, timeFormatter)

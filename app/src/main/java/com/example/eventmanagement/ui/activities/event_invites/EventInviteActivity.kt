@@ -8,12 +8,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.eventmanagement.adapters.EventInviteAdapter
 import com.example.eventmanagement.databinding.ActivityEventInviteBinding
 import com.example.eventmanagement.models.EventData
 import com.example.eventmanagement.models.EventInvites
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.ui.bottomsheets.eventdetails.EventDetailsFragment
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

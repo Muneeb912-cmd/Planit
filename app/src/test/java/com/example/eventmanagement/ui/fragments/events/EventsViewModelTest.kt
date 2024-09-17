@@ -1,28 +1,14 @@
 package com.example.eventmanagement.ui.fragments.events
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.models.FavEvents
-import com.example.eventmanagement.models.OperationType
-import com.example.eventmanagement.models.PendingOperations
-import com.example.eventmanagement.repository.room_db.Converters
-import com.example.eventmanagement.repository.room_db.PendingOperationDao
+import com.example.eventmanagement.repository.roomDb.Converters
+import com.example.eventmanagement.repository.roomDb.PendingOperationDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.*
 import org.junit.Rule
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
-import org.mockito.kotlin.check
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class EventsViewModelTest {

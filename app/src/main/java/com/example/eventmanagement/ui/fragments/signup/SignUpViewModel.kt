@@ -26,14 +26,15 @@ class SignUpViewModel @Inject constructor(
     private val _user = MutableStateFlow(User.UserData())
     val user: StateFlow<User.UserData> = _user.asStateFlow()
 
+    private val _clearFocusEvent = MutableStateFlow(false)
+    val clearFocusEvent: StateFlow<Boolean> get() = _clearFocusEvent
+
     var isRoleSelected: Boolean = false
     var isDataComplete: Boolean = false
     var isEmailVerified: Boolean = false
+    var isDataValid: Boolean = false
     var accountExist: Boolean = false
     var loginType: String = ""
-
-    private val _errors = MutableStateFlow<Map<String, String?>>(emptyMap())
-    val errors: StateFlow<Map<String, String?>> get() = _errors
 
     private val _signUpResults = MutableStateFlow<Response<Unit>>(Response.Loading)
     val signUpResult: StateFlow<Response<Unit>> get() = _signUpResults.asStateFlow()
@@ -59,45 +60,17 @@ class SignUpViewModel @Inject constructor(
             userId = if (key == "userId") value else currentUser.userId,
             userBanned = if (key == "userBanned") value == "Yes" else currentUser.userBanned
         )
-        validateField(key, value)
-        checkIfDataComplete()
         _user.value = updatedUser
         println("Updated User: $updatedUser")
     }
 
-    private fun validateField(field: String, value: String) {
-        val updatedErrors = _errors.value.toMutableMap()
 
-        when (field) {
-            "fullName" -> updatedErrors["fullName"] =
-                if (validators.validateName(value)) null else "Invalid name, Example Input: (Ali Ahmad) "
-
-            "email" -> updatedErrors["email"] =
-                if (validators.validateEmail(value)) null else "Invalid email, Example Input: (user@mail.com)"
-
-            "phone" -> updatedErrors["phone"] =
-                if (validators.validatePhone(value)) null else "Invalid phone, Example Input: (+920000000000)"
-
-            "password" -> {
-                if (loginType != "google") {
-                    updatedErrors["password"] =
-                        if (validators.validatePassword(value)) null else "Invalid password. Password should contain at least one special character, one uppercase letter, one number, and be at least 6 characters long."
-                } else {
-                    updatedErrors["password"] = null
-                }
-            }
-
-        }
-        _errors.value = updatedErrors
-    }
-
-    private fun checkIfDataComplete() {
+    fun checkIfDataComplete() {
         isDataComplete = !user.value.userName.isNullOrEmpty() &&
                 !user.value.userEmail.isNullOrEmpty() &&
                 !user.value.userPhone.isNullOrEmpty() &&
                 !user.value.userDob.isNullOrEmpty() &&
-                (loginType == "google" || !user.value.userPassword.isNullOrEmpty()) &&
-                !user.value.userImg.isNullOrEmpty()
+                (loginType == "google" || !user.value.userPassword.isNullOrEmpty())
     }
 
     fun createUserAccount() {
@@ -206,4 +179,70 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    fun clearUserData() {
+        _user.value = User.UserData()
+        isRoleSelected = false
+        isDataComplete = false
+        isDataValid = false
+    }
+
+    fun validateFullName(fullName: String): String? {
+        return if (fullName.isEmpty()) {
+            null
+        } else if (validators.validateName(fullName)) {
+            null
+        } else {
+            "Invalid Name, Example Input: (Ali Ahmad)"
+        }
+    }
+
+    fun validateEmail(email: String): String? {
+        return if (email.isEmpty()) {
+            null
+        } else if (validators.validateEmail(email)) {
+            updateUserInfo("email", email)
+            null
+        } else {
+            "Invalid Email, Example Input: (user@mail.com)"
+        }
+    }
+
+    fun validatePassword(password: String): String? {
+        return if (password.isEmpty()) {
+            null
+        } else if (validators.validatePassword(password)) {
+            null
+        } else {
+            "Password must include a digit, special character, and a capital letter."
+        }
+    }
+
+    private fun validateConfirmPassword(password: String, confirmPassword: String): String? {
+        return if (password == confirmPassword) {
+            null
+        } else {
+            "Confirm Password did not match with Password"
+        }
+    }
+
+    fun checkIfImgSelected(): Boolean {
+        return !user.value.userImg.isNullOrEmpty()
+    }
+
+
+    fun checkIfDataValid() {
+        isDataValid = !validateFullName(_user.value.userName.toString()).isNullOrEmpty().not() &&
+                !validateEmail(_user.value.userEmail.toString()).isNullOrEmpty().not() &&
+                !validatePassword(_user.value.userPassword.toString()).isNullOrEmpty().not() &&
+                !validateConfirmPassword(_user.value.userPassword.toString(), _user.value.userPassword.toString()).isNullOrEmpty().not()
+    }
+
+
+    fun triggerClearFocus() {
+        _clearFocusEvent.value = true
+    }
+
+    fun unTriggerClearFocus() {
+        _clearFocusEvent.value = false
+    }
 }

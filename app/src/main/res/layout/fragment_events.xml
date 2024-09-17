@@ -7,28 +7,76 @@
     android:orientation="vertical"
     android:padding="25dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchEventContainer"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <LinearLayout
+        android:id="@+id/titleContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:hint="@string/search_event"
-        app:startIconDrawable="@drawable/ic_search">
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_events"
+            android:scaleType="centerInside" />
 
-
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchEvent"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:padding="10dp"
-            android:paddingStart="40dp"
-            android:textSize="18sp"
-            tools:ignore="RtlSymmetry" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:text="All Events"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/md_theme_inverseSurface" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchEventContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_event"
+            app:startIconDrawable="@drawable/ic_search"
+            android:layout_weight="1">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:padding="2dp"
+                android:paddingStart="40dp"
+                android:textSize="18sp"
+                tools:ignore="RtlSymmetry" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Spinner
+            android:id="@+id/eventFilterSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:spinnerMode="dropdown"
+            android:dropDownWidth="wrap_content" />
+
+    </LinearLayout>
 
     <HorizontalScrollView
         android:id="@+id/chipsContainerContainer"
@@ -48,64 +96,7 @@
         android:id="@+id/searchItemRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"/>
+        android:layout_marginTop="10dp" />
 
-    <TextView
-        android:id="@+id/titlePopularEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="5dp"
-        android:drawablePadding="5dp"
-        android:text="Popular Events"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:drawableLeftCompat="@drawable/ic_popular" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewEventCards"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"/>
-
-    <LinearLayout
-        android:id="@+id/expandLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/md_theme_inverseSurface"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"/>
-        <ImageButton
-            android:id="@+id/expandUi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_down"
-            android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"
-            android:layout_weight="0"/>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/featuredEventTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="5dp"
-        android:drawablePadding="5dp"
-        android:text="Featured Events"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:drawableLeftCompat="@drawable/ic_featured" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPromotionCards"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/event_card" />
 
 </LinearLayout>

@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -18,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.example.eventmanagement.R
-import com.example.eventmanagement.adapters.SignUpPagerAdapter
 import com.example.eventmanagement.databinding.FragmentSignUpBinding
 import com.example.eventmanagement.utils.Response
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -46,12 +44,13 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.loginType = args.loginType
         Log.d("SignUpFragment", "LoginType: ${viewModel.loginType}")
-
+        binding.stepContainer.isUserInputEnabled=false
         setupViewPager()
         setupNavigationButtons()
         setupIndicators()
 
         binding.toolBar.setNavigationOnClickListener {
+            viewModel.clearUserData()
             findNavController().popBackStack()
         }
     }
@@ -96,11 +95,22 @@ class SignUpFragment : Fragment() {
             }
 
             1 -> {
+                viewModel.triggerClearFocus()
+                viewModel.checkIfDataComplete()
+                viewModel.checkIfDataValid()
                 if (viewModel.isDataComplete) {
-                    viewModel.createUserAccount()
-                    observeSignUpStateOnCreateUser()
-                    if (validateCurrentStep(currentItem)) {
-                        binding.stepContainer.currentItem = currentItem + 1
+                    if (viewModel.isDataValid) {
+                        if (viewModel.checkIfImgSelected()) {
+                            viewModel.createUserAccount()
+                            observeSignUpStateOnCreateUser()
+                            if (!viewModel.accountExist) {
+                                binding.stepContainer.currentItem = currentItem + 1
+                            } else {
+                                showValidationAlert(currentItem)
+                            }
+                        } else {
+                            showValidationAlert(currentItem)
+                        }
                     } else {
                         showValidationAlert(currentItem)
                     }
@@ -119,7 +129,7 @@ class SignUpFragment : Fragment() {
         Log.d("SignUpFragment", "Validating step: $step  and ${viewModel.accountExist}")
         return when (step) {
             0 -> viewModel.isRoleSelected
-            1 -> (viewModel.isDataComplete && viewModel.accountExist)
+            1 -> (viewModel.isDataComplete && viewModel.accountExist && viewModel.isDataValid)
             else -> true
         }
     }
@@ -167,13 +177,10 @@ class SignUpFragment : Fragment() {
             0 -> "Attention" to "Please select one of the given options to proceed."
 
             1 -> {
-                val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
-                val confirmPassword =
-                    view?.findViewById<EditText>(R.id.confirmPassword)?.text.toString()
-                if (password != confirmPassword) {
-                    "Password Error" to "Password and Confirm Password didn't match"
-                } else if (!viewModel.isDataComplete) {
+                if (!viewModel.isDataComplete) {
                     "Data Incomplete" to "Input field Empty, Kindly fill the input fields before continuing"
+                } else if (!viewModel.checkIfImgSelected()) {
+                    "Image Not Selected" to "Image not selected, please select an image."
                 } else {
                     null to null
                 }
@@ -196,9 +203,18 @@ class SignUpFragment : Fragment() {
         if (viewModel.isEmailVerified) {
             Toast.makeText(requireContext(), "User Registration Successful", Toast.LENGTH_SHORT)
                 .show()
-            if(viewModel.user.value.userRole=="Attendee"){
+            viewModel.saveDataToPreferences() { isUserSavedInPrefs ->
+                if (isUserSavedInPrefs) {
+                    Toast.makeText(
+                        requireContext(),
+                        "User instance saved for seamless login",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            if (viewModel.user.value.userRole == "Attendee") {
                 findNavController().navigate(R.id.action_signUpFragment_to_eventsMainFragment)
-            }else{
+            } else {
                 findNavController().navigate(R.id.action_signUpFragment_to_adminMainFragment)
             }
         } else {
@@ -218,25 +234,6 @@ class SignUpFragment : Fragment() {
                             "User Successfully Created!",
                             Toast.LENGTH_SHORT
                         ).show()
-                        if (viewModel.loginType == "email_pass") {
-
-                            viewModel.saveDataToPreferences() { isUserSavedInPrefs ->
-                                if (isUserSavedInPrefs) {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "User instance saved for seamless login",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Couldn't save user instance",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-
-                        }
                         showLoader(false)
                     }
 

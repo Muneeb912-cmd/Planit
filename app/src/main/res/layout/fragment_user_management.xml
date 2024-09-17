@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="25dp"
-    tools:context=".ui.fragments.user_management.UserManagementFragment">
+    tools:context=".ui.fragments.usermanagement.UserManagementFragment">
 
     <LinearLayout
         android:id="@+id/titleContainer"
@@ -17,8 +17,8 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/ic_manage_user"
             android:scaleType="centerInside" />
@@ -29,9 +29,32 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:text="@string/user_management"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchEventContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Search User (Name, Email)"
+        app:startIconDrawable="@drawable/ic_search"
+        app:layout_constraintTop_toBottomOf="@id/titleContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:textSize="18sp"
+            tools:ignore="RtlSymmetry"
+            android:paddingStart="40dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:id="@+id/tabsContainer"
@@ -41,7 +64,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleContainer">
+        app:layout_constraintTop_toBottomOf="@id/searchEventContainer">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
@@ -66,37 +89,11 @@
         </com.google.android.material.tabs.TabLayout>
 
     </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchEventContainer"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:hint="Search User (Name, Email)"
-        app:startIconDrawable="@drawable/ic_search"
-        app:boxStrokeColor="@color/md_theme_tertiaryFixedDim_mediumContrast"
-        app:layout_constraintTop_toBottomOf="@id/tabsContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:padding="10dp"
-            android:textSize="18sp"
-            tools:ignore="RtlSymmetry"
-            android:paddingStart="40dp"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/searchEventContainer"
+        app:layout_constraintTop_toBottomOf="@id/tabsContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

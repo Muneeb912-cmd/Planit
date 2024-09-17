@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.eventmanagement.models.FavEvents
-import com.example.eventmanagement.repository.room_db.LocalDB
+import com.example.eventmanagement.repository.roomDb.LocalDB
 import com.example.eventmanagement.receivers.ConnectivityObserver
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

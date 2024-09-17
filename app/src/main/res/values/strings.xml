@@ -33,8 +33,9 @@
     <string name="home">Home</string>
     <string name="events">Events</string>
     <string name="my_events">My Events</string>
+    <string name="profileVisibility">Profile Visibility</string>
     <string name="profile">Profile</string>
-    <string name="search_event">Search Event (Name, Organizer)</string>
+    <string name="search_event">Search Event</string>
     <string name="missed">Missed</string>
     <string name="up_coming">Up-Coming</string>
     <string name="on_going">On-Going</string>
@@ -71,4 +72,6 @@
     <string name="ban_user">Ban User?</string>
     <string name="send_invites">Send Invites</string>
     <string name="sent_invites">Sent Invites</string>
+    <string name="open_events">Open Events</string>
+    <string name="closed_events">Closed Events</string>
 </resources>

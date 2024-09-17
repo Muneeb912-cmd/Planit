@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.eventmanagement.ui.shared_view_model.SharedViewModel" />
+            type="com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +21,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/profile"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBaseline_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +83,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@{viewModel.currentUser.userName}"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -105,6 +105,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:drawablePadding="5dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:text="@{viewModel.currentUser.userEmail}"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_email"
@@ -150,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/allow_notification"
-                    android:textSize="18sp"
+
                     android:textStyle="bold" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
@@ -172,15 +174,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/user_loaction"
-                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/userLocationTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.currentUser.userLocation}"
-                    android:textSize="18sp" />
+                    android:text="@{viewModel.currentUser.userLocation}" />
             </LinearLayout>
 
             <LinearLayout
@@ -193,8 +193,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/profile"
-                    android:textSize="18sp"
+                    android:text="@string/profileVisibility"
+
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -207,7 +207,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{viewModel.getProfileStatus()}"
-                        android:textSize="18sp" />
+                        />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/profileToggle"
@@ -231,15 +231,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/reset_password"
-                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/changePassTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/change_password"
-                    android:textSize="18sp" />
+                    android:text="@string/change_password" />
             </LinearLayout>
 
             <View

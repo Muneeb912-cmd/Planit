@@ -25,7 +25,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Event Title"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/inviteStatus"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -37,7 +37,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="pending"
-                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/eventTitle" />
@@ -59,7 +58,7 @@
                 android:layout_marginTop="20dp"
                 android:drawablePadding="10dp"
                 android:text="Organizer"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:drawableStartCompat="@drawable/ic_person"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/eventTitle" />
@@ -71,7 +70,7 @@
                 android:layout_marginTop="10dp"
                 android:drawablePadding="10dp"
                 android:text="2024-12-08 - 2024-12-08"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:drawableStartCompat="@drawable/ic_calender"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/eventOrganizer" />
@@ -83,7 +82,7 @@
                 android:layout_marginTop="10dp"
                 android:drawablePadding="10dp"
                 android:text="02:00 AM - 03:00 AM"
-                android:textSize="18sp"
+                android:gravity="center_vertical"
                 app:drawableStartCompat="@drawable/ic_time"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/eventDate" />
@@ -123,14 +122,15 @@
 
             <TextView
                 android:id="@+id/inviteSender"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Sent By: Ali"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider2" />
+                app:layout_constraintTop_toBottomOf="@id/materialDivider2"
+                app:layout_constraintEnd_toStartOf="@id/inviteTime"/>
 
             <TextView
                 android:id="@+id/inviteTime"

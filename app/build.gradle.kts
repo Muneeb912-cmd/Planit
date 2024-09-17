@@ -10,6 +10,8 @@ plugins {
     id ("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
     jacoco
+    id("org.jlleitschuh.gradle.ktlint") version "11.5.1"
+
 }
 
 android {
@@ -18,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.eventmanagement"
-        minSdk = 24
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -59,8 +61,8 @@ android {
     hilt {
         enableAggregatingTask = true
     }
-    packagingOptions {
-        exclude ("META-INF/gradle/incremental.annotation.processors")
+    packaging {
+        resources.excludes.add ("META-INF/gradle/incremental.annotation.processors")
     }
 
 }
@@ -69,6 +71,7 @@ android {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
 
 dependencies {
 

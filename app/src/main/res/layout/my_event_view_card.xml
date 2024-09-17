@@ -24,13 +24,14 @@
 
             <TextView
                 android:id="@+id/eventTitleTv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Ali's Promotion"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/eventStatus"/>
 
             <TextView
                 android:id="@+id/eventStatus"
@@ -55,10 +56,9 @@
                 tools:layout_editor_absoluteX="20dp"
                 tools:layout_editor_absoluteY="20dp" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view"
@@ -66,14 +66,16 @@
 
                 <TextView
                     android:id="@+id/eventOrganizer"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:drawablePadding="10dp"
                     android:text="Ali Ahmad"
-                    android:textSize="18sp"
                     android:layout_gravity="center_vertical"
-                    app:drawableLeftCompat="@drawable/ic_person" />
+                    android:gravity="center_vertical"
+                    app:drawableLeftCompat="@drawable/ic_person"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/eventTime"/>
 
                 <TextView
                     android:id="@+id/eventTime"
@@ -82,12 +84,12 @@
                     android:layout_weight="1"
                     android:drawablePadding="5dp"
                     android:text="12:00 AM - 1:00 PM"
-                    android:textSize="18sp"
+                    android:gravity="center_vertical"
                     app:drawableLeftCompat="@drawable/ic_time"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_gravity="center_vertical" />
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

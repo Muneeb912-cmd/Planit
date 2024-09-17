@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="25dp"
-    tools:context=".ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment">
+    tools:context=".ui.bottomsheets.eventdetails.EventDetailsFragment">
 
     <LinearLayout
         android:id="@+id/titleContainer"
@@ -52,15 +52,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="Organizer: Ali Ahmad"
-            android:textSize="20sp"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/eventCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="Category: Party"
-            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -69,7 +68,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="Status: On-Going"
-            android:textSize="20sp"
             android:textStyle="bold" />
 
         <View
@@ -93,7 +91,6 @@
                 android:layout_weight="1"
                 android:drawablePadding="5dp"
                 android:text="2:00 PM - 4:00 Pm"
-                android:textSize="18sp"
                 app:drawableLeftCompat="@drawable/ic_time" />
 
             <TextView
@@ -104,7 +101,6 @@
                 android:layout_weight="1"
                 android:drawablePadding="5dp"
                 android:text="14-8-2024"
-                android:textSize="18sp"
                 app:drawableLeftCompat="@drawable/ic_calender" />
 
         </LinearLayout>
@@ -119,7 +115,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Event Description :"
-            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -127,8 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="This is the description for Event"
-            android:textSize="18sp" />
+            android:text="This is the description for Event" />
 
         <LinearLayout
             android:id="@+id/attendingEventLayout"
@@ -144,7 +138,6 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:text="Will you be attending this event?"
-                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <ToggleButton
@@ -174,15 +167,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Event Location :"
-                android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
+
+                <!-- MapView -->
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <!-- Transparent Overlay -->
+                <View
+                    android:id="@+id/mapOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"/>
+
+            </FrameLayout>
+
         </LinearLayout>
 
     </LinearLayout>

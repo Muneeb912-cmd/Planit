@@ -87,6 +87,7 @@
                     android:textSize="18sp"
                     tools:ignore="RtlSymmetry"
                     android:paddingStart="50dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,6 +129,7 @@
                     android:padding="10dp"
                     android:textSize="18sp"
                     tools:ignore="RtlSymmetry"
+                    android:maxLength="14"
                     android:paddingStart="50dp"
                     />
             </com.google.android.material.textfield.TextInputLayout>

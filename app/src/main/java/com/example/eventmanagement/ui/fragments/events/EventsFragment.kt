@@ -6,6 +6,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -14,35 +16,29 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventmanagement.R
-import com.example.eventmanagement.adapters.FeaturedEventAdapter
-import com.example.eventmanagement.adapters.PopularEventCardAdapter
 import com.example.eventmanagement.databinding.FragmentEventsBinding
-import com.example.eventmanagement.di.Categories
+import com.example.eventmanagement.di.StaticDataModule
 import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.ui.bottomsheets.eventdetails.EventDetailsFragment
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class EventsFragment : Fragment(),
-    PopularEventCardAdapter.EventCardClickListener,
-    FeaturedEventAdapter.OnFeaturedEventClickListener {
+class EventsFragment : Fragment(), AllEventCardAdapter.EventCardClickListener {
 
     private lateinit var binding: FragmentEventsBinding
     private var isEventDetailsBottomSheetShown = false
 
-    @Inject
-    @Categories
-    lateinit var categories: ArrayList<String>
+    private val categories = StaticDataModule.provideCategories()
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val eventsViewModel: EventsViewModel by viewModels()
     private val selectedCategories = mutableSetOf<String>()
-
-    private var isUiHidden = false
+    private lateinit var eventsAdapter: AllEventCardAdapter
+    private var selectedFilter: String = "All"
+    private var searchQuery: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -56,39 +52,59 @@ class EventsFragment : Fragment(),
         setUpCategories()
         setUpRecyclerViews()
         observeViewModel()
-
-        binding.expandUi.setImageResource(R.drawable.ic_up)
-        binding.chipsContainer.visibility=View.GONE
-        binding.expandUi.setOnClickListener {
-            if (isUiHidden) {
-                binding.expandUi.setImageResource(R.drawable.ic_up)
-                binding.chipsContainer.visibility=View.GONE
-                showUiElements("expandUiBtn")
-            } else {
-                binding.expandUi.setImageResource(R.drawable.ic_down)
-                binding.chipsContainer.visibility=View.VISIBLE
-                hideUiElements("expandUiBtn")
-            }
-        }
+        setUpEventFilterSpinner()
 
         binding.searchEvent.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                handleSearch(s.toString().trim())
+                searchQuery = s.toString().trim()
+                filterAllEvents()
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString().isEmpty()) {
+                    binding.searchEvent.clearFocus()
+                }
+            }
         })
     }
 
+    private fun setUpEventFilterSpinner() {
+        val filterOptions = arrayOf("All", "Up-Coming", "On-Going", "Missed", "Popular", "Featured", "Favorites")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filterOptions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.eventFilterSpinner.adapter = adapter
+        binding.eventFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                selectedFilter = filterOptions[position]
+                filterAllEvents()
+                binding.searchEvent.clearFocus()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Default behavior: No filter applied
+            }
+        }
+    }
+
     private fun setUpCategories() {
+        selectedCategories.add("All")
+
         categories.forEach { label ->
             val chip = Chip(context).apply {
                 text = label
                 isClickable = true
                 isCheckable = true
-                setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
-                setTextColor(resources.getColor(R.color.md_theme_onBackground_highContrast, null))
+
+                if (label == "All") {
+                    isChecked = true
+                    setChipBackgroundColorResource(R.color.md_theme_primary)
+                    setTextColor(resources.getColor(R.color.md_theme_surfaceContainerLow, null))
+                } else {
+                    setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
+                    setTextColor(resources.getColor(R.color.md_theme_onBackground_highContrast, null))
+                }
+
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
@@ -97,147 +113,123 @@ class EventsFragment : Fragment(),
                     topMargin = resources.getDimensionPixelSize(R.dimen.chip_margin_top)
                     bottomMargin = resources.getDimensionPixelSize(R.dimen.chip_margin_bottom)
                 }
+
                 setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        selectedCategories.add(label)
-                        setChipBackgroundColorResource(R.color.md_theme_primary)
-                        setTextColor(resources.getColor(R.color.md_theme_surfaceContainerLow, null))
+                    if (label == "All") {
+                        if (isChecked) {
+                            selectedCategories.clear()
+                            selectedCategories.add("All")
+                            uncheckAllExcept(label)
+                        }
                     } else {
-                        selectedCategories.remove(label)
-                        setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
-                        setTextColor(
-                            resources.getColor(
-                                R.color.md_theme_onBackground_highContrast,
-                                null
-                            )
-                        )
+                        if (isChecked) {
+                            selectedCategories.remove("All")
+                            selectedCategories.add(label)
+                            uncheckCategory("All")
+                            setChipBackgroundColorResource(R.color.md_theme_primary)
+                            setTextColor(resources.getColor(R.color.md_theme_surfaceContainerLow, null))
+                        } else {
+                            selectedCategories.remove(label)
+                            if (selectedCategories.isEmpty()) {
+                                selectedCategories.add("All")
+                                checkAllCategoryChip()
+                            }
+                            setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
+                            setTextColor(resources.getColor(R.color.md_theme_onBackground_highContrast, null))
+                        }
                     }
-                    filterFeaturedEvents()
+                    filterAllEvents()
                 }
             }
             binding.chipsContainer.addView(chip)
         }
     }
 
+    private fun checkAllCategoryChip() {
+        for (i in 0 until binding.chipsContainer.childCount) {
+            val chip = binding.chipsContainer.getChildAt(i) as? Chip
+            if (chip != null && chip.text == "All") {
+                chip.isChecked = true
+                break
+            }
+        }
+    }
+
+    private fun uncheckCategory(category: String) {
+        for (i in 0 until binding.chipsContainer.childCount) {
+            val chip = binding.chipsContainer.getChildAt(i) as Chip
+            if (chip.text == category) {
+                chip.isChecked = false
+                chip.setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
+                chip.setTextColor(resources.getColor(R.color.md_theme_onBackground_highContrast, null))
+            }
+        }
+    }
+
+    private fun uncheckAllExcept(exceptCategory: String) {
+        for (i in 0 until binding.chipsContainer.childCount) {
+            val chip = binding.chipsContainer.getChildAt(i) as Chip
+            if (chip.text != exceptCategory) {
+                chip.isChecked = false
+                chip.setChipBackgroundColorResource(R.color.md_theme_primaryFixed)
+                chip.setTextColor(resources.getColor(R.color.md_theme_onBackground_highContrast, null))
+            } else {
+                chip.isChecked = true
+                chip.setChipBackgroundColorResource(R.color.md_theme_primary)
+                chip.setTextColor(resources.getColor(R.color.md_theme_surfaceContainerLow, null))
+            }
+        }
+    }
+
     private fun setUpRecyclerViews() {
-        binding.recyclerViewEventCards.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerViewEventCards.adapter = PopularEventCardAdapter(
+        eventsAdapter = AllEventCardAdapter(
             emptyList(), sharedViewModel.allFavEvents.value, this
         )
-
-        binding.recyclerViewPromotionCards.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerViewPromotionCards.adapter = FeaturedEventAdapter(
-            emptyList(), sharedViewModel.allFavEvents.value, this
-        )
-
         binding.searchItemRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.searchItemRecyclerView.adapter = PopularEventCardAdapter(
-            emptyList(), sharedViewModel.allFavEvents.value, this
-        )
+        binding.searchItemRecyclerView.adapter = eventsAdapter
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            launch { sharedViewModel.allEvents.collect { filterFeaturedEvents() } }
-            launch { sharedViewModel.allFavEvents.collect { favEvents ->
-                (binding.recyclerViewPromotionCards.adapter as? FeaturedEventAdapter)?.submitFavEventsList(
-                    favEvents
-                )
-                (binding.recyclerViewEventCards.adapter as? PopularEventCardAdapter)?.submitFavEventsList(
-                    favEvents
-                )
-            } }
+            sharedViewModel.allEvents.collect {
+                filterAllEvents()
+            }
+        }
+        lifecycleScope.launch {
+            sharedViewModel.allFavEvents.collect { events ->
+                eventsAdapter.submitFavEventsList(events)
+                filterAllEvents()
+            }
         }
     }
 
-    private fun filterFeaturedEvents() {
-        val filteredEvents = sharedViewModel.allEvents.value.filter { event ->
-            event.isEventFeatured == true &&
-                    event.isEventPublic == true &&
-                    (selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory))
-        }
-        (binding.recyclerViewPromotionCards.adapter as? FeaturedEventAdapter)?.submitList(
-            filteredEvents
-        )
+    private fun filterAllEvents() {
+        val allEvents = sharedViewModel.allEvents.value
+        val favEvents = sharedViewModel.allFavEvents.value
 
-        val filteredPopularEvents = sharedViewModel.allEvents.value.filter { event ->
-            event.isEventPopular == true &&
-                    event.isEventPublic == true &&
-                    (selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory))
-        }
-        (binding.recyclerViewEventCards.adapter as? PopularEventCardAdapter)?.submitList(
-            filteredPopularEvents
-        )
-    }
+        val filteredEvents = when (selectedFilter) {
+            "All" -> allEvents
+            "Up-Coming" -> allEvents.filter { it.isUpcoming() }
+            "On-Going" -> allEvents.filter { it.isOngoing() }
+            "Missed" -> allEvents.filter { it.isMissed() }
+            "Popular" -> allEvents.filter { it.isEventPopular == true }
+            "Featured" -> allEvents.filter { it.isEventFeatured == true }
+            "Favorites" -> allEvents.filter { event -> favEvents.contains(event.eventId) }
+            else -> emptyList()
+        }.filter { event ->
+            val matchesCategory = selectedCategories.contains("All") || selectedCategories.contains(event.eventCategory)
+            val matchesQuery = event.eventOrganizer?.contains(searchQuery, ignoreCase = true) == true ||
+                    event.eventTitle?.contains(searchQuery, ignoreCase = true) == true
 
-    private fun handleSearch(query: String) {
-        if (query.isEmpty()) {
-            showUiElements("search")
-            binding.chipsContainer.visibility=View.GONE
-            filterFeaturedEvents()
-        } else {
-            hideUiElements("search")
-            binding.chipsContainer.visibility=View.VISIBLE
-            handleQuery(query)
+            matchesCategory && matchesQuery && event.isEventPublic == true
         }
+
+        (binding.searchItemRecyclerView.adapter as? AllEventCardAdapter)?.submitList(filteredEvents)
     }
 
     private fun handleQuery(query: String) {
-        val filteredEvents = sharedViewModel.allEvents.value.filter { event ->
-            val matchesQuery = event.eventOrganizer?.contains(query, ignoreCase = true) == true ||
-                    event.eventTitle?.contains(query, ignoreCase = true) == true
-            val matchesCategory = selectedCategories.isEmpty() || selectedCategories.contains(event.eventCategory)
-
-            matchesQuery && matchesCategory && event.isEventPublic == true
-        }
-
-        (binding.searchItemRecyclerView.adapter as? PopularEventCardAdapter)?.submitList(filteredEvents)
-    }
-
-    private fun hideUiElements(key: String) {
-        if (key != "search") {
-            animateViewVisibility(binding.searchEventContainer, View.GONE)
-            animateViewVisibility(binding.titlePopularEvents, View.GONE)
-            animateViewVisibility(binding.recyclerViewEventCards, View.GONE)
-            isUiHidden = true
-        } else {
-            animateViewVisibility(binding.searchItemRecyclerView, View.VISIBLE)
-            animateViewVisibility(binding.titlePopularEvents, View.GONE)
-            animateViewVisibility(binding.recyclerViewEventCards, View.GONE)
-            animateViewVisibility(binding.featuredEventTitle, View.GONE)
-            animateViewVisibility(binding.recyclerViewPromotionCards, View.GONE)
-            animateViewVisibility(binding.expandLayout, View.GONE)
-        }
-    }
-
-    private fun showUiElements(key: String) {
-        if (key != "search") {
-            animateViewVisibility(binding.searchEventContainer, View.VISIBLE)
-            animateViewVisibility(binding.titlePopularEvents, View.VISIBLE)
-            animateViewVisibility(binding.recyclerViewEventCards, View.VISIBLE)
-            isUiHidden = false
-        } else {
-            animateViewVisibility(binding.searchItemRecyclerView, View.GONE)
-            animateViewVisibility(binding.titlePopularEvents, View.VISIBLE)
-            animateViewVisibility(binding.recyclerViewEventCards, View.VISIBLE)
-            animateViewVisibility(binding.featuredEventTitle, View.VISIBLE)
-            animateViewVisibility(binding.recyclerViewPromotionCards, View.VISIBLE)
-            animateViewVisibility(binding.expandLayout, View.VISIBLE)
-        }
-    }
-
-    private fun animateViewVisibility(view: View, visibility: Int) {
-        val duration = 300L
-        view.animate()
-            .alpha(if (visibility == View.VISIBLE) 1f else 0f)
-            .setDuration(duration)
-            .setInterpolator(android.view.animation.AccelerateDecelerateInterpolator())
-            .withEndAction {
-                view.visibility = visibility
-            }
+        // Already handled in filterAllEvents as searchQuery is updated in afterTextChanged
     }
 
     override fun onEventCardClick(cardData: EventData) {
@@ -255,7 +247,7 @@ class EventsFragment : Fragment(),
 
     private fun removeEventFromFavorites(userId: String, cardData: EventData) {
         eventsViewModel.removeEventFromUserFav(userId, cardData) { result, msg ->
-            showToast("Event deleted from favorites", result, msg)
+            showToast("Event removed from favorites", result, msg)
         }
     }
 
@@ -270,10 +262,6 @@ class EventsFragment : Fragment(),
             .show()
     }
 
-    override fun onFeaturedEventCardClick(cardData: EventData) {
-        showEventDetails(cardData)
-    }
-
     private fun showEventDetails(cardData: EventData) {
         if (!isEventDetailsBottomSheetShown) {
             isEventDetailsBottomSheetShown = true
@@ -285,4 +273,15 @@ class EventsFragment : Fragment(),
         }
     }
 
+    private fun EventData.isUpcoming(): Boolean {
+        return this.eventStatus == "Up-Coming"
+    }
+
+    private fun EventData.isOngoing(): Boolean {
+        return this.eventStatus == "On-Going"
+    }
+
+    private fun EventData.isMissed(): Boolean {
+        return this.eventStatus == "Missed"
+    }
 }

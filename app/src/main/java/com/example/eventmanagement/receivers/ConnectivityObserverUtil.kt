@@ -11,7 +11,7 @@ import android.util.Log
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.example.eventmanagement.repository.room_db.LocalDB
+import com.example.eventmanagement.repository.roomDb.LocalDB
 import com.example.eventmanagement.workers.sync_data_from_firebase.SyncAttendeeDataWorker
 import com.example.eventmanagement.workers.sync_data_from_firebase.SyncEventsDataWorker
 import com.example.eventmanagement.workers.sync_data_from_firebase.SyncFavEventsDataWorker

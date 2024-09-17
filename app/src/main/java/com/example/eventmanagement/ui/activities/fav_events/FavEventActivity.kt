@@ -1,19 +1,16 @@
 package com.example.eventmanagement.ui.activities.fav_events
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.eventmanagement.R
-import com.example.eventmanagement.adapters.FavEventAdapter
 import com.example.eventmanagement.databinding.ActivityFavEventBinding
 import com.example.eventmanagement.models.EventData
-import com.example.eventmanagement.ui.bottom_sheet_dialogs.event_details.event_details.EventDetailsFragment
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.ui.bottomsheets.eventdetails.EventDetailsFragment
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -25,7 +22,7 @@ class FavEventActivity : AppCompatActivity(), FavEventAdapter.EventCardClickList
     private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var binding: ActivityFavEventBinding
     private var isEventDetailsBottomSheetShown = false
-    private lateinit var adapter:FavEventAdapter
+    private lateinit var adapter: FavEventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +41,6 @@ class FavEventActivity : AppCompatActivity(), FavEventAdapter.EventCardClickList
             sharedViewModel.allFavEvents.combine(sharedViewModel.allEvents) { allFavEvents, allEvents ->
                 Pair(allFavEvents, allEvents)
             }.collect { (allFavEvents, allEvents) ->
-                Log.d("FavEventActivity", "All Fav Events: $allFavEvents")
-                Log.d("FavEventActivity", "All Events: $allEvents")
-
                 if (allFavEvents.isNotEmpty() && allEvents.isNotEmpty()) {
                     val filteredFavEvents = allEvents.filter { event ->
                         allFavEvents.contains(event.eventId)
@@ -67,13 +61,6 @@ class FavEventActivity : AppCompatActivity(), FavEventAdapter.EventCardClickList
         }
     }
 
-
-    private fun eventsByFavs() {
-        val filteredFavEvents = sharedViewModel.allEvents.value.filter { event ->
-            sharedViewModel.allFavEvents.value.contains(event.eventId)
-        }
-        adapter.updatedFavEvents(filteredFavEvents)
-    }
 
     private fun setUpFavEventsDisplay() {
         adapter = FavEventAdapter(emptyList(), this)

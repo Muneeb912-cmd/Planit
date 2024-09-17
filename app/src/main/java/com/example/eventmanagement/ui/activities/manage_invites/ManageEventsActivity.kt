@@ -1,22 +1,24 @@
 package com.example.eventmanagement.ui.activities.manage_invites
 
-import android.os.Build
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.eventmanagement.adapters.ManageInviteAdapter
+import com.example.eventmanagement.R
 import com.example.eventmanagement.databinding.ActivityManageEventsBinding
 import com.example.eventmanagement.models.User
-import com.example.eventmanagement.ui.shared_view_model.SharedViewModel
+import com.example.eventmanagement.ui.sharedviewmodel.SharedViewModel
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClickListener {
@@ -165,34 +167,75 @@ class ManageEventsActivity : AppCompatActivity(), ManageInviteAdapter.OnItemClic
         adapter.updatedUsersList(filteredUsers)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onSendInviteButtonClick(userData: User.UserData, key: String) {
-        if (key == "send") {
-            viewModel.createInvite(
-                eventId.toString(),
-                sharedViewModel.currentUser.value?.userId.toString(),
-                userData
-            ) { result ->
-                Log.d("Result", "onSendInviteButtonClick: $result")
+        when (key) {
+            "send" -> {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.Main) {
+                        findViewById<TextView>(R.id.sendInviteBtn).text = "Sending..."
+                        findViewById<TextView>(R.id.sendInviteBtn).isClickable = false
+                    }
+                }
+                viewModel.createInvite(
+                    eventId.toString(),
+                    sharedViewModel.currentUser.value?.userId.toString(),
+                    userData
+                ) { result ->
+                    if (result) {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.Main) {
+                                findViewById<TextView>(R.id.sendInviteBtn).isClickable = true
+                            }
+                        }
+                    }
+                }
             }
-        } else if (key == "re-send") {
-            viewModel.updateInvite(
-                eventId.toString(),
-                sharedViewModel.currentUser.value?.userId.toString(),
-                userData
-            ) { result ->
-                Log.d("Result", "onSendInviteButtonClick: $result")
+
+            "re-send" -> {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.Main) {
+                        findViewById<TextView>(R.id.sendInviteBtn).text = "Un-Sending..."
+                        findViewById<TextView>(R.id.sendInviteBtn).isClickable = false
+                    }
+                }
+                viewModel.updateInvite(
+                    eventId.toString(),
+                    sharedViewModel.currentUser.value?.userId.toString(),
+                    userData
+                ) { result ->
+                    if (result) {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.Main) {
+                                findViewById<TextView>(R.id.sendInviteBtn).isClickable = true
+                            }
+                        }
+                    }
+                }
             }
-        } else {
-            viewModel.deleteInvite(
-                eventId.toString(),
-                sharedViewModel.currentUser.value?.userId.toString(),
-                userData
-            ) { result ->
-                Log.d("Result", "onSendInviteButtonClick: $result")
+
+            else -> {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.Main) {
+                        findViewById<TextView>(R.id.sendInviteBtn).text = "Deleting..."
+                        findViewById<TextView>(R.id.sendInviteBtn).isClickable = false
+                    }
+                }
+                viewModel.deleteInvite(
+                    eventId.toString(),
+                    sharedViewModel.currentUser.value?.userId.toString(),
+                    userData
+                ) { result ->
+                    if (result) {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.Main) {
+                                findViewById<TextView>(R.id.sendInviteBtn).isClickable = true
+                            }
+                        }
+                    }
+                }
             }
         }
-//update invite functionality
     }
 
     companion object {

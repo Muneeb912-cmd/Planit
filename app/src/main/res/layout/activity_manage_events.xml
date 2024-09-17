@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.manage_events.CreateInviteFragment">
+    tools:context=".ui.fragments.manageevents.CreateInviteFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolBar"
@@ -114,6 +114,8 @@
         android:layout_height="0dp"
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

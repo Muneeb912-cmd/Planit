@@ -24,13 +24,14 @@
 
             <TextView
                 android:id="@+id/eventTitleTv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Ali's Promotion"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/favIcon"/>
 
             <ImageView
                 android:id="@+id/favIcon"
@@ -67,7 +68,6 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="Ali Ahmad"
-                   android:textSize="18dp"
                    android:drawablePadding="10dp"
                    app:drawableLeftCompat="@drawable/ic_person"
                    android:layout_weight="1"/>
@@ -77,7 +77,6 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="14-8-2024"
-                   android:textSize="18sp"
                    android:drawablePadding="5dp"
                    app:drawableLeftCompat="@drawable/ic_calender"
                    android:layout_weight="0"
