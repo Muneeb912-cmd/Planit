@@ -47,7 +47,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB7EIFMRQe-9Ijp2e-Bjwy6PnZ6ksByABg" />
+            android:value="{GOOGLE MAPS API KEY}" />
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
