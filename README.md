@@ -100,7 +100,17 @@ This project follows the MVVM (Model-View-ViewModel) pattern with clean architec
 
 ## Code Structure
 
-├── data │ ├── model # Data models (User, Event) │ ├── repository # Data repositories (Firebase, Room) ├── di # Hilt DI modules ├── ui # UI components │ ├── view # Activities and Fragments │ ├── viewmodel # ViewModels │ ├── adapters # RecyclerView adapters ├── utils # Utility classes and constants ├── service # Services like notifications, data sync, etc. └── network # Network layer for API calls
+├── data 
+│ ├── model # Data models (User, Event) 
+│ ├── repository # Data repositories (Firebase, Room) 
+├── di # Hilt DI modules 
+├── ui # UI components 
+│ ├── view # Activities and Fragments 
+│ ├── viewmodel # ViewModels 
+│ ├── adapters # RecyclerView adapters 
+├── utils # Utility classes and constants 
+├── service # Services like notifications, data sync, etc. 
+└── network # Network layer for API calls
 
 ---
 
