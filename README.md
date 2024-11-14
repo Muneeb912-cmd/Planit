@@ -63,7 +63,7 @@ Event Organizer is a Kotlin-based Android application built using the MVVM archi
 - **Language**: Kotlin
 - **Architecture**: MVVM with Clean Architecture
 - **Firebase**: Authentication, Firestore
-- **UI**: Jetpack Compose (optional) or traditional Views
+- **UI**: Traditional Views
 - **Data Persistence**: Room database for offline caching
 - **Networking**: Retrofit with Coroutine support for asynchronous calls
 - **Dependency Injection**: Hilt
